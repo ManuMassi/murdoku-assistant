@@ -1,6 +1,6 @@
 # Murdoku Assistant — Manuale d'uso
 
-*Read this in [English](MANUAL.md).*
+*Read this in [English](README.md).*
 
 Murdoku Assistant è un foglio elettronico digitale per risolvere i puzzle **Murdoku** (murdoku.com): sostituisce carta e penna quando si segnano indizi e decisioni su una griglia. Non fa nulla "per te": non risolve il puzzle, non dà suggerimenti — tiene traccia in modo ordinato di quello che scrivi.
 
