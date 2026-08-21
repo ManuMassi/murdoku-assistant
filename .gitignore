@@ -1,0 +1,7 @@
+# File personali (foto/scansioni dei puzzle, PDF, archivi) — non fanno parte dell'app,
+# che carica le immagini a runtime dal browser dell'utente, non da file nel repository.
+*.jpg
+*.jpeg
+*.png
+*.pdf
+*.zip

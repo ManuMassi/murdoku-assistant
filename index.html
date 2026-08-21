@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Murdoku Assistant</title>
+<style>
+  :root{
+    --bg:#1c1e26;
+    --panel:#262933;
+    --panel2:#2f333f;
+    --text:#e8e9ee;
+    --muted:#9aa0ad;
+    --accent:#4f8cff;
+    --accent2:#3a6fd6;
+    --danger:#e6495c;
+    --ok:#3ecf8e;
+    --border:#3a3f4d;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    overscroll-behavior:none;
+  }
+  #app{
+    display:flex;flex-direction:column;height:100vh;height:100dvh;
+  }
+  header#toolbar{
+    display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+    padding:8px 10px;background:var(--panel);border-bottom:1px solid var(--border);
+    z-index:20;
+  }
+  header#toolbar label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+  button, input[type=number], select{
+    font-family:inherit;font-size:13px;
+    background:var(--panel2);color:var(--text);
+    border:1px solid var(--border);border-radius:6px;
+    padding:6px 10px;cursor:pointer;
+  }
+  button:disabled{opacity:0.35;cursor:not-allowed;}
+  button:active{transform:translateY(1px);}
+  button.primary{background:var(--accent);border-color:var(--accent2);}
+  button.toggled{background:var(--accent);border-color:var(--accent2);}
+  input[type=number]{width:56px;cursor:text;}
+  #fileInput,#importInput{display:none;}
+
+  main#stage{
+    flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;
+    padding:14px;background:repeating-linear-gradient(45deg,#20222b,#20222b 10px,#1c1e26 10px,#1c1e26 20px);
+  }
+  #imageContainer{
+    position:relative;max-width:100%;
+    background:#12141a;border:1px dashed var(--border);
+    touch-action:none;
+    user-select:none;-webkit-user-select:none;
+  }
+  #imageContainer.no-image{width:min(900px, 100%);aspect-ratio:1/1;}
+  #imageContainer:not(.no-image){width:fit-content;}
+  #bgImage{
+    display:block;width:auto;height:auto;max-width:100%;
+    user-select:none;-webkit-user-drag:none;pointer-events:none;
+  }
+  #bgImage[hidden]{display:none;}
+  #placeholder{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-size:14px;text-align:center;padding:20px;pointer-events:none;
+  }
+  #gridBox{
+    position:absolute;border:2px solid var(--accent);background:rgba(79,140,255,0.03);
+  }
+  #gridBox.locked{border-color:rgba(79,140,255,0.5);}
+  #cellsGrid{
+    position:absolute;inset:0;display:grid;width:100%;height:100%;
+  }
+  .cell{
+    position:relative;border:1px solid rgba(255,255,255,0.12);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  #gridBox:not(.locked) .cell{pointer-events:none;}
+  .cell.selected{outline:2px solid var(--ok);outline-offset:-2px;z-index:2;}
+  .cell.letter-highlight{background:rgba(255,159,10,0.8);outline:2px solid #fff2c2;outline-offset:-2px;z-index:1;}
+  .cell.empty-highlight{background:rgba(0,210,255,0.4);box-shadow:inset 0 0 0 2px rgba(0,210,255,0.95);}
+  .cell .decision{
+    font-weight:800;color:#ff5470;
+    text-shadow:0 0 2px #000,0 0 2px #000,0 0 3px #000;
+    font-size:calc(var(--cell-size, 40px) * 0.55);
+    line-height:1;
+  }
+  .cell .candidates{
+    position:absolute;inset:2px;display:flex;flex-wrap:wrap;align-content:flex-start;
+    gap:1px;pointer-events:none;
+  }
+  .cell .candidates span{
+    font-size:calc(var(--cell-size, 40px) * 0.22);
+    font-weight:700;line-height:1.15;color:#fff7c2;
+    background:rgba(0,0,0,0.6);border-radius:2px;padding:0 1px;
+  }
+  .cell.disabled::after{
+    content:"✕";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--danger);opacity:0.75;font-weight:900;
+    font-size:calc(var(--cell-size, 40px) * 0.7);
+    text-shadow:0 0 3px #000;
+  }
+  .handle{
+    position:absolute;width:22px;height:22px;background:var(--accent);border:2px solid #fff;
+    border-radius:50%;touch-action:none;z-index:5;
+  }
+  .handle.nw{left:-11px;top:-11px;cursor:nwse-resize;}
+  .handle.ne{right:-11px;top:-11px;cursor:nesw-resize;}
+  .handle.sw{left:-11px;bottom:-11px;cursor:nesw-resize;}
+  .handle.se{right:-11px;bottom:-11px;cursor:nwse-resize;}
+  #gridBox.locked .handle{display:none;}
+  #gridBox:not(.locked){cursor:move;}
+
+  footer#lettersBar{
+    display:flex;flex-direction:row;align-items:center;gap:10px;
+    background:var(--panel);border-top:1px solid var(--border);
+    padding:8px 10px;z-index:20;overflow-x:auto;
+  }
+  #toolRow{display:flex;gap:6px;flex:0 0 auto;}
+  #toolRow button{flex:0 0 auto;min-width:36px;font-weight:700;}
+  #toolRow button.decided{opacity:0.45;}
+  #modeRow{display:flex;gap:6px;align-items:center;flex:0 0 auto;border-left:1px solid var(--border);padding-left:10px;}
+  #highlightRow{display:flex;gap:6px;align-items:center;flex:0 0 auto;border-left:1px solid var(--border);padding-left:10px;}
+  #timerBox{display:flex;align-items:center;gap:6px;flex:0 0 auto;margin-left:6px;padding-left:10px;border-left:1px solid var(--border);}
+  #timerDisplay{font-family:Consolas,monospace;font-size:14px;min-width:64px;text-align:center;}
+  #lettersStatus{font-size:11px;color:var(--muted);white-space:nowrap;flex:0 0 auto;border-left:1px solid var(--border);padding-left:10px;margin-left:6px;}
+  #toast{
+    position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+    background:#000c;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;
+    opacity:0;transition:opacity .25s;pointer-events:none;z-index:100;max-width:90vw;text-align:center;
+  }
+  #toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="toolbar">
+    <label><span data-i18n="rowsLabel">Righe</span> <input type="number" id="rowsInput" min="2" max="22" value="12"></label>
+    <label><span data-i18n="colsLabel">Colonne</span> <input type="number" id="colsInput" min="2" max="22" value="12"></label>
+    <button id="btnLoadImage" data-i18n="btnLoadImage">Carica immagine</button>
+    <input type="file" id="fileInput" accept="image/*">
+    <button id="btnClearImage" data-i18n="btnClearImage">Rimuovi immagine</button>
+    <button id="btnClearGrid" data-i18n="btnClearGrid">🗑 Cancella tutto</button>
+    <button id="btnLock" data-i18n="btnLock">🔒 Blocca/Sblocca</button>
+    <button id="btnUndo" data-i18n="btnUndo">↶ Undo</button>
+    <button id="btnRedo" data-i18n="btnRedo">↷ Redo</button>
+    <button id="btnExport" data-i18n="btnExport">Esporta</button>
+    <button id="btnImport" data-i18n="btnImport">Importa</button>
+    <input type="file" id="importInput" accept="application/json">
+    <button id="btnLang">🌐 EN</button>
+    <span data-i18n="keyboardHint" style="font-size:11px;color:var(--muted);margin-left:auto;">
+      Tastiera: frecce = sposta cella · lettera = indizio · Shift+lettera = decisione · X = escludi · Ctrl+Z/Y = undo/redo
+    </span>
+  </header>
+
+  <main id="stage">
+    <div id="imageContainer">
+      <div id="placeholder" data-i18n="placeholder">Carica un'immagine (facoltativo) oppure lavora subito sulla griglia vuota qui sotto.</div>
+      <img id="bgImage" hidden>
+      <div id="gridBox">
+        <div class="handle nw" data-handle="nw"></div>
+        <div class="handle ne" data-handle="ne"></div>
+        <div class="handle sw" data-handle="sw"></div>
+        <div class="handle se" data-handle="se"></div>
+        <div id="cellsGrid"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="lettersBar">
+    <div id="toolRow"></div>
+    <div id="modeRow">
+      <span data-i18n="modeLabel" style="font-size:12px;color:var(--muted);">Modalità:</span>
+      <button id="modePencil" data-i18n="modePencil">Indizio (minuscola)</button>
+      <button id="modePen" data-i18n="modePen">Decisione (maiuscola)</button>
+    </div>
+    <div id="highlightRow">
+      <button id="btnHighlightEmpty" data-i18n="btnHighlightEmpty" data-i18n-title="btnHighlightEmptyTitle">👁 Evidenzia vuote</button>
+    </div>
+    <div id="timerBox">
+      <span id="timerDisplay">00:00</span>
+      <button id="btnTimerToggle">▶ Avvia</button>
+      <button id="btnTimerReset" data-i18n="btnTimerReset">⟲ Azzera</button>
+    </div>
+    <span id="lettersStatus"></span>
+  </footer>
+  <div id="toast"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- state ----------
+  let rows = 12, cols = 12;
+  let img = null; // data URL or null
+  let gridBox = {x:0, y:0, w:100, h:100}; // percentages relative to imageContainer
+  let cells = []; // rows x cols of {x:bool, decision:string|null, candidates:string[]}
+  let locked = true;
+  let activeTool = 'x'; // 'x' or a letter
+  let activeMode = 'pencil'; // 'pencil' | 'pen'
+  let selR = 0, selC = 0; // keyboard-selected cell
+
+  let history = [];
+  let historyIndex = -1;
+
+  // cronometro: timerElapsedMs è il totale "congelato" (se il cronometro fosse
+  // fermo ora); mentre è in marcia si somma il tempo trascorso da timerStartedAt.
+  let timerElapsedMs = 0;
+  let timerRunning = false;
+  let timerStartedAt = null;
+  let timerDisplayInterval = null;
+  let timerPersistInterval = null;
+
+  // ---------- dom refs ----------
+  const rowsInput = document.getElementById('rowsInput');
+  const colsInput = document.getElementById('colsInput');
+  const btnLoadImage = document.getElementById('btnLoadImage');
+  const fileInput = document.getElementById('fileInput');
+  const btnClearImage = document.getElementById('btnClearImage');
+  const btnClearGrid = document.getElementById('btnClearGrid');
+  const btnLock = document.getElementById('btnLock');
+  const btnHighlightEmpty = document.getElementById('btnHighlightEmpty');
+  const btnUndo = document.getElementById('btnUndo');
+  const btnRedo = document.getElementById('btnRedo');
+  const btnExport = document.getElementById('btnExport');
+  const btnImport = document.getElementById('btnImport');
+  const importInput = document.getElementById('importInput');
+  const btnLang = document.getElementById('btnLang');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const btnTimerToggle = document.getElementById('btnTimerToggle');
+  const btnTimerReset = document.getElementById('btnTimerReset');
+  const lettersStatus = document.getElementById('lettersStatus');
+  const stageEl = document.getElementById('stage');
+  const imageContainer = document.getElementById('imageContainer');
+  const bgImage = document.getElementById('bgImage');
+  const placeholder = document.getElementById('placeholder');
+  const gridBoxEl = document.getElementById('gridBox');
+  const cellsGridEl = document.getElementById('cellsGrid');
+  const toolRow = document.getElementById('toolRow');
+  const modeRow = document.getElementById('modeRow');
+  const modePencilBtn = document.getElementById('modePencil');
+  const modePenBtn = document.getElementById('modePen');
+  const toast = document.getElementById('toast');
+
+  // ---------- i18n ----------
+  // preferenza di lingua legata al dispositivo/browser (localStorage), volutamente
+  // separata dallo stato del puzzle (sessionStorage, vedi persist()/loadStoredData()).
+  const LANG_KEY = 'murdoku_lang_v1';
+
+  const STRINGS = {
+    it: {
+      rowsLabel: 'Righe',
+      colsLabel: 'Colonne',
+      btnLoadImage: 'Carica immagine',
+      btnClearImage: 'Rimuovi immagine',
+      btnClearGrid: '🗑 Cancella tutto',
+      btnLock: '🔒 Blocca/Sblocca',
+      btnUndo: '↶ Undo',
+      btnRedo: '↷ Redo',
+      btnExport: 'Esporta',
+      btnImport: 'Importa',
+      keyboardHint: 'Tastiera: frecce = sposta cella · lettera = indizio · Shift+lettera = decisione · X = escludi · Ctrl+Z/Y = undo/redo',
+      placeholder: 'Carica un\'immagine (facoltativo) oppure lavora subito sulla griglia vuota qui sotto.',
+      modeLabel: 'Modalità:',
+      modePencil: 'Indizio (minuscola)',
+      modePen: 'Decisione (maiuscola)',
+      btnHighlightEmpty: '👁 Evidenzia vuote',
+      btnHighlightEmptyTitle: 'Tieni premuto per evidenziare le caselle senza X e senza decisione',
+      btnTimerStart: '▶ Avvia',
+      btnTimerPause: '⏸ Pausa',
+      btnTimerReset: '⟲ Azzera',
+      xToolTitle: 'Disabilita/riabilita cella',
+      letterDecidedTitle: 'Lettera "{letter}" già piazzata',
+      letterPendingTitle: 'Lettera "{letter}" ancora da piazzare',
+      lettersAllPlaced: 'Tutte le lettere piazzate ({total}/{total}) ✓',
+      lettersRemaining: 'Da piazzare ({remaining}/{total}): {list}',
+      toastCellHasDecision: 'Non puoi escludere una casella che contiene già una decisione',
+      toastCellExcluded: 'Impossibile: la casella è esclusa (X)',
+      toastLetterDecidedElsewhereClue: 'Lettera "{letter}" già decisa altrove: non utilizzabile come indizio',
+      toastLetterDecidedElsewhereDecision: 'Lettera "{letter}" già usata come decisione altrove',
+      toastCellAlreadyDecided: 'Impossibile: la casella ha già una decisione',
+      toastStorageFull: 'Spazio di archiviazione esaurito: impossibile salvare (prova a esportare su file)',
+      toastImportCancelled: 'Importazione annullata',
+      toastImportDone: 'Importazione completata',
+      toastImportInvalid: 'File non valido',
+      confirmGridResize: 'Cambiare le dimensioni della griglia azzera i contenuti (X, indizi, decisioni). Continuare?',
+      confirmClearImage: 'Rimuovere l\'immagine di sfondo? La griglia resta invariata.',
+      confirmClearGrid: 'Cancellare tutto il contenuto della griglia (X, indizi, decisioni)?',
+      confirmFullReset: 'Ripristinare anche la griglia a dimensione standard (12×12) senza immagine?\n\nOK = ripristina anche griglia e immagine\nAnnulla = mantieni dimensione griglia e immagine attuali, cancella solo i contenuti',
+      confirmImportOverwrite: 'Importare questo file sovrascriverà la sessione di lavoro corrente. Continuare?',
+      exportPrompt: 'Nome del file da esportare:'
+    },
+    en: {
+      rowsLabel: 'Rows',
+      colsLabel: 'Columns',
+      btnLoadImage: 'Load image',
+      btnClearImage: 'Remove image',
+      btnClearGrid: '🗑 Clear all',
+      btnLock: '🔒 Lock/Unlock',
+      btnUndo: '↶ Undo',
+      btnRedo: '↷ Redo',
+      btnExport: 'Export',
+      btnImport: 'Import',
+      keyboardHint: 'Keyboard: arrows = move cell · letter = clue · Shift+letter = decision · X = exclude · Ctrl+Z/Y = undo/redo',
+      placeholder: 'Load an image (optional), or start working directly on the empty grid below.',
+      modeLabel: 'Mode:',
+      modePencil: 'Clue (lowercase)',
+      modePen: 'Decision (uppercase)',
+      btnHighlightEmpty: '👁 Highlight empty',
+      btnHighlightEmptyTitle: 'Hold to highlight cells with no X and no decision',
+      btnTimerStart: '▶ Start',
+      btnTimerPause: '⏸ Pause',
+      btnTimerReset: '⟲ Reset',
+      xToolTitle: 'Disable/re-enable cell',
+      letterDecidedTitle: 'Letter "{letter}" already placed',
+      letterPendingTitle: 'Letter "{letter}" still to place',
+      lettersAllPlaced: 'All letters placed ({total}/{total}) ✓',
+      lettersRemaining: 'To place ({remaining}/{total}): {list}',
+      toastCellHasDecision: 'You cannot exclude a cell that already has a decision',
+      toastCellExcluded: 'Not allowed: the cell is excluded (X)',
+      toastLetterDecidedElsewhereClue: 'Letter "{letter}" already decided elsewhere: cannot be used as a clue',
+      toastLetterDecidedElsewhereDecision: 'Letter "{letter}" already used as a decision elsewhere',
+      toastCellAlreadyDecided: 'Not allowed: the cell already has a decision',
+      toastStorageFull: 'Storage full: could not save (try exporting to a file)',
+      toastImportCancelled: 'Import cancelled',
+      toastImportDone: 'Import completed',
+      toastImportInvalid: 'Invalid file',
+      confirmGridResize: 'Changing the grid size clears its contents (X, clues, decisions). Continue?',
+      confirmClearImage: 'Remove the background image? The grid stays unchanged.',
+      confirmClearGrid: 'Clear all the grid contents (X, clues, decisions)?',
+      confirmFullReset: 'Also reset the grid to the standard size (12×12) with no image?\n\nOK = reset grid and image too\nCancel = keep current grid size and image, only clear contents',
+      confirmImportOverwrite: 'Importing this file will overwrite the current work session. Continue?',
+      exportPrompt: 'File name to export:'
+    }
+  };
+
+  function loadLang(){
+    try{
+      const saved = localStorage.getItem(LANG_KEY);
+      if(saved === 'it' || saved === 'en') return saved;
+    }catch(e){}
+    return (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'it';
+  }
+
+  let lang = loadLang();
+
+  function t(key, params){
+    let s = (STRINGS[lang] && STRINGS[lang][key]) || key;
+    if(params) for(const k in params) s = s.split('{'+k+'}').join(params[k]);
+    return s;
+  }
+
+  function applyTranslations(){
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); });
+    btnLang.textContent = lang === 'it' ? '🌐 EN' : '🌐 IT';
+    renderLetterToolbar();
+    renderTimerButtons();
+  }
+
+  function setLang(newLang){
+    lang = newLang;
+    try{ localStorage.setItem(LANG_KEY, lang); }catch(e){}
+    applyTranslations();
+  }
+
+  // ---------- helpers ----------
+  // il numero di decisioni piazzabili in totale (vincolo torre: una per riga E
+  // per colonna) è min(righe, colonne) anche su griglie rettangolari.
+  function objectCount(rr, cc){
+    return Math.min(rr, cc);
+  }
+
+  function validLetters(count){
+    const arr = [];
+    for(let i=0;i<count-1;i++) arr.push(String.fromCharCode(97+i));
+    arr.push('v');
+    return arr;
+  }
+
+  function makeEmptyCells(rr, cc){
+    const c = [];
+    for(let r=0;r<rr;r++){
+      const row = [];
+      for(let col=0;col<cc;col++){
+        row.push({x:false, decision:null, candidates:[]});
+      }
+      c.push(row);
+    }
+    return c;
+  }
+
+  function isGloballyDecided(letter){
+    for(const row of cells) for(const c of row) if(c.decision === letter) return true;
+    return false;
+  }
+
+  // ---------- cronometro ----------
+  function formatElapsed(ms){
+    const totalSec = Math.floor(ms/1000);
+    const h = Math.floor(totalSec/3600);
+    const m = Math.floor((totalSec%3600)/60);
+    const s = totalSec%60;
+    const pad = v => String(v).padStart(2,'0');
+    return h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+  }
+
+  function currentTimerElapsedMs(){
+    return timerElapsedMs + (timerRunning && timerStartedAt ? Date.now() - timerStartedAt : 0);
+  }
+
+  function renderTimerDisplay(){
+    timerDisplay.textContent = formatElapsed(currentTimerElapsedMs());
+  }
+
+  function renderTimerButtons(){
+    btnTimerToggle.textContent = timerRunning ? t('btnTimerPause') : t('btnTimerStart');
+  }
+
+  function startTimerTick(){
+    clearInterval(timerDisplayInterval);
+    timerDisplayInterval = setInterval(renderTimerDisplay, 500);
+    clearInterval(timerPersistInterval);
+    timerPersistInterval = setInterval(persist, 30000);
+  }
+
+  function stopTimerTick(){
+    clearInterval(timerDisplayInterval); timerDisplayInterval = null;
+    clearInterval(timerPersistInterval); timerPersistInterval = null;
+  }
+
+  function toggleTimer(){
+    if(timerRunning){
+      timerElapsedMs = currentTimerElapsedMs();
+      timerRunning = false;
+      timerStartedAt = null;
+      stopTimerTick();
+    } else {
+      timerRunning = true;
+      timerStartedAt = Date.now();
+      startTimerTick();
+    }
+    renderTimerDisplay();
+    renderTimerButtons();
+    persist();
+  }
+
+  // avvia (o riprende) il cronometro alla prima modifica della griglia; non-op se già in marcia
+  function ensureTimerRunning(){
+    if(timerRunning) return;
+    timerRunning = true;
+    timerStartedAt = Date.now();
+    startTimerTick();
+    renderTimerDisplay();
+    renderTimerButtons();
+  }
+
+  function resetTimer(){
+    timerElapsedMs = 0;
+    timerStartedAt = timerRunning ? Date.now() : null;
+    renderTimerDisplay();
+    persist();
+  }
+
+  // ---------- lettere ancora da piazzare come decisione ----------
+  function updateLetterButtonsState(){
+    const letters = validLetters(objectCount(rows, cols));
+    Array.from(toolRow.children).forEach(b=>{
+      const letter = b.dataset.tool;
+      if(letter === 'x') return;
+      const decided = isGloballyDecided(letter);
+      b.classList.toggle('decided', decided);
+      b.textContent = decided ? (letter + ' ✓') : letter;
+      b.title = decided ? t('letterDecidedTitle', {letter: letter.toUpperCase()}) : t('letterPendingTitle', {letter: letter.toUpperCase()});
+    });
+    const remaining = letters.filter(l => !isGloballyDecided(l));
+    lettersStatus.textContent = remaining.length === 0
+      ? t('lettersAllPlaced', {total: letters.length})
+      : t('lettersRemaining', {remaining: remaining.length, total: letters.length, list: remaining.map(l=>l.toUpperCase()).join(' ')});
+  }
+
+  let toastTimer = null;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toast.classList.remove('show'), 1800);
+  }
+
+  // ---------- history ----------
+  function snapshot(){
+    return {
+      rows, cols,
+      gridBox: {...gridBox},
+      cells: cells.map(row => row.map(c => ({x:c.x, decision:c.decision, candidates:[...c.candidates]})))
+    };
+  }
+
+  function applySnapshot(snap){
+    rows = snap.rows;
+    cols = snap.cols;
+    gridBox = {...snap.gridBox};
+    cells = snap.cells.map(row => row.map(c => ({x:c.x, decision:c.decision, candidates:[...c.candidates]})));
+    rowsInput.value = rows;
+    colsInput.value = cols;
+    clampSelection();
+    buildCellsDom();
+    renderLetterToolbar();
+    renderGridBox();
+    renderCells();
+  }
+
+  function pushHistory(){
+    history = history.slice(0, historyIndex+1);
+    history.push(snapshot());
+    historyIndex = history.length - 1;
+    updateUndoRedoButtons();
+    persist();
+  }
+
+  function undo(){
+    if(historyIndex <= 0) return;
+    historyIndex--;
+    applySnapshot(history[historyIndex]);
+    updateUndoRedoButtons();
+    ensureTimerRunning();
+    persist();
+  }
+
+  function redo(){
+    if(historyIndex >= history.length-1) return;
+    historyIndex++;
+    applySnapshot(history[historyIndex]);
+    updateUndoRedoButtons();
+    ensureTimerRunning();
+    persist();
+  }
+
+  function updateUndoRedoButtons(){
+    btnUndo.disabled = historyIndex <= 0;
+    btnRedo.disabled = historyIndex >= history.length-1;
+  }
+
+  // ---------- persistence: un'unica sessione di lavoro ----------
+  // Non c'è più selezione/switch tra sessioni multiple: un solo stato corrente
+  // (rows, cols, gridBox, cells, img) autosalvato in background. Per lavorare su un
+  // puzzle diverso si usa Esporta (salva su file) / Importa (carica da file,
+  // sovrascrivendo la sessione corrente). L'undo/redo resta solo in memoria.
+  //
+  // Si usa sessionStorage, non localStorage: deve sopravvivere a un F5 sulla
+  // stessa pagina (sessionStorage lo garantisce, è legato alla singola tab) ma
+  // NON a una nuova apertura della pagina (nuova tab/finestra ha sessionStorage
+  // vuoto anche per lo stesso file) — è esattamente il comportamento voluto,
+  // senza bisogno di distinguere "reload" da "apertura nuova" a mano.
+  const STORAGE_KEY = 'murdoku_state_v1';
+
+  // chiavi del vecchio formato multi-sessione, mantenute solo per la migrazione
+  // una tantum al primo avvio dopo l'aggiornamento; rimovibili in sicurezza
+  // quando nessun utente dipenderà più da esse.
+  const OLD_SESSIONS_INDEX_KEY = 'murdoku_sessions_index_v1';
+  const OLD_SESSION_DATA_PREFIX = 'murdoku_session_v1_';
+  const OLD_LAST_ACTIVE_KEY = 'murdoku_last_active_v1';
+
+  function migrateFromMultiSession(){
+    let idx;
+    try{
+      const raw = localStorage.getItem(OLD_SESSIONS_INDEX_KEY);
+      idx = raw ? JSON.parse(raw) : null;
+    }catch(e){ idx = null; }
+    if(!idx || !idx.length) return null;
+
+    let lastActive = null;
+    try{ lastActive = localStorage.getItem(OLD_LAST_ACTIVE_KEY); }catch(e){}
+    const target = idx.find(s=>s.id===lastActive) || idx[0];
+
+    let data = null;
+    try{
+      const raw = localStorage.getItem(OLD_SESSION_DATA_PREFIX + target.id);
+      data = raw ? JSON.parse(raw) : null;
+    }catch(e){}
+
+    idx.forEach(s=>{ try{ localStorage.removeItem(OLD_SESSION_DATA_PREFIX + s.id); }catch(e){} });
+    try{ localStorage.removeItem(OLD_SESSIONS_INDEX_KEY); }catch(e){}
+    try{ localStorage.removeItem(OLD_LAST_ACTIVE_KEY); }catch(e){}
+    return data;
+  }
+
+  function loadStoredData(){
+    try{
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){}
+    return migrateFromMultiSession();
+  }
+
+  function persist(){
+    try{
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+        rows, cols, gridBox, cells, img,
+        timerElapsedMs: currentTimerElapsedMs(),
+        timerRunning
+      }));
+    }catch(e){
+      showToast(t('toastStorageFull'));
+    }
+  }
+
+  // i dati salvati/esportati dal vecchio formato quadrato hanno un campo `n`
+  // invece di `rows`/`cols`: si traducono qui in una griglia quadrata rows=cols=n.
+  function normalizeGridDims(data){
+    if(data.rows && data.cols) return {rows:data.rows, cols:data.cols};
+    return {rows:data.n, cols:data.n};
+  }
+
+  function applyLoadedData(data){
+    const dims = normalizeGridDims(data);
+    rows = dims.rows;
+    cols = dims.cols;
+    gridBox = data.gridBox;
+    cells = data.cells;
+    img = data.img || null;
+    selR = 0; selC = 0;
+    rowsInput.value = rows;
+    colsInput.value = cols;
+    applyImage();
+    buildCellsDom();
+    renderLetterToolbar();
+    renderGridBox();
+    renderCells();
+    history = [snapshot()];
+    historyIndex = 0;
+    updateUndoRedoButtons();
+
+    timerElapsedMs = data.timerElapsedMs || 0;
+    timerRunning = !!data.timerRunning;
+    timerStartedAt = timerRunning ? Date.now() : null;
+    renderTimerDisplay();
+    renderTimerButtons();
+    if(timerRunning) startTimerTick(); else stopTimerTick();
+  }
+
+  // ---------- rendering ----------
+  function buildCellsDom(){
+    cellsGridEl.innerHTML = '';
+    cellsGridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    cellsGridEl.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const div = document.createElement('div');
+        div.className = 'cell';
+        div.dataset.r = r;
+        div.dataset.c = c;
+        const decision = document.createElement('div');
+        decision.className = 'decision';
+        const candidates = document.createElement('div');
+        candidates.className = 'candidates';
+        div.appendChild(candidates);
+        div.appendChild(decision);
+        div.addEventListener('click', onCellClick);
+        cellsGridEl.appendChild(div);
+      }
+    }
+  }
+
+  function renderCells(){
+    const divs = cellsGridEl.children;
+    for(let i=0;i<divs.length;i++){
+      const div = divs[i];
+      const r = +div.dataset.r, c = +div.dataset.c;
+      const cell = cells[r][c];
+      div.classList.toggle('disabled', cell.x);
+      div.classList.toggle('selected', locked && r === selR && c === selC);
+      const decisionEl = div.querySelector('.decision');
+      const candidatesEl = div.querySelector('.candidates');
+      decisionEl.textContent = cell.decision ? cell.decision.toUpperCase() : '';
+      candidatesEl.innerHTML = '';
+      cell.candidates.forEach(l=>{
+        const span = document.createElement('span');
+        span.textContent = l;
+        candidatesEl.appendChild(span);
+      });
+    }
+  }
+
+  function renderGridBox(){
+    gridBoxEl.style.left = gridBox.x + '%';
+    gridBoxEl.style.top = gridBox.y + '%';
+    gridBoxEl.style.width = gridBox.w + '%';
+    gridBoxEl.style.height = gridBox.h + '%';
+    gridBoxEl.classList.toggle('locked', locked);
+    updateCellSizeVar();
+  }
+
+  function updateCellSizeVar(){
+    const rect = gridBoxEl.getBoundingClientRect();
+    const size = Math.min(rect.width / cols, rect.height / rows);
+    gridBoxEl.style.setProperty('--cell-size', size + 'px');
+  }
+
+  // scala l'immagine per occupare al meglio lo spazio disponibile nello stage,
+  // sia in larghezza che in altezza — calcolate qui in pixel perché le percentuali
+  // CSS non si risolvono correttamente contro un contenitore a larghezza "fit-content".
+  // Una volta note le dimensioni intrinseche (naturalWidth/Height, disponibili solo
+  // dopo il 'load'), si impostano width/height espliciti così l'immagine viene anche
+  // allargata per riempire lo spazio, non solo rimpicciolita se troppo grande
+  // (max-width/max-height da sole non ingrandiscono mai un'immagine più piccola dello spazio disponibile).
+  function updateImageSize(){
+    const cs = getComputedStyle(stageEl);
+    const padX = (parseFloat(cs.paddingLeft)||0) + (parseFloat(cs.paddingRight)||0);
+    const padY = (parseFloat(cs.paddingTop)||0) + (parseFloat(cs.paddingBottom)||0);
+    const availW = Math.max(120, stageEl.clientWidth - padX);
+    const availH = Math.max(120, stageEl.clientHeight - padY);
+    if(bgImage.naturalWidth && bgImage.naturalHeight){
+      const scale = Math.min(availW / bgImage.naturalWidth, availH / bgImage.naturalHeight);
+      bgImage.style.width = Math.round(bgImage.naturalWidth * scale) + 'px';
+      bgImage.style.height = Math.round(bgImage.naturalHeight * scale) + 'px';
+    } else {
+      // dimensioni intrinseche non ancora note (prima del 'load'): usa il vecchio
+      // comportamento di solo contenimento, corretto non appena l'immagine carica
+      bgImage.style.width = '';
+      bgImage.style.height = '';
+      bgImage.style.maxWidth = availW + 'px';
+      bgImage.style.maxHeight = availH + 'px';
+    }
+  }
+
+  function renderLetterToolbar(){
+    toolRow.innerHTML = '';
+    const xBtn = document.createElement('button');
+    xBtn.textContent = '✕';
+    xBtn.title = t('xToolTitle');
+    xBtn.dataset.tool = 'x';
+    xBtn.addEventListener('click', ()=>selectTool('x'));
+    toolRow.appendChild(xBtn);
+
+    validLetters(objectCount(rows, cols)).forEach(letter=>{
+      const b = document.createElement('button');
+      b.textContent = letter;
+      b.dataset.tool = letter;
+      b.addEventListener('click', ()=>selectTool(letter));
+      b.addEventListener('pointerdown', ()=>highlightLetterOccurrences(letter));
+      toolRow.appendChild(b);
+    });
+    highlightActiveTool();
+    updateLetterButtonsState();
+  }
+
+  // ---------- evidenzia occorrenze di una lettera mentre si tiene premuto il bottone ----------
+  function highlightLetterOccurrences(letter){
+    const divs = cellsGridEl.children;
+    for(let i=0;i<divs.length;i++){
+      const div = divs[i];
+      const r = +div.dataset.r, c = +div.dataset.c;
+      const cell = cells[r][c];
+      div.classList.toggle('letter-highlight', cell.decision === letter || cell.candidates.includes(letter));
+    }
+  }
+
+  // ---------- evidenzia le caselle ancora "vuote" (senza X e senza decisione,
+  // indizi a parte) mentre si tiene premuto il bottone — stesso meccanismo di sopra ----------
+  function highlightEmptyCells(){
+    const divs = cellsGridEl.children;
+    for(let i=0;i<divs.length;i++){
+      const div = divs[i];
+      const r = +div.dataset.r, c = +div.dataset.c;
+      const cell = cells[r][c];
+      div.classList.toggle('empty-highlight', !cell.x && !cell.decision);
+    }
+  }
+
+  function clearHoldHighlights(){
+    const divs = cellsGridEl.children;
+    for(let i=0;i<divs.length;i++) divs[i].classList.remove('letter-highlight', 'empty-highlight');
+  }
+
+  document.addEventListener('pointerup', clearHoldHighlights);
+  document.addEventListener('pointercancel', clearHoldHighlights);
+
+  function highlightActiveTool(){
+    Array.from(toolRow.children).forEach(b=>{
+      b.classList.toggle('toggled', b.dataset.tool === activeTool);
+    });
+    modePencilBtn.classList.toggle('toggled', activeMode==='pencil');
+    modePenBtn.classList.toggle('toggled', activeMode==='pen');
+  }
+
+  function selectTool(tool){
+    activeTool = tool;
+    highlightActiveTool();
+  }
+
+  // ---------- cell interaction ----------
+  // il click seleziona solo la cella: lettera e X si impostano da tastiera
+  function onCellClick(e){
+    if(!locked) return; // must lock grid before editing cells
+    const div = e.currentTarget;
+    const r = +div.dataset.r, c = +div.dataset.c;
+    selR = r; selC = c;
+    renderCells();
+  }
+
+  function applyActiveToolToCell(r, c){
+    const cell = cells[r][c];
+
+    if(activeTool === 'x'){
+      if(cell.decision){
+        showToast(t('toastCellHasDecision'));
+        return;
+      }
+      cell.x = !cell.x;
+      if(cell.x) cell.candidates = [];
+      ensureTimerRunning();
+      pushHistory();
+      renderCells();
+      return;
+    }
+
+    if(cell.x){
+      showToast(t('toastCellExcluded'));
+      return;
+    }
+
+    const letter = activeTool;
+    if(activeMode === 'pencil'){
+      if(isGloballyDecided(letter)){
+        showToast(t('toastLetterDecidedElsewhereClue', {letter}));
+        return;
+      }
+      const idx = cell.candidates.indexOf(letter);
+      if(idx >= 0) cell.candidates.splice(idx,1);
+      else { cell.candidates.push(letter); cell.candidates.sort(); }
+      ensureTimerRunning();
+      pushHistory();
+      renderCells();
+    } else { // pen / decisione — solo su casella vuota (niente altra decisione)
+      if(cell.decision){
+        showToast(t('toastCellAlreadyDecided'));
+        return;
+      }
+      if(isGloballyDecided(letter)){
+        showToast(t('toastLetterDecidedElsewhereDecision', {letter: letter.toUpperCase()}));
+        return;
+      }
+      cell.decision = letter;
+      cell.candidates = [];
+      for(const row of cells) for(const c2 of row){
+        const idx = c2.candidates.indexOf(letter);
+        if(idx >= 0) c2.candidates.splice(idx,1);
+      }
+      // vincolo "torre": nessun'altra decisione può condividere riga o colonna
+      for(let cc=0; cc<cols; cc++){ if(cc !== c){ cells[r][cc].x = true; cells[r][cc].candidates = []; } }
+      for(let rr=0; rr<rows; rr++){ if(rr !== r){ cells[rr][c].x = true; cells[rr][c].candidates = []; } }
+      ensureTimerRunning();
+      pushHistory();
+      renderCells();
+      updateLetterButtonsState();
+    }
+  }
+
+  function moveSelection(dr, dc){
+    selR = Math.max(0, Math.min(rows-1, selR + dr));
+    selC = Math.max(0, Math.min(cols-1, selC + dc));
+    renderCells();
+  }
+
+  function clampSelection(){
+    selR = Math.max(0, Math.min(rows-1, selR));
+    selC = Math.max(0, Math.min(cols-1, selC));
+  }
+
+  // ---------- grid box drag / resize ----------
+  let dragState = null;
+
+  gridBoxEl.addEventListener('pointerdown', (e)=>{
+    if(locked) return;
+    if(e.target.classList.contains('handle')) return; // handled separately
+    e.preventDefault();
+    gridBoxEl.setPointerCapture(e.pointerId);
+    dragState = {mode:'move', startX:e.clientX, startY:e.clientY, start:{...gridBox}};
+  });
+
+  Array.from(document.querySelectorAll('.handle')).forEach(h=>{
+    h.addEventListener('pointerdown', (e)=>{
+      if(locked) return;
+      e.preventDefault();
+      e.stopPropagation();
+      h.setPointerCapture(e.pointerId);
+      dragState = {mode:'resize', corner:h.dataset.handle, startX:e.clientX, startY:e.clientY, start:{...gridBox}};
+    });
+  });
+
+  document.addEventListener('pointermove', (e)=>{
+    if(!dragState) return;
+    const contRect = imageContainer.getBoundingClientRect();
+    const dxPct = (e.clientX - dragState.startX) / contRect.width * 100;
+    const dyPct = (e.clientY - dragState.startY) / contRect.height * 100;
+    const MIN = 5;
+
+    if(dragState.mode === 'move'){
+      let x = dragState.start.x + dxPct;
+      let y = dragState.start.y + dyPct;
+      x = Math.max(0, Math.min(100 - gridBox.w, x));
+      y = Math.max(0, Math.min(100 - gridBox.h, y));
+      gridBox.x = x; gridBox.y = y;
+    } else if(dragState.mode === 'resize'){
+      const s = dragState.start;
+      let {x,y,w,h} = s;
+      if(dragState.corner === 'se'){
+        w = Math.max(MIN, Math.min(100 - s.x, s.w + dxPct));
+        h = Math.max(MIN, Math.min(100 - s.y, s.h + dyPct));
+      } else if(dragState.corner === 'ne'){
+        w = Math.max(MIN, Math.min(100 - s.x, s.w + dxPct));
+        h = Math.max(MIN, s.h - dyPct);
+        y = s.y + s.h - h;
+        if(y < 0){ h += y; y = 0; }
+      } else if(dragState.corner === 'sw'){
+        w = Math.max(MIN, s.w - dxPct);
+        x = s.x + s.w - w;
+        if(x < 0){ w += x; x = 0; }
+        h = Math.max(MIN, Math.min(100 - s.y, s.h + dyPct));
+      } else if(dragState.corner === 'nw'){
+        w = Math.max(MIN, s.w - dxPct);
+        x = s.x + s.w - w;
+        if(x < 0){ w += x; x = 0; }
+        h = Math.max(MIN, s.h - dyPct);
+        y = s.y + s.h - h;
+        if(y < 0){ h += y; y = 0; }
+      }
+      gridBox = {x,y,w,h};
+    }
+    renderGridBox();
+  });
+
+  document.addEventListener('pointerup', ()=>{
+    if(dragState){
+      dragState = null;
+      pushHistory();
+    }
+  });
+
+  window.addEventListener('resize', ()=>{ updateImageSize(); updateCellSizeVar(); });
+
+  // ---------- toolbar actions ----------
+  function onGridSizeChange(){
+    let newRows = parseInt(rowsInput.value, 10);
+    let newCols = parseInt(colsInput.value, 10);
+    if(isNaN(newRows)) newRows = rows;
+    if(isNaN(newCols)) newCols = cols;
+    newRows = Math.max(2, Math.min(22, newRows));
+    newCols = Math.max(2, Math.min(22, newCols));
+    rowsInput.value = newRows;
+    colsInput.value = newCols;
+    if(newRows === rows && newCols === cols) return;
+    if(!confirm(t('confirmGridResize'))){
+      rowsInput.value = rows;
+      colsInput.value = cols;
+      return;
+    }
+    rows = newRows;
+    cols = newCols;
+    cells = makeEmptyCells(rows, cols);
+    selR = 0; selC = 0;
+    buildCellsDom();
+    renderLetterToolbar();
+    renderCells();
+    renderGridBox();
+    pushHistory();
+  }
+  rowsInput.addEventListener('change', onGridSizeChange);
+  colsInput.addEventListener('change', onGridSizeChange);
+
+  btnLoadImage.addEventListener('click', ()=>fileInput.click());
+  fileInput.addEventListener('change', ()=>{
+    const file = fileInput.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      img = reader.result;
+      applyImage();
+      gridBox = {x:0, y:0, w:100, h:100};
+      renderGridBox();
+      pushHistory();
+    };
+    reader.readAsDataURL(file);
+    fileInput.value = '';
+  });
+
+  function applyImage(){
+    imageContainer.classList.toggle('no-image', !img);
+    if(img){
+      bgImage.src = img;
+      bgImage.hidden = false;
+      placeholder.style.display = 'none';
+    } else {
+      bgImage.hidden = true;
+      placeholder.style.display = 'flex';
+    }
+    updateImageSize();
+  }
+
+  // le dimensioni intrinseche (naturalWidth/Height) sono note solo dopo il 'load':
+  // va ricalcolata la dimensione scalata dell'immagine, poi il contenitore
+  // (fit-content) assume quella dimensione e la griglia sovrapposta può allinearsi.
+  bgImage.addEventListener('load', ()=>{ updateImageSize(); renderGridBox(); });
+
+  btnClearImage.addEventListener('click', ()=>{
+    if(!img) return;
+    if(!confirm(t('confirmClearImage'))) return;
+    img = null;
+    applyImage();
+    pushHistory();
+  });
+
+  btnClearGrid.addEventListener('click', ()=>{
+    if(!confirm(t('confirmClearGrid'))) return;
+    const fullReset = confirm(t('confirmFullReset'));
+    if(fullReset){
+      rows = 12; cols = 12;
+      gridBox = {x:0, y:0, w:100, h:100};
+      img = null;
+      rowsInput.value = rows;
+      colsInput.value = cols;
+      applyImage();
+      cells = makeEmptyCells(rows, cols);
+      selR = 0; selC = 0;
+      buildCellsDom();
+      renderLetterToolbar();
+      renderGridBox();
+      renderCells();
+    } else {
+      cells = makeEmptyCells(rows, cols);
+      selR = 0; selC = 0;
+      renderCells();
+      updateLetterButtonsState();
+    }
+    history = [snapshot()];
+    historyIndex = 0;
+    updateUndoRedoButtons();
+    resetTimer();
+  });
+
+  btnLang.addEventListener('click', ()=>setLang(lang === 'it' ? 'en' : 'it'));
+
+  btnLock.addEventListener('click', ()=>{
+    locked = !locked;
+    renderGridBox();
+  });
+
+  btnHighlightEmpty.addEventListener('pointerdown', highlightEmptyCells);
+
+  btnUndo.addEventListener('click', undo);
+  btnRedo.addEventListener('click', redo);
+
+  btnTimerToggle.addEventListener('click', toggleTimer);
+  btnTimerReset.addEventListener('click', resetTimer);
+
+  document.addEventListener('keydown', (e)=>{
+    if((e.ctrlKey||e.metaKey) && !e.shiftKey && e.key.toLowerCase()==='z'){ e.preventDefault(); undo(); return; }
+    if((e.ctrlKey||e.metaKey) && (e.key.toLowerCase()==='y' || (e.shiftKey && e.key.toLowerCase()==='z'))){ e.preventDefault(); redo(); return; }
+
+    // the rest of the shortcuts only apply to grid editing, and only when
+    // the user isn't typing into a text field (e.g. the N input)
+    const tag = (e.target.tagName || '').toLowerCase();
+    if(tag === 'input' || tag === 'textarea') return;
+    if(!locked) return; // grid is being positioned, not edited
+    if(e.ctrlKey || e.metaKey || e.altKey) return;
+
+    if(e.key === 'ArrowUp'){ e.preventDefault(); moveSelection(-1,0); return; }
+    if(e.key === 'ArrowDown'){ e.preventDefault(); moveSelection(1,0); return; }
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); moveSelection(0,-1); return; }
+    if(e.key === 'ArrowRight'){ e.preventDefault(); moveSelection(0,1); return; }
+
+    if(e.key.toLowerCase() === 'x'){
+      e.preventDefault();
+      activeTool = 'x';
+      highlightActiveTool();
+      applyActiveToolToCell(selR, selC);
+      return;
+    }
+
+    if(/^[a-z]$/i.test(e.key)){
+      const lower = e.key.toLowerCase();
+      const isUpper = e.key >= 'A' && e.key <= 'Z';
+      if(!validLetters(objectCount(rows, cols)).includes(lower)) return; // not a valid letter for these dimensions
+      e.preventDefault();
+      activeTool = lower;
+      activeMode = isUpper ? 'pen' : 'pencil';
+      highlightActiveTool();
+      applyActiveToolToCell(selR, selC);
+    }
+  });
+
+  modePencilBtn.addEventListener('click', ()=>{ activeMode='pencil'; highlightActiveTool(); });
+  modePenBtn.addEventListener('click', ()=>{ activeMode='pen'; highlightActiveTool(); });
+
+  btnExport.addEventListener('click', ()=>{
+    const name = prompt(t('exportPrompt'), 'murdoku');
+    if(!name) return;
+    const data = JSON.stringify({name, rows, cols, gridBox, cells, img});
+    const blob = new Blob([data], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name.replace(/[^a-z0-9\-_]+/gi,'_') + '-' + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // l'importazione sovrascrive la sessione di lavoro corrente, dopo conferma
+  btnImport.addEventListener('click', ()=>importInput.click());
+  importInput.addEventListener('change', ()=>{
+    const file = importInput.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const parsed = JSON.parse(reader.result);
+        if(!confirm(t('confirmImportOverwrite'))){
+          showToast(t('toastImportCancelled'));
+          return;
+        }
+        applyLoadedData({n:parsed.n, rows:parsed.rows, cols:parsed.cols, gridBox:parsed.gridBox, cells:parsed.cells, img:parsed.img||null});
+        persist();
+        showToast(t('toastImportDone'));
+      }catch(e){
+        showToast(t('toastImportInvalid'));
+      }
+    };
+    reader.readAsText(file);
+    importInput.value = '';
+  });
+
+  // ---------- init ----------
+  function init(){
+    applyTranslations();
+    const fresh = {rows:12, cols:12, gridBox:{x:0,y:0,w:100,h:100}, cells:makeEmptyCells(12,12), img:null};
+    const data = loadStoredData() || fresh;
+    applyLoadedData(data);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
