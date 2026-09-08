@@ -1,112 +1,360 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Murdoku Assistant</title>
 <style>
   :root{
-    --bg:#1c1e26;
-    --panel:#262933;
-    --panel2:#2f333f;
-    --text:#e8e9ee;
-    --muted:#9aa0ad;
-    --accent:#4f8cff;
-    --accent2:#3a6fd6;
-    --danger:#e6495c;
-    --ok:#3ecf8e;
-    --border:#3a3f4d;
+    --bg:#2a2639;
+    --bg2:#332e47;
+    --panel:#39344e;
+    --panel2:#4a4467;
+    --panel3:#565080;
+    --line:#5b5480;
+    --ink:#f3effb;
+    --muted:#a9a1c6;
+    --accent:#ffc857;
+    --danger:#e05561;
+    --ok:#5bc46a;
+    --ink-dark:#1b1826;
+    --plate:#15121f;
+    --font-ui:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    --font-display:"Arial Black","Segoe UI Black",Impact,"Segoe UI",system-ui,sans-serif;
+    --font-name:Georgia,"Times New Roman",serif;
+    --font-mono:ui-monospace,Consolas,"SF Mono",Menlo,monospace;
   }
   *{box-sizing:border-box;}
   html,body{
     margin:0;padding:0;height:100%;
-    background:var(--bg);color:var(--text);
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);
+    font-family:var(--font-ui);
     overscroll-behavior:none;
   }
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--panel2);border-radius:8px;border:2px solid var(--panel);}
+  ::-webkit-scrollbar-thumb:hover{background:var(--panel3);}
+
   #app{
-    display:flex;flex-direction:column;height:100vh;height:100dvh;
+    display:grid;
+    grid-template-columns:326px minmax(0,1fr) 240px;
+    grid-template-rows:auto minmax(0,1fr);
+    height:100vh;height:100dvh;
   }
-  header#toolbar{
-    display:flex;flex-wrap:wrap;gap:6px;align-items:center;
-    padding:8px 10px;background:var(--panel);border-bottom:1px solid var(--border);
-    z-index:20;
+
+  /* ---------- topbar ---------- */
+  #topbar{
+    grid-column:1/-1;
+    display:flex;align-items:center;gap:18px;
+    padding:9px 16px;background:linear-gradient(180deg,#3a3450,#302b43);
+    border-bottom:2px solid var(--line);z-index:30;
+    box-shadow:0 6px 18px rgba(0,0,0,.35);
   }
-  header#toolbar label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px;}
-  button, input[type=number], select{
-    font-family:inherit;font-size:13px;
-    background:var(--panel2);color:var(--text);
-    border:1px solid var(--border);border-radius:6px;
-    padding:6px 10px;cursor:pointer;
+  .brand{display:flex;align-items:baseline;gap:9px;flex:0 0 auto;user-select:none;}
+  .brand .word{font:900 23px/1 var(--font-display);letter-spacing:.5px;color:#fff;}
+  .brand .word .eye{color:#ff5a5f;}
+  .brand .tag{
+    font:800 10px/1 var(--font-ui);letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted);border:2px solid var(--line);border-radius:999px;padding:4px 8px;
   }
-  button:disabled{opacity:0.35;cursor:not-allowed;}
-  button:active{transform:translateY(1px);}
-  button.primary{background:var(--accent);border-color:var(--accent2);}
-  button.toggled{background:var(--accent);border-color:var(--accent2);}
-  input[type=number]{width:56px;cursor:text;}
+  .puzzle-meta{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0;}
+  #puzzleTitle{
+    flex:0 1 340px;min-width:120px;
+    background:transparent;border:none;border-bottom:2px dashed var(--line);
+    color:var(--ink);font:700 15px/1.2 var(--font-ui);padding:5px 6px;
+  }
+  #puzzleTitle::placeholder{color:var(--muted);font-weight:600;}
+  #puzzleTitle:focus{outline:none;border-bottom-color:var(--accent);}
+  #dimsBadge{
+    flex:0 0 auto;background:var(--panel);border:2px solid var(--line);border-radius:999px;
+    padding:4px 11px;font:800 11px/1 var(--font-ui);color:var(--muted);letter-spacing:.06em;white-space:nowrap;
+  }
+  #toolHint{
+    flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    background:var(--plate);border:2px solid var(--line);border-left-width:6px;border-radius:10px;
+    padding:4px 10px;font:800 11px/1.3 var(--font-ui);color:var(--ink);letter-spacing:.02em;
+  }
+  .topbar-right{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
+  #timerBox{
+    display:flex;align-items:center;gap:6px;
+    background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:4px 6px 4px 10px;
+  }
+  #timerDisplay{font:800 19px/1 var(--font-mono);min-width:74px;text-align:center;letter-spacing:.04em;}
+
+  /* ---------- generic controls ---------- */
+  button{font-family:inherit;cursor:pointer;color:var(--ink);}
+  button:disabled{opacity:.32;cursor:not-allowed;}
+  .btn{
+    background:linear-gradient(180deg,#544d75,#433d5f);
+    border:2px solid var(--line);border-radius:13px;
+    font:700 12.5px/1.2 var(--font-ui);padding:9px 10px;
+    box-shadow:0 3px 0 rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.12);
+    transition:filter .1s,transform .05s;
+  }
+  .btn:hover:not(:disabled){filter:brightness(1.16);}
+  .btn:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.12);}
+  .btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+  .btn.wide{width:100%;}
+  .btn.slim{padding:6px 8px;font-size:11px;}
+  .btn.ghost{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.06));box-shadow:none;}
+  .btn.danger{background:linear-gradient(180deg,#68314310,#5c2b3a),#5c2b3a;border-color:#8d3d51;}
+  .btn.icon{padding:6px 9px;font-size:13px;border-radius:10px;}
+  .btn.toggled{
+    background:linear-gradient(180deg,#ffd77a,#f5b93f);border-color:#c9922f;color:var(--ink-dark);
+    box-shadow:0 3px 0 rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .btn .sub{display:block;font:600 9.5px/1.3 var(--font-ui);color:var(--muted);margin-top:4px;letter-spacing:.04em;text-transform:uppercase;}
+  .btn.toggled .sub{color:rgba(27,24,38,.7);}
+  input[type=number],input[type=text]{font-family:inherit;}
+  input[type=number]{
+    width:100%;background:var(--plate);color:var(--ink);border:2px solid var(--line);
+    border-radius:9px;padding:6px 8px;font:800 14px/1 var(--font-ui);text-align:center;
+  }
+  input[type=number]:focus,input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .suspect .name:focus{outline:2px solid var(--accent);outline-offset:0;}
+  .mark-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
   #fileInput,#importInput{display:none;}
 
+  /* ---------- side panels ---------- */
+  .panel{
+    background:var(--panel);overflow-y:auto;overflow-x:hidden;
+    padding:11px 10px 14px;display:flex;flex-direction:column;gap:10px;
+  }
+  #suspectsPanel{border-right:2px solid var(--line);}
+  #toolsPanel{border-left:2px solid var(--line);}
+  .panel-title{
+    margin:0;text-align:center;font:800 16px/1 var(--font-ui);
+    letter-spacing:.04em;color:#fff;position:relative;padding-bottom:9px;
+  }
+  .panel-title::after{
+    content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+    width:38px;height:3px;border-radius:3px;background:var(--accent);opacity:.85;
+  }
+  .panel-hint{
+    margin:-6px 0 0;text-align:center;font:600 10.5px/1.4 var(--font-ui);
+    color:var(--muted);letter-spacing:.02em;
+  }
+  .section-label{
+    margin:6px 0 -4px;font:800 9.5px/1 var(--font-ui);letter-spacing:.18em;
+    text-transform:uppercase;color:var(--muted);text-align:center;
+  }
+  .divider{height:2px;background:var(--line);border:none;margin:2px 0;border-radius:2px;opacity:.6;}
+
+  /* ---------- mode switch ---------- */
+  #modeSwitch{display:flex;background:var(--plate);border:2px solid var(--line);border-radius:12px;padding:3px;gap:3px;}
+  #modeSwitch button{
+    flex:1;border:none;background:transparent;color:var(--muted);
+    font:800 10.5px/1.2 var(--font-ui);padding:7px 3px;border-radius:9px;
+    letter-spacing:.06em;text-transform:uppercase;
+  }
+  #modeSwitch button.toggled{background:var(--accent);color:var(--ink-dark);}
+
+  /* ---------- suspect cards ---------- */
+  #suspectList{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .suspect{
+    position:relative;border:2px solid;border-radius:12px;padding:6px 5px 7px;
+    display:flex;flex-direction:column;gap:5px;cursor:pointer;
+    transition:transform .08s,filter .1s;
+  }
+  .suspect:hover{transform:translateY(-2px);filter:brightness(1.14);}
+  .suspect:hover .token{box-shadow:inset 0 0 0 1px rgba(255,255,255,.45),0 0 14px rgba(0,0,0,.35);}
+  .suspect .token{
+    width:100%;aspect-ratio:1/.74;border-radius:9px;border:3px solid #14111d;
+    display:flex;align-items:center;justify-content:center;
+    font:900 24px/1 var(--font-display);color:var(--ink-dark);
+    text-shadow:0 1px 0 rgba(255,255,255,.35);
+    background-image:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,0) 45%,rgba(0,0,0,.16));
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);
+  }
+  .suspect .name{
+    width:100%;min-width:0;background:var(--plate);border:2px solid #2a2440;border-radius:6px;
+    color:#fff;font:italic 700 11px/1.25 var(--font-name);text-align:center;padding:3px 2px;
+  }
+  .suspect .name::placeholder{color:#6b6390;font-style:italic;}
+  .suspect .check{
+    position:absolute;top:-7px;right:-6px;width:20px;height:20px;border-radius:50%;
+    background:var(--ok);color:#10240f;border:3px solid var(--panel);
+    display:none;align-items:center;justify-content:center;font:900 10px/1 var(--font-ui);
+  }
+  .suspect.decided .check{display:flex;}
+  .suspect.decided{filter:saturate(.5);}
+  .suspect.decided .token{filter:saturate(.4) brightness(.66);}
+  .suspect.active{box-shadow:0 0 0 3px var(--accent),0 0 16px rgba(255,200,87,.35);}
+  .suspect.victim .ribbon{
+    position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+    background:var(--danger);color:#fff;border:2px solid #14111d;border-radius:999px;
+    font:900 7px/1 var(--font-ui);letter-spacing:.1em;padding:3px 6px;white-space:nowrap;
+  }
+
+  /* ---------- progress ---------- */
+  #progressWrap{display:flex;flex-direction:column;gap:4px;margin-top:0;}
+  #progressBar{height:9px;background:var(--plate);border:2px solid var(--line);border-radius:999px;overflow:hidden;}
+  #progressFill{
+    height:100%;width:0;transition:width .25s;
+    background:linear-gradient(90deg,#4bb45c,#7fe08d);box-shadow:0 0 10px rgba(91,196,106,.6);
+  }
+  #lettersStatus{font:700 10.5px/1.4 var(--font-ui);color:var(--muted);text-align:center;}
+
+  /* ---------- note symbols ---------- */
+  #markRow{display:flex;gap:8px;justify-content:center;}
+  .mark-btn{
+    position:relative;width:100%;aspect-ratio:1/1;max-width:50px;
+    background:var(--plate);border:3px solid #14111d;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;font-size:24px;line-height:1;
+    box-shadow:0 3px 0 rgba(0,0,0,.32);
+  }
+  .mark-btn:hover{filter:brightness(1.3);}
+  .mark-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.32);}
+  .mark-btn .key{position:absolute;bottom:1px;right:4px;font:800 9px/1 var(--font-ui);color:var(--muted);}
+  .mark-btn.toggled{box-shadow:0 0 0 3px var(--accent),0 3px 0 rgba(0,0,0,.32);}
+
+  /* ---------- tools ---------- */
+  #btnX{
+    width:100%;padding:14px 10px 10px;font:900 38px/1 var(--font-ui);
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field span{font:800 9px/1 var(--font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center;}
+
+  /* ---------- stage ---------- */
   main#stage{
-    flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;
-    padding:14px;background:repeating-linear-gradient(45deg,#20222b,#20222b 10px,#1c1e26 10px,#1c1e26 20px);
+    position:relative;overflow:auto;
+    display:flex;align-items:center;justify-content:center;
+    padding:44px 24px 24px 52px;
+    background:
+      radial-gradient(ellipse at 50% 0%,rgba(255,200,87,.05),transparent 60%),
+      repeating-linear-gradient(45deg,#2d2941,#2d2941 12px,#2a2639 12px,#2a2639 24px);
+    box-shadow:inset 0 0 90px rgba(0,0,0,.4);
   }
   #imageContainer{
     position:relative;max-width:100%;
-    background:#12141a;border:1px dashed var(--border);
-    touch-action:none;
-    user-select:none;-webkit-user-select:none;
+    touch-action:none;user-select:none;-webkit-user-select:none;
   }
-  #imageContainer.no-image{width:min(900px, 100%);aspect-ratio:1/1;}
+  #imageContainer.no-image{
+    width:min(720px,100%);aspect-ratio:1/1;max-height:100%;
+    background:#221e30;border:2px dashed var(--line);border-radius:6px;
+  }
   #imageContainer:not(.no-image){width:fit-content;}
   #bgImage{
-    display:block;width:auto;height:auto;max-width:100%;
+    display:block;width:auto;height:auto;max-width:100%;border-radius:4px;
     user-select:none;-webkit-user-drag:none;pointer-events:none;
+    box-shadow:0 8px 30px rgba(0,0,0,.5);
   }
   #bgImage[hidden]{display:none;}
   #placeholder{
-    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    color:var(--muted);font-size:14px;text-align:center;padding:20px;pointer-events:none;
+    position:absolute;inset:0;display:flex;flex-direction:column;gap:8px;
+    align-items:center;justify-content:center;
+    color:var(--muted);font:600 13px/1.6 var(--font-ui);text-align:center;padding:26px;pointer-events:none;
+    white-space:pre-line;
   }
+  #placeholder .big{font-size:40px;}
+  #stageHint{
+    position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    background:var(--accent);color:var(--ink-dark);border:2px solid #c9922f;border-radius:999px;
+    font:800 11px/1 var(--font-ui);padding:7px 14px;letter-spacing:.03em;
+    box-shadow:0 3px 0 rgba(0,0,0,.3);z-index:12;display:none;
+  }
+  #app.unlocked #stageHint{display:block;}
+
+  /* ---------- grid box ---------- */
   #gridBox{
-    position:absolute;border:2px solid var(--accent);background:rgba(79,140,255,0.03);
+    position:absolute;border:3px solid var(--accent);
+    box-shadow:0 0 0 1px rgba(0,0,0,.65),0 0 18px rgba(255,200,87,.25);
   }
-  #gridBox.locked{border-color:rgba(79,140,255,0.5);}
-  #cellsGrid{
-    position:absolute;inset:0;display:grid;width:100%;height:100%;
-  }
-  .cell{
-    position:relative;border:1px solid rgba(255,255,255,0.12);
+  #gridBox.locked{border-color:rgba(255,200,87,.5);box-shadow:0 0 0 1px rgba(0,0,0,.55);}
+  #cellsGrid{position:absolute;inset:0;display:grid;width:100%;height:100%;}
+  #colLabels{position:absolute;left:0;right:0;bottom:100%;height:24px;display:grid;pointer-events:none;}
+  #rowLabels{position:absolute;top:0;bottom:0;right:100%;width:32px;display:grid;pointer-events:none;}
+  .axis-label{
     display:flex;align-items:center;justify-content:center;
+    font:800 11px/1 var(--font-ui);color:var(--ink);
+    text-shadow:0 0 4px #000,0 0 3px #000,0 1px 2px #000;
     overflow:hidden;
   }
+  .axis-label.on{color:var(--ink-dark);text-shadow:none;}
+  .axis-label.on i{
+    font-style:normal;background:var(--accent);border-radius:5px;padding:2px 5px;
+  }
+  .axis-label.done{color:#c9f2d1;}
+  .axis-label.done i{
+    font-style:normal;background:rgba(91,196,106,.32);border-radius:5px;padding:2px 5px;
+    box-shadow:inset 0 0 0 1px rgba(91,196,106,.6);
+  }
+  .axis-label.on.done i{background:var(--accent);box-shadow:none;}
+
+  /* ---------- cells ---------- */
+  .cell{
+    position:relative;border:1px solid rgba(255,255,255,.22);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  #gridBox.locked .cell{cursor:crosshair;}
+  #gridBox.locked.tool-select .cell{cursor:pointer;}
   #gridBox:not(.locked) .cell{pointer-events:none;}
-  .cell.selected{outline:2px solid var(--ok);outline-offset:-2px;z-index:2;}
-  .cell.letter-highlight{background:rgba(255,159,10,0.8);outline:2px solid #fff2c2;outline-offset:-2px;z-index:1;}
-  .cell.empty-highlight{background:rgba(0,210,255,0.4);box-shadow:inset 0 0 0 2px rgba(0,210,255,0.95);}
-  .cell .decision{
-    font-weight:800;color:#ff5470;
-    text-shadow:0 0 2px #000,0 0 2px #000,0 0 3px #000;
-    font-size:calc(var(--cell-size, 40px) * 0.55);
-    line-height:1;
+  .cell .ghost{
+    position:absolute;display:flex;align-items:center;justify-content:center;
+    pointer-events:none;z-index:4;opacity:.6;font-weight:900;line-height:1;
+    font-family:var(--font-display);
   }
-  .cell .candidates{
-    position:absolute;inset:2px;display:flex;flex-wrap:wrap;align-content:flex-start;
-    gap:1px;pointer-events:none;
+  .cell .ghost:empty{display:none;}
+  .ghost-x{inset:0;color:#ff8f99;font-size:calc(var(--cell-size,40px) * .66);text-shadow:0 0 4px #000;}
+  .ghost-mark{inset:0;font-size:calc(var(--cell-size,40px) * .6);text-shadow:0 0 4px #000;}
+  .ghost-decision{
+    left:10%;top:10%;width:80%;height:80%;border-radius:24%;
+    border:2px dashed rgba(0,0,0,.7);color:var(--ink-dark);
+    font-size:calc(var(--cell-size,40px) * .5);
   }
-  .cell .candidates span{
-    font-size:calc(var(--cell-size, 40px) * 0.22);
-    font-weight:700;line-height:1.15;color:#fff7c2;
-    background:rgba(0,0,0,0.6);border-radius:2px;padding:0 1px;
+  .ghost-clue{
+    right:5%;bottom:5%;
+    width:calc(var(--cell-size,40px) * .3);height:calc(var(--cell-size,40px) * .3);
+    border-radius:32%;border:1px dashed rgba(0,0,0,.7);
+    color:var(--ink-dark);font-size:calc(var(--cell-size,40px) * .2);
   }
+  .ghost-undo{background:#1c1828;color:#ffd77a;border-style:solid;border-color:rgba(255,215,122,.7);}
+  .cell.cross{background:rgba(255,200,87,.11);}
+  .cell.disabled{background:rgba(18,14,28,.44);}
   .cell.disabled::after{
     content:"✕";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    color:var(--danger);opacity:0.75;font-weight:900;
-    font-size:calc(var(--cell-size, 40px) * 0.7);
-    text-shadow:0 0 3px #000;
+    color:#ff6b78;font:900 calc(var(--cell-size,40px) * .68)/1 var(--font-ui);
+    text-shadow:0 0 4px #000,0 0 2px #000;opacity:.85;
+  }
+  .cell.selected{outline:3px solid var(--accent);outline-offset:-3px;z-index:4;background:rgba(255,200,87,.2);}
+  .cell.letter-highlight{background:rgba(255,159,10,.82);outline:2px solid #fff2c2;outline-offset:-2px;z-index:2;}
+  .cell.empty-highlight{background:rgba(0,210,255,.42);box-shadow:inset 0 0 0 2px rgba(0,210,255,.95);z-index:2;}
+  .cell .mark{
+    position:absolute;font-size:calc(var(--cell-size,40px) * .6);line-height:1;
+    opacity:.9;text-shadow:0 0 3px #000,0 1px 2px #000;pointer-events:none;
+  }
+  .cell .decision{
+    display:none;width:80%;height:80%;border-radius:24%;
+    border:2px solid rgba(0,0,0,.75);box-shadow:0 2px 0 rgba(0,0,0,.45);
+    align-items:center;justify-content:center;z-index:3;
+    font:900 calc(var(--cell-size,40px) * .5)/1 var(--font-display);
+    color:var(--ink-dark);text-shadow:0 1px 0 rgba(255,255,255,.35);
+  }
+  .cell.has-decision .decision{display:flex;}
+  .cell .candidates{
+    position:absolute;inset:4%;display:flex;flex-wrap:wrap;
+    align-content:center;justify-content:center;
+    /* con inset 4% restano 92% di cella: i valori di chipScale() sono calibrati
+       su questa larghezza, quindi cambiarli qui cambia anche come vanno a capo */
+    gap:calc(var(--cell-size,40px) * .03);
+    pointer-events:none;z-index:2;
+  }
+  .cell .candidates span{
+    width:calc(var(--cell-size,40px) * var(--chip,.28));
+    height:calc(var(--cell-size,40px) * var(--chip,.28));
+    display:flex;align-items:center;justify-content:center;
+    border-radius:32%;border:1px solid rgba(0,0,0,.55);
+    font:900 calc(var(--cell-size,40px) * var(--chip,.28) * .72)/1 var(--font-display);
+    color:var(--ink-dark);
+    background-image:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,0) 55%,rgba(0,0,0,.12));
+    box-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.5);
   }
   .handle{
-    position:absolute;width:22px;height:22px;background:var(--accent);border:2px solid #fff;
-    border-radius:50%;touch-action:none;z-index:5;
+    position:absolute;width:22px;height:22px;background:var(--accent);border:3px solid #fff;
+    border-radius:50%;touch-action:none;z-index:6;box-shadow:0 2px 6px rgba(0,0,0,.5);
   }
   .handle.nw{left:-11px;top:-11px;cursor:nwse-resize;}
   .handle.ne{right:-11px;top:-11px;cursor:nesw-resize;}
@@ -115,80 +363,149 @@
   #gridBox.locked .handle{display:none;}
   #gridBox:not(.locked){cursor:move;}
 
-  footer#lettersBar{
-    display:flex;flex-direction:row;align-items:center;gap:10px;
-    background:var(--panel);border-top:1px solid var(--border);
-    padding:8px 10px;z-index:20;overflow-x:auto;
-  }
-  #toolRow{display:flex;gap:6px;flex:0 0 auto;}
-  #toolRow button{flex:0 0 auto;min-width:36px;font-weight:700;}
-  #toolRow button.decided{opacity:0.45;}
-  #modeRow{display:flex;gap:6px;align-items:center;flex:0 0 auto;border-left:1px solid var(--border);padding-left:10px;}
-  #highlightRow{display:flex;gap:6px;align-items:center;flex:0 0 auto;border-left:1px solid var(--border);padding-left:10px;}
-  #timerBox{display:flex;align-items:center;gap:6px;flex:0 0 auto;margin-left:6px;padding-left:10px;border-left:1px solid var(--border);}
-  #timerDisplay{font-family:Consolas,monospace;font-size:14px;min-width:64px;text-align:center;}
-  #lettersStatus{font-size:11px;color:var(--muted);white-space:nowrap;flex:0 0 auto;border-left:1px solid var(--border);padding-left:10px;margin-left:6px;}
+  /* ---------- toast + help ---------- */
   #toast{
-    position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
-    background:#000c;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;
-    opacity:0;transition:opacity .25s;pointer-events:none;z-index:100;max-width:90vw;text-align:center;
+    position:fixed;bottom:34px;left:50%;transform:translateX(-50%);
+    background:#12101c;color:#fff;padding:10px 18px;border-radius:12px;
+    border:2px solid var(--line);font:700 13px/1.3 var(--font-ui);
+    opacity:0;transition:opacity .25s;pointer-events:none;z-index:100;max-width:70vw;text-align:center;
   }
   #toast.show{opacity:1;}
+  #helpOverlay{
+    position:fixed;inset:0;background:rgba(12,10,20,.8);z-index:200;
+    display:none;align-items:center;justify-content:center;padding:28px;
+  }
+  #helpOverlay.show{display:flex;}
+  #helpCard{
+    background:var(--panel);border:3px solid var(--line);border-radius:20px;
+    width:min(660px,100%);max-height:82vh;overflow:auto;padding:22px 24px 24px;
+    box-shadow:0 20px 60px rgba(0,0,0,.6);
+  }
+  #helpCard h2{margin:0 0 4px;font:800 21px/1.2 var(--font-ui);}
+  #helpCard h3{margin:18px 0 8px;font:800 10.5px/1 var(--font-ui);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+  #helpCard ul{margin:0;padding-left:20px;}
+  #helpCard li{font:600 13px/1.65 var(--font-ui);color:var(--ink);margin-bottom:3px;}
+  #helpCard .kbd-table{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;align-items:center;}
+  #helpCard kbd{
+    display:inline-block;background:var(--plate);border:2px solid var(--line);border-bottom-width:3px;
+    border-radius:7px;padding:4px 9px;font:800 12px/1 var(--font-mono);color:var(--ink);white-space:nowrap;
+  }
+  #helpCard .kbd-desc{font:600 13px/1.4 var(--font-ui);color:var(--ink);}
+  #helpClose{margin-top:20px;}
 </style>
 </head>
 <body>
 <div id="app">
-  <header id="toolbar">
-    <label><span data-i18n="rowsLabel">Righe</span> <input type="number" id="rowsInput" min="2" max="22" value="12"></label>
-    <label><span data-i18n="colsLabel">Colonne</span> <input type="number" id="colsInput" min="2" max="22" value="12"></label>
-    <button id="btnLoadImage" data-i18n="btnLoadImage">Carica immagine</button>
-    <input type="file" id="fileInput" accept="image/*">
-    <button id="btnClearImage" data-i18n="btnClearImage">Rimuovi immagine</button>
-    <button id="btnClearGrid" data-i18n="btnClearGrid">🗑 Cancella tutto</button>
-    <button id="btnLock" data-i18n="btnLock">🔒 Blocca/Sblocca</button>
-    <button id="btnUndo" data-i18n="btnUndo">↶ Undo</button>
-    <button id="btnRedo" data-i18n="btnRedo">↷ Redo</button>
-    <button id="btnExport" data-i18n="btnExport">Esporta</button>
-    <button id="btnImport" data-i18n="btnImport">Importa</button>
-    <input type="file" id="importInput" accept="application/json">
-    <button id="btnLang">🌐 EN</button>
-    <span data-i18n="keyboardHint" style="font-size:11px;color:var(--muted);margin-left:auto;">
-      Tastiera: frecce = sposta cella · lettera = indizio · Shift+lettera = decisione · X = escludi · Ctrl+Z/Y = undo/redo
-    </span>
+
+  <header id="topbar">
+    <div class="brand">
+      <span class="word">MURD<span class="eye">O</span>KU</span>
+      <span class="tag" data-i18n="brandTag">assistant</span>
+    </div>
+    <div class="puzzle-meta">
+      <input type="text" id="puzzleTitle" maxlength="60" data-i18n-placeholder="puzzleTitlePlaceholder">
+      <span id="dimsBadge">10×10</span>
+      <span id="toolHint"></span>
+    </div>
+    <div class="topbar-right">
+      <div id="timerBox">
+        <span id="timerDisplay">00:00</span>
+        <button id="btnTimerToggle" class="btn icon"></button>
+        <button id="btnTimerReset" class="btn icon" data-i18n-title="btnTimerReset">⟲</button>
+      </div>
+      <button id="btnLang" class="btn icon">EN</button>
+      <button id="btnHelp" class="btn icon" data-i18n-title="helpTitle">?</button>
+    </div>
   </header>
 
+  <aside id="suspectsPanel" class="panel">
+    <h2 class="panel-title" data-i18n="suspectsTitle">Suspects</h2>
+    <p class="panel-hint" data-i18n="suspectsHint">click to select · hold to highlight</p>
+    <div id="modeSwitch">
+      <button id="modePencil" data-i18n="modePencil">Clue</button>
+      <button id="modePen" data-i18n="modePen">Decision</button>
+    </div>
+    <div id="suspectList"></div>
+    <div id="progressWrap">
+      <div id="progressBar"><div id="progressFill"></div></div>
+      <div id="lettersStatus"></div>
+    </div>
+    <hr class="divider">
+    <div class="section-label" data-i18n="noteSymbols">Note symbols</div>
+    <div id="markRow"></div>
+  </aside>
+
   <main id="stage">
+    <div id="stageHint" data-i18n="stageHintUnlocked">Positioning: drag the box, then lock it again to fill in squares</div>
     <div id="imageContainer">
-      <div id="placeholder" data-i18n="placeholder">Carica un'immagine (facoltativo) oppure lavora subito sulla griglia vuota qui sotto.</div>
-      <img id="bgImage" hidden>
+      <div id="placeholder">
+        <span class="big">🖼</span>
+        <span data-i18n="placeholder">Load the puzzle photo: its size and box are detected automatically.</span>
+      </div>
+      <img id="bgImage" hidden alt="">
       <div id="gridBox">
         <div class="handle nw" data-handle="nw"></div>
         <div class="handle ne" data-handle="ne"></div>
         <div class="handle sw" data-handle="sw"></div>
         <div class="handle se" data-handle="se"></div>
+        <div id="colLabels"></div>
+        <div id="rowLabels"></div>
         <div id="cellsGrid"></div>
       </div>
     </div>
   </main>
 
-  <footer id="lettersBar">
-    <div id="toolRow"></div>
-    <div id="modeRow">
-      <span data-i18n="modeLabel" style="font-size:12px;color:var(--muted);">Modalità:</span>
-      <button id="modePencil" data-i18n="modePencil">Indizio (minuscola)</button>
-      <button id="modePen" data-i18n="modePen">Decisione (maiuscola)</button>
+  <aside id="toolsPanel" class="panel">
+    <h2 class="panel-title" data-i18n="toolsTitle">Tools</h2>
+    <button id="btnX" class="btn" data-i18n-title="xToolTitle">✕<span class="sub" data-i18n="xToolSub">exclude square</span></button>
+    <button id="btnSelect" class="btn wide slim" data-i18n-title="selectToolTitle"><span data-i18n="selectTool">↖ Select only</span></button>
+    <button id="btnHighlightEmpty" class="btn wide" data-i18n-title="btnHighlightEmptyTitle">👁<span class="sub" data-i18n="btnHighlightEmptySub">hold: empty cells</span></button>
+    <div class="grid2">
+      <button id="btnUndo" class="btn" data-i18n="btnUndo">↶ Undo</button>
+      <button id="btnRedo" class="btn" data-i18n="btnRedo">↷ Redo</button>
     </div>
-    <div id="highlightRow">
-      <button id="btnHighlightEmpty" data-i18n="btnHighlightEmpty" data-i18n-title="btnHighlightEmptyTitle">👁 Evidenzia vuote</button>
+
+    <hr class="divider">
+    <div class="section-label" data-i18n="sectionGrid">Grid</div>
+    <div class="grid2">
+      <label class="field"><span data-i18n="rowsLabel">Rows</span><input type="number" id="rowsInput" min="2" max="22" value="10"></label>
+      <label class="field"><span data-i18n="colsLabel">Columns</span><input type="number" id="colsInput" min="2" max="22" value="10"></label>
     </div>
-    <div id="timerBox">
-      <span id="timerDisplay">00:00</span>
-      <button id="btnTimerToggle">▶ Avvia</button>
-      <button id="btnTimerReset" data-i18n="btnTimerReset">⟲ Azzera</button>
+    <button id="btnLock" class="btn wide"></button>
+
+    <hr class="divider">
+    <div class="section-label" data-i18n="sectionImage">Image</div>
+    <button id="btnLoadImage" class="btn wide" data-i18n="btnLoadImage">Load image</button>
+    <input type="file" id="fileInput" accept="image/*">
+    <button id="btnDetect" class="btn wide" data-i18n-title="btnDetectTitle" data-i18n="btnDetect">🔍 Detect grid</button>
+    <button id="btnClearImage" class="btn wide ghost" data-i18n="btnClearImage">Remove image</button>
+
+    <hr class="divider">
+    <div class="section-label" data-i18n="sectionSession">Session</div>
+    <div class="grid2">
+      <button id="btnExport" class="btn" data-i18n="btnExport">Export</button>
+      <button id="btnImport" class="btn" data-i18n="btnImport">Import</button>
     </div>
-    <span id="lettersStatus"></span>
-  </footer>
+    <input type="file" id="importInput" accept="application/json">
+    <button id="btnClearGrid" class="btn wide danger" data-i18n="btnClearGrid">🗑 Clear all</button>
+    <button id="btnHowTo" class="btn wide ghost" data-i18n="btnHowTo">How to play</button>
+  </aside>
+
   <div id="toast"></div>
+
+  <div id="helpOverlay">
+    <div id="helpCard">
+      <h2 id="helpHeading"></h2>
+      <p id="helpIntro" style="margin:0;font:600 13px/1.6 var(--font-ui);color:var(--muted);"></p>
+      <h3 id="helpRulesLabel"></h3>
+      <ul id="helpRules"></ul>
+      <h3 id="helpMouseLabel"></h3>
+      <ul id="helpMouse"></ul>
+      <h3 id="helpKeysLabel"></h3>
+      <div class="kbd-table" id="helpKeys"></div>
+      <button id="helpClose" class="btn wide" data-i18n="helpClose">Close</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -196,12 +513,14 @@
   "use strict";
 
   // ---------- state ----------
-  let rows = 12, cols = 12;
+  let rows = 10, cols = 10;
   let img = null; // data URL or null
   let gridBox = {x:0, y:0, w:100, h:100}; // percentages relative to imageContainer
-  let cells = []; // rows x cols of {x:bool, decision:string|null, candidates:string[]}
+  let cells = []; // rows x cols of {x:bool, decision:string|null, candidates:string[], mark:string|null}
+  let puzzleTitle = '';
+  let suspectNames = {}; // letter -> nome del sospettato scritto dall'utente
   let locked = true;
-  let activeTool = 'x'; // 'x' or a letter
+  let activeTool = 'x'; // 'x' | lettera | '#idSimbolo'
   let activeMode = 'pencil'; // 'pencil' | 'pen'
   let selR = 0, selC = 0; // keyboard-selected cell
 
@@ -217,13 +536,20 @@
   let timerPersistInterval = null;
 
   // ---------- dom refs ----------
+  const appEl = document.getElementById('app');
   const rowsInput = document.getElementById('rowsInput');
   const colsInput = document.getElementById('colsInput');
+  const puzzleTitleInput = document.getElementById('puzzleTitle');
+  const dimsBadge = document.getElementById('dimsBadge');
   const btnLoadImage = document.getElementById('btnLoadImage');
   const fileInput = document.getElementById('fileInput');
   const btnClearImage = document.getElementById('btnClearImage');
   const btnClearGrid = document.getElementById('btnClearGrid');
   const btnLock = document.getElementById('btnLock');
+  const btnX = document.getElementById('btnX');
+  const btnSelect = document.getElementById('btnSelect');
+  const btnDetect = document.getElementById('btnDetect');
+  const toolHint = document.getElementById('toolHint');
   const btnHighlightEmpty = document.getElementById('btnHighlightEmpty');
   const btnUndo = document.getElementById('btnUndo');
   const btnRedo = document.getElementById('btnRedo');
@@ -231,21 +557,61 @@
   const btnImport = document.getElementById('btnImport');
   const importInput = document.getElementById('importInput');
   const btnLang = document.getElementById('btnLang');
+  const btnHelp = document.getElementById('btnHelp');
+  const btnHowTo = document.getElementById('btnHowTo');
   const timerDisplay = document.getElementById('timerDisplay');
   const btnTimerToggle = document.getElementById('btnTimerToggle');
   const btnTimerReset = document.getElementById('btnTimerReset');
   const lettersStatus = document.getElementById('lettersStatus');
+  const progressFill = document.getElementById('progressFill');
   const stageEl = document.getElementById('stage');
   const imageContainer = document.getElementById('imageContainer');
   const bgImage = document.getElementById('bgImage');
   const placeholder = document.getElementById('placeholder');
   const gridBoxEl = document.getElementById('gridBox');
   const cellsGridEl = document.getElementById('cellsGrid');
-  const toolRow = document.getElementById('toolRow');
-  const modeRow = document.getElementById('modeRow');
+  const colLabelsEl = document.getElementById('colLabels');
+  const rowLabelsEl = document.getElementById('rowLabels');
+  const suspectList = document.getElementById('suspectList');
+  const markRow = document.getElementById('markRow');
   const modePencilBtn = document.getElementById('modePencil');
   const modePenBtn = document.getElementById('modePen');
   const toast = document.getElementById('toast');
+  const helpOverlay = document.getElementById('helpOverlay');
+  const helpClose = document.getElementById('helpClose');
+
+  // ---------- simboli nota ----------
+  // marcatore facoltativo per casella (uno solo alla volta), come i "note symbols"
+  // del gioco originale: non hanno alcun significato per le regole, servono solo
+  // all'utente per annotare deduzioni proprie.
+  const MARKS = [
+    {id:'tri',  glyph:'▲', color:'#e5544b', key:'1'},
+    {id:'cir',  glyph:'●', color:'#4a90d9', key:'2'},
+    {id:'sq',   glyph:'■', color:'#5bc46a', key:'3'},
+    {id:'star', glyph:'★', color:'#e8c04a', key:'4'}
+  ];
+  const MARK_BY_ID = {};
+  MARKS.forEach(m => { MARK_BY_ID[m.id] = m; });
+
+  // ---------- colori dei sospettati ----------
+  // colore stabile per lettera (indicizzato sull'alfabeto, non sulla posizione
+  // nella lista): la stessa lettera mantiene il suo colore anche cambiando griglia.
+  const SUSPECT_COLORS = [
+    '#5fb0a5','#d987b0','#7cc47f','#d9b56a','#7b8fd6','#7fc3dd','#9fce6f','#d99a6a',
+    '#b58ad9','#6fc9b0','#dd8f8f','#8fb4dd','#c9c46f','#d97fa0','#79c9a0','#a9a0e0',
+    '#cf9f6f','#6fbdd9','#c4d97f','#d9a0c9','#8ad9c0'
+  ];
+  const VICTIM_COLOR = '#e0616c';
+
+  function letterColor(letter){
+    if(letter === 'v') return VICTIM_COLOR;
+    return SUSPECT_COLORS[(letter.charCodeAt(0) - 97) % SUSPECT_COLORS.length];
+  }
+
+  function rgba(hex, a){
+    const n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n>>16)&255) + ',' + ((n>>8)&255) + ',' + (n&255) + ',' + a + ')';
+  }
 
   // ---------- i18n ----------
   // preferenza di lingua legata al dispositivo/browser (localStorage), volutamente
@@ -254,27 +620,58 @@
 
   const STRINGS = {
     it: {
+      brandTag: 'assistant',
+      puzzleTitlePlaceholder: 'Nome del puzzle…',
+      suspectsTitle: 'Sospettati',
+      suspectsHint: 'clic per selezionare · tieni premuto per evidenziare',
+      toolsTitle: 'Strumenti',
+      noteSymbols: 'Simboli nota',
+      sectionGrid: 'Griglia',
+      sectionImage: 'Immagine',
+      sectionSession: 'Sessione',
       rowsLabel: 'Righe',
       colsLabel: 'Colonne',
       btnLoadImage: 'Carica immagine',
       btnClearImage: 'Rimuovi immagine',
       btnClearGrid: '🗑 Cancella tutto',
-      btnLock: '🔒 Blocca/Sblocca',
+      btnLockLocked: '🔒 Griglia bloccata',
+      btnLockUnlocked: '🔓 Griglia sbloccata',
+      btnLockTitleLocked: 'Clic per sbloccare e riposizionare il riquadro',
+      btnLockTitleUnlocked: 'Clic per bloccare il riquadro e tornare a compilare le caselle',
       btnUndo: '↶ Undo',
       btnRedo: '↷ Redo',
       btnExport: 'Esporta',
       btnImport: 'Importa',
-      keyboardHint: 'Tastiera: frecce = sposta cella · lettera = indizio · Shift+lettera = decisione · X = escludi · Ctrl+Z/Y = undo/redo',
-      placeholder: 'Carica un\'immagine (facoltativo) oppure lavora subito sulla griglia vuota qui sotto.',
-      modeLabel: 'Modalità:',
-      modePencil: 'Indizio (minuscola)',
-      modePen: 'Decisione (maiuscola)',
-      btnHighlightEmpty: '👁 Evidenzia vuote',
+      btnHowTo: 'Come si gioca',
+      stageHintUnlocked: 'Posizionamento: trascina il riquadro, poi ribloccalo per compilare',
+      placeholder: 'Carica la foto del puzzle: dimensioni e riquadro vengono riconosciuti da soli.\nOppure lavora subito sulla griglia vuota qui sotto.',
+      modePencil: 'Indizio',
+      modePen: 'Decisione',
+      btnHighlightEmptySub: 'tieni premuto: vuote',
       btnHighlightEmptyTitle: 'Tieni premuto per evidenziare le caselle senza X e senza decisione',
-      btnTimerStart: '▶ Avvia',
-      btnTimerPause: '⏸ Pausa',
-      btnTimerReset: '⟲ Azzera',
-      xToolTitle: 'Disabilita/riabilita cella',
+      btnTimerStart: '▶',
+      btnTimerPause: '⏸',
+      btnTimerReset: 'Azzera il cronometro',
+      xToolSub: 'escludi casella',
+      xToolTitle: 'Disabilita/riabilita cella (clic sulla casella, o tasto X)',
+      selectTool: '↖ Solo selezione',
+      selectToolTitle: 'Il clic sposta solo la selezione, senza scrivere nulla',
+      btnDetect: '🔍 Rileva griglia',
+      btnDetectTitle: 'Prova a ricavare dimensioni e posizione della griglia dalla foto',
+      toolHintSelect: '↖ Solo selezione: il clic non scrive',
+      toolHintX: '✕ Clic su una casella per escluderla',
+      toolHintMark: '{glyph} Clic per applicare il simbolo',
+      toolHintClue: '{letter} — indizio: clic per segnare',
+      toolHintDecision: '{letter} — DECISIONE: clic per piazzare',
+      toastDetected: 'Griglia rilevata: {rows}×{cols}',
+      toastDetectedBoxOnly: 'Rilevato solo il riquadro: dimensioni invariate',
+      toastDetectFailed: 'Griglia non riconosciuta: imposta righe/colonne a mano',
+      toastDetectNoImage: 'Carica prima una foto del puzzle',
+      confirmDetectResize: 'Rilevata una griglia {rows}×{cols}. Applicarla? Il contenuto attuale della griglia verrà azzerato.',
+      markTitle: 'Simbolo nota "{glyph}" (tasto {key})',
+      suspectPlaceholder: 'Sospettato {letter}',
+      victimPlaceholder: 'La vittima',
+      victimTag: 'VITTIMA',
       letterDecidedTitle: 'Lettera "{letter}" già piazzata',
       letterPendingTitle: 'Lettera "{letter}" ancora da piazzare',
       lettersAllPlaced: 'Tutte le lettere piazzate ({total}/{total}) ✓',
@@ -291,32 +688,83 @@
       confirmGridResize: 'Cambiare le dimensioni della griglia azzera i contenuti (X, indizi, decisioni). Continuare?',
       confirmClearImage: 'Rimuovere l\'immagine di sfondo? La griglia resta invariata.',
       confirmClearGrid: 'Cancellare tutto il contenuto della griglia (X, indizi, decisioni)?',
-      confirmFullReset: 'Ripristinare anche la griglia a dimensione standard (12×12) senza immagine?\n\nOK = ripristina anche griglia e immagine\nAnnulla = mantieni dimensione griglia e immagine attuali, cancella solo i contenuti',
+      confirmFullReset: 'Ripristinare anche la griglia a dimensione standard (10×10) senza immagine e senza nomi?\n\nOK = ripristina anche griglia, immagine e nomi\nAnnulla = mantieni dimensione griglia, immagine e nomi attuali, cancella solo i contenuti',
       confirmImportOverwrite: 'Importare questo file sovrascriverà la sessione di lavoro corrente. Continuare?',
-      exportPrompt: 'Nome del file da esportare:'
+      exportPrompt: 'Nome del file da esportare:',
+      helpTitle: 'Come si gioca',
+      helpIntro: 'Questo assistente sostituisce carta e penna: carica la foto del puzzle, adatta il riquadro alla griglia stampata e deduci chi è l\'assassino.',
+      helpRulesLabel: 'Regole',
+      helpRule1: 'Ogni sospettato occupa una sola casella: al massimo uno per riga e uno per colonna (vincolo "torre").',
+      helpRule2: 'I sospettati sono in ordine alfabetico (A, B, C…) e la vittima è sempre V.',
+      helpRule3: 'Minuscola = indizio (più indizi convivono nella stessa casella); maiuscola = decisione definitiva.',
+      helpRule4: 'Piazzare una decisione esclude automaticamente con una X tutte le altre caselle della sua riga e della sua colonna.',
+      helpRule5: 'Le decisioni non si tolgono con un clic: l\'unico modo per tornare indietro è l\'Undo.',
+      helpMouseLabel: 'Mouse',
+      helpMouse1: 'Seleziona uno strumento (una card sospettato, la ✕, un simbolo nota) e poi clicca una casella: il clic la compila subito.',
+      helpMouse2: 'Con "↖ Solo selezione" attivo il clic si limita a spostare la selezione, senza scrivere nulla.',
+      helpMouse3: 'Passando sopra una casella vedi in trasparenza cosa verrà scritto.',
+      helpKeysLabel: 'Tastiera',
+      kbMove: 'Sposta la casella selezionata',
+      kbClue: 'Segna la lettera come indizio',
+      kbDecision: 'Piazza la lettera come decisione',
+      kbExclude: 'Escludi / riabilita la casella',
+      kbMark: 'Applica un simbolo nota',
+      kbUndo: 'Annulla / ripeti',
+      helpClose: 'Chiudi'
     },
     en: {
+      brandTag: 'assistant',
+      puzzleTitlePlaceholder: 'Puzzle name…',
+      suspectsTitle: 'Suspects',
+      suspectsHint: 'click to select · hold to highlight',
+      toolsTitle: 'Tools',
+      noteSymbols: 'Note symbols',
+      sectionGrid: 'Grid',
+      sectionImage: 'Image',
+      sectionSession: 'Session',
       rowsLabel: 'Rows',
       colsLabel: 'Columns',
       btnLoadImage: 'Load image',
       btnClearImage: 'Remove image',
       btnClearGrid: '🗑 Clear all',
-      btnLock: '🔒 Lock/Unlock',
+      btnLockLocked: '🔒 Grid locked',
+      btnLockUnlocked: '🔓 Grid unlocked',
+      btnLockTitleLocked: 'Click to unlock and reposition the box',
+      btnLockTitleUnlocked: 'Click to lock the box and go back to filling in squares',
       btnUndo: '↶ Undo',
       btnRedo: '↷ Redo',
       btnExport: 'Export',
       btnImport: 'Import',
-      keyboardHint: 'Keyboard: arrows = move cell · letter = clue · Shift+letter = decision · X = exclude · Ctrl+Z/Y = undo/redo',
-      placeholder: 'Load an image (optional), or start working directly on the empty grid below.',
-      modeLabel: 'Mode:',
-      modePencil: 'Clue (lowercase)',
-      modePen: 'Decision (uppercase)',
-      btnHighlightEmpty: '👁 Highlight empty',
+      btnHowTo: 'How to play',
+      stageHintUnlocked: 'Positioning: drag the box, then lock it again to fill in squares',
+      placeholder: 'Load the puzzle photo: its size and box are detected automatically.\nOr start working on the empty grid below right away.',
+      modePencil: 'Clue',
+      modePen: 'Decision',
+      btnHighlightEmptySub: 'hold: empty cells',
       btnHighlightEmptyTitle: 'Hold to highlight cells with no X and no decision',
-      btnTimerStart: '▶ Start',
-      btnTimerPause: '⏸ Pause',
-      btnTimerReset: '⟲ Reset',
-      xToolTitle: 'Disable/re-enable cell',
+      btnTimerStart: '▶',
+      btnTimerPause: '⏸',
+      btnTimerReset: 'Reset the timer',
+      xToolSub: 'exclude square',
+      xToolTitle: 'Disable/re-enable cell (click the square, or X key)',
+      selectTool: '↖ Select only',
+      selectToolTitle: 'Clicking only moves the selection, without writing anything',
+      btnDetect: '🔍 Detect grid',
+      btnDetectTitle: 'Try to work out the grid size and position from the photo',
+      toolHintSelect: '↖ Select only: clicking writes nothing',
+      toolHintX: '✕ Click a square to exclude it',
+      toolHintMark: '{glyph} Click to apply the symbol',
+      toolHintClue: '{letter} — clue: click to mark',
+      toolHintDecision: '{letter} — DECISION: click to place',
+      toastDetected: 'Grid detected: {rows}×{cols}',
+      toastDetectedBoxOnly: 'Only the box was detected: size left unchanged',
+      toastDetectFailed: 'Grid not recognised: set rows/columns by hand',
+      toastDetectNoImage: 'Load a photo of the puzzle first',
+      confirmDetectResize: 'Detected a {rows}×{cols} grid. Apply it? The current grid contents will be cleared.',
+      markTitle: 'Note symbol "{glyph}" ({key} key)',
+      suspectPlaceholder: 'Suspect {letter}',
+      victimPlaceholder: 'The victim',
+      victimTag: 'VICTIM',
       letterDecidedTitle: 'Letter "{letter}" already placed',
       letterPendingTitle: 'Letter "{letter}" still to place',
       lettersAllPlaced: 'All letters placed ({total}/{total}) ✓',
@@ -333,18 +781,39 @@
       confirmGridResize: 'Changing the grid size clears its contents (X, clues, decisions). Continue?',
       confirmClearImage: 'Remove the background image? The grid stays unchanged.',
       confirmClearGrid: 'Clear all the grid contents (X, clues, decisions)?',
-      confirmFullReset: 'Also reset the grid to the standard size (12×12) with no image?\n\nOK = reset grid and image too\nCancel = keep current grid size and image, only clear contents',
+      confirmFullReset: 'Also reset the grid to the standard size (10×10) with no image and no names?\n\nOK = reset grid, image and names too\nCancel = keep current grid size, image and names, only clear contents',
       confirmImportOverwrite: 'Importing this file will overwrite the current work session. Continue?',
-      exportPrompt: 'File name to export:'
+      exportPrompt: 'File name to export:',
+      helpTitle: 'How to play',
+      helpIntro: 'This assistant replaces pen and paper: load the puzzle photo, fit the box over the printed grid, and work out who the murderer is.',
+      helpRulesLabel: 'Rules',
+      helpRule1: 'Every suspect takes exactly one square: at most one per row and one per column (the "rook" constraint).',
+      helpRule2: 'Suspects are in alphabetical order (A, B, C…) and the victim is always V.',
+      helpRule3: 'Lowercase = clue (several clues can share a square); uppercase = final decision.',
+      helpRule4: 'Placing a decision automatically crosses out every other square in its row and column.',
+      helpRule5: 'Decisions cannot be removed with a click: the only way back is Undo.',
+      helpMouseLabel: 'Mouse',
+      helpMouse1: 'Pick a tool (a suspect card, the ✕, a note symbol) then click a square: the click fills it in straight away.',
+      helpMouse2: 'With "↖ Select only" active, clicking just moves the selection without writing anything.',
+      helpMouse3: 'Hovering a square previews what will be written there.',
+      helpKeysLabel: 'Keyboard',
+      kbMove: 'Move the selected square',
+      kbClue: 'Mark the letter as a clue',
+      kbDecision: 'Place the letter as a decision',
+      kbExclude: 'Exclude / re-enable the square',
+      kbMark: 'Apply a note symbol',
+      kbUndo: 'Undo / redo',
+      helpClose: 'Close'
     }
   };
 
+  // inglese di default; l'italiano si sceglie dal bottone e resta memorizzato
   function loadLang(){
     try{
       const saved = localStorage.getItem(LANG_KEY);
       if(saved === 'it' || saved === 'en') return saved;
     }catch(e){}
-    return (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'it';
+    return 'en';
   }
 
   let lang = loadLang();
@@ -359,9 +828,13 @@
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
     document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); });
-    btnLang.textContent = lang === 'it' ? '🌐 EN' : '🌐 IT';
-    renderLetterToolbar();
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+    btnLang.textContent = lang === 'it' ? 'EN' : 'IT';
+    renderSuspects();
+    renderMarkRow();
     renderTimerButtons();
+    renderLockButton();
+    renderHelp();
   }
 
   function setLang(newLang){
@@ -389,11 +862,31 @@
     for(let r=0;r<rr;r++){
       const row = [];
       for(let col=0;col<cc;col++){
-        row.push({x:false, decision:null, candidates:[]});
+        row.push({x:false, decision:null, candidates:[], mark:null});
       }
       c.push(row);
     }
     return c;
+  }
+
+  // normalizza celle provenienti da sessionStorage o da un file importato:
+  // riempie dimensioni mancanti e i campi introdotti dopo (es. `mark`).
+  function normalizeCells(raw, rr, cc){
+    const out = [];
+    for(let r=0;r<rr;r++){
+      const row = [];
+      for(let c=0;c<cc;c++){
+        const src = (raw && raw[r] && raw[r][c]) || {};
+        row.push({
+          x: !!src.x,
+          decision: src.decision || null,
+          candidates: Array.isArray(src.candidates) ? src.candidates.slice() : [],
+          mark: src.mark || null
+        });
+      }
+      out.push(row);
+    }
+    return out;
   }
 
   function isGloballyDecided(letter){
@@ -421,6 +914,7 @@
 
   function renderTimerButtons(){
     btnTimerToggle.textContent = timerRunning ? t('btnTimerPause') : t('btnTimerStart');
+    btnTimerToggle.classList.toggle('toggled', timerRunning);
   }
 
   function startTimerTick(){
@@ -468,18 +962,103 @@
     persist();
   }
 
+  // ---------- pannello sospettati ----------
+  // una card per lettera valida: token colorato (la "foto segnaletica"), nome
+  // facoltativo scritto dall'utente e spunta quando la lettera è già stata decisa.
+  function renderSuspects(){
+    suspectList.innerHTML = '';
+    validLetters(objectCount(rows, cols)).forEach(letter=>{
+      const isVictim = letter === 'v';
+      const color = letterColor(letter);
+
+      const card = document.createElement('div');
+      card.className = 'suspect' + (isVictim ? ' victim' : '');
+      card.dataset.tool = letter;
+      card.style.background = rgba(color, .15);
+      card.style.borderColor = rgba(color, .55);
+
+      if(isVictim){
+        const ribbon = document.createElement('div');
+        ribbon.className = 'ribbon';
+        ribbon.textContent = t('victimTag');
+        card.appendChild(ribbon);
+      }
+
+      const token = document.createElement('div');
+      token.className = 'token';
+      token.style.background = color;
+      token.textContent = letter.toUpperCase();
+
+      const name = document.createElement('input');
+      name.className = 'name';
+      name.type = 'text';
+      name.maxLength = 18;
+      name.value = suspectNames[letter] || '';
+      name.placeholder = isVictim ? t('victimPlaceholder') : t('suspectPlaceholder', {letter: letter.toUpperCase()});
+      name.addEventListener('input', ()=>{
+        suspectNames[letter] = name.value;
+        renderToolHint();
+        persist();
+      });
+      name.addEventListener('keydown', e=>{
+        e.stopPropagation();
+        if(e.key === 'Enter' || e.key === 'Escape') name.blur();
+      });
+
+      const check = document.createElement('div');
+      check.className = 'check';
+      check.textContent = '✓';
+
+      card.appendChild(token);
+      card.appendChild(name);
+      card.appendChild(check);
+      card.addEventListener('click', ()=>selectTool(letter));
+      card.addEventListener('pointerdown', ()=>highlightLetterOccurrences(letter));
+      suspectList.appendChild(card);
+    });
+    highlightActiveTool();
+    updateLetterButtonsState();
+  }
+
+  function renderMarkRow(){
+    markRow.innerHTML = '';
+    MARKS.forEach(m=>{
+      const b = document.createElement('button');
+      b.className = 'mark-btn';
+      b.dataset.tool = '#' + m.id;
+      b.title = t('markTitle', {glyph:m.glyph, key:m.key});
+      b.innerHTML = '<span style="color:' + m.color + ';text-shadow:0 0 6px ' + rgba(m.color,.6) + '">' + m.glyph + '</span><span class="key">' + m.key + '</span>';
+      b.addEventListener('click', ()=>selectTool('#' + m.id));
+      markRow.appendChild(b);
+    });
+    highlightActiveTool();
+  }
+
+  function renderLockButton(){
+    btnLock.textContent = locked ? t('btnLockLocked') : t('btnLockUnlocked');
+    btnLock.title = locked ? t('btnLockTitleLocked') : t('btnLockTitleUnlocked');
+    btnLock.classList.toggle('toggled', !locked);
+    appEl.classList.toggle('unlocked', !locked);
+  }
+
+  function updateDimsBadge(){
+    dimsBadge.textContent = rows + '×' + cols + ' · ' + objectCount(rows, cols) + '👤';
+  }
+
   // ---------- lettere ancora da piazzare come decisione ----------
   function updateLetterButtonsState(){
     const letters = validLetters(objectCount(rows, cols));
-    Array.from(toolRow.children).forEach(b=>{
-      const letter = b.dataset.tool;
-      if(letter === 'x') return;
+    Array.from(suspectList.children).forEach(card=>{
+      const letter = card.dataset.tool;
       const decided = isGloballyDecided(letter);
-      b.classList.toggle('decided', decided);
-      b.textContent = decided ? (letter + ' ✓') : letter;
-      b.title = decided ? t('letterDecidedTitle', {letter: letter.toUpperCase()}) : t('letterPendingTitle', {letter: letter.toUpperCase()});
+      card.classList.toggle('decided', decided);
+      card.title = decided
+        ? t('letterDecidedTitle', {letter: letter.toUpperCase()})
+        : t('letterPendingTitle', {letter: letter.toUpperCase()});
     });
     const remaining = letters.filter(l => !isGloballyDecided(l));
+    const placed = letters.length - remaining.length;
+    progressFill.style.width = (letters.length ? (placed / letters.length * 100) : 0) + '%';
     lettersStatus.textContent = remaining.length === 0
       ? t('lettersAllPlaced', {total: letters.length})
       : t('lettersRemaining', {remaining: remaining.length, total: letters.length, list: remaining.map(l=>l.toUpperCase()).join(' ')});
@@ -498,7 +1077,7 @@
     return {
       rows, cols,
       gridBox: {...gridBox},
-      cells: cells.map(row => row.map(c => ({x:c.x, decision:c.decision, candidates:[...c.candidates]})))
+      cells: cells.map(row => row.map(c => ({x:c.x, decision:c.decision, candidates:[...c.candidates], mark:c.mark})))
     };
   }
 
@@ -506,12 +1085,13 @@
     rows = snap.rows;
     cols = snap.cols;
     gridBox = {...snap.gridBox};
-    cells = snap.cells.map(row => row.map(c => ({x:c.x, decision:c.decision, candidates:[...c.candidates]})));
+    cells = snap.cells.map(row => row.map(c => ({x:c.x, decision:c.decision, candidates:[...c.candidates], mark:c.mark})));
     rowsInput.value = rows;
     colsInput.value = cols;
+    updateDimsBadge();
     clampSelection();
     buildCellsDom();
-    renderLetterToolbar();
+    renderSuspects();
     renderGridBox();
     renderCells();
   }
@@ -549,9 +1129,9 @@
 
   // ---------- persistence: un'unica sessione di lavoro ----------
   // Non c'è più selezione/switch tra sessioni multiple: un solo stato corrente
-  // (rows, cols, gridBox, cells, img) autosalvato in background. Per lavorare su un
-  // puzzle diverso si usa Esporta (salva su file) / Importa (carica da file,
-  // sovrascrivendo la sessione corrente). L'undo/redo resta solo in memoria.
+  // (rows, cols, gridBox, cells, img, titolo, nomi) autosalvato in background. Per
+  // lavorare su un puzzle diverso si usa Esporta (salva su file) / Importa (carica
+  // da file, sovrascrivendo la sessione corrente). L'undo/redo resta solo in memoria.
   //
   // Si usa sessionStorage, non localStorage: deve sopravvivere a un F5 sulla
   // stessa pagina (sessionStorage lo garantisce, è legato alla singola tab) ma
@@ -603,6 +1183,7 @@
     try{
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
         rows, cols, gridBox, cells, img,
+        puzzleTitle, suspectNames,
         timerElapsedMs: currentTimerElapsedMs(),
         timerRunning
       }));
@@ -623,14 +1204,18 @@
     rows = dims.rows;
     cols = dims.cols;
     gridBox = data.gridBox;
-    cells = data.cells;
+    cells = normalizeCells(data.cells, rows, cols);
     img = data.img || null;
+    puzzleTitle = data.puzzleTitle || '';
+    suspectNames = (data.suspectNames && typeof data.suspectNames === 'object') ? {...data.suspectNames} : {};
     selR = 0; selC = 0;
     rowsInput.value = rows;
     colsInput.value = cols;
+    puzzleTitleInput.value = puzzleTitle;
+    updateDimsBadge();
     applyImage();
     buildCellsDom();
-    renderLetterToolbar();
+    renderSuspects();
     renderGridBox();
     renderCells();
     history = [snapshot()];
@@ -656,15 +1241,47 @@
         div.className = 'cell';
         div.dataset.r = r;
         div.dataset.c = c;
-        const decision = document.createElement('div');
-        decision.className = 'decision';
+        const mark = document.createElement('div');
+        mark.className = 'mark';
         const candidates = document.createElement('div');
         candidates.className = 'candidates';
+        const ghost = document.createElement('div');
+        ghost.className = 'ghost';
+        const decision = document.createElement('div');
+        decision.className = 'decision';
+        div.appendChild(mark);
         div.appendChild(candidates);
+        div.appendChild(ghost);
         div.appendChild(decision);
         div.addEventListener('click', onCellClick);
+        div.addEventListener('pointerenter', onCellEnter);
+        div.addEventListener('pointerleave', onCellLeave);
         cellsGridEl.appendChild(div);
       }
+    }
+    buildAxisLabels();
+  }
+
+  // etichette R1…Rn / C1…Cn: vivono dentro #gridBox ma posizionate appena fuori
+  // dai suoi bordi, così restano allineate alla griglia in qualsiasi posizione.
+  function buildAxisLabels(){
+    colLabelsEl.innerHTML = '';
+    colLabelsEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    for(let c=0;c<cols;c++){
+      const d = document.createElement('div');
+      d.className = 'axis-label';
+      d.dataset.c = c;
+      d.innerHTML = '<i>C' + (c+1) + '</i>';
+      colLabelsEl.appendChild(d);
+    }
+    rowLabelsEl.innerHTML = '';
+    rowLabelsEl.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    for(let r=0;r<rows;r++){
+      const d = document.createElement('div');
+      d.className = 'axis-label';
+      d.dataset.r = r;
+      d.innerHTML = '<i>R' + (r+1) + '</i>';
+      rowLabelsEl.appendChild(d);
     }
   }
 
@@ -674,18 +1291,74 @@
       const div = divs[i];
       const r = +div.dataset.r, c = +div.dataset.c;
       const cell = cells[r][c];
+      const isSel = locked && r === selR && c === selC;
       div.classList.toggle('disabled', cell.x);
-      div.classList.toggle('selected', locked && r === selR && c === selC);
+      div.classList.toggle('selected', isSel);
+      div.classList.toggle('cross', locked && !isSel && (r === selR || c === selC));
+      div.classList.toggle('has-decision', !!cell.decision);
+
       const decisionEl = div.querySelector('.decision');
       const candidatesEl = div.querySelector('.candidates');
-      decisionEl.textContent = cell.decision ? cell.decision.toUpperCase() : '';
+      const markEl = div.querySelector('.mark');
+
+      if(cell.decision){
+        decisionEl.textContent = cell.decision.toUpperCase();
+        decisionEl.style.background = letterColor(cell.decision);
+      } else {
+        decisionEl.textContent = '';
+      }
+
+      const mark = cell.mark ? MARK_BY_ID[cell.mark] : null;
+      markEl.textContent = mark ? mark.glyph : '';
+      markEl.style.color = mark ? mark.color : '';
+
       candidatesEl.innerHTML = '';
+      candidatesEl.style.setProperty('--chip', chipScale(cell.candidates.length));
       cell.candidates.forEach(l=>{
         const span = document.createElement('span');
         span.textContent = l;
+        span.style.background = letterColor(l);
         candidatesEl.appendChild(span);
       });
     }
+    renderAxisHighlight();
+  }
+
+  // Dimensione dei gettoni-indizio in frazione di cella. Non è una semplice scala
+  // decrescente: ogni valore è scelto perché quel numero di gettoni riempia righe
+  // intere dentro il 90% di cella disponibile (es. 4 stanno meglio in 2×2 che in
+  // una riga da 4, quindi possono restare più grandi di quando sono 3).
+  function chipScale(n){
+    if(n <= 1) return '.4';
+    if(n === 2) return '.34';
+    if(n === 3) return '.27';
+    if(n === 4) return '.31';
+    if(n <= 6) return '.27';
+    if(n <= 9) return '.22';
+    if(n <= 12) return '.18';
+    return '.15';
+  }
+
+  function renderAxisHighlight(){
+    // "done" = quella riga/colonna ha già la sua decisione, quindi per il vincolo
+    // torre è chiusa: si legge dall'etichetta senza dover cercare nella griglia
+    const rowDone = [], colDone = [];
+    for(let r=0;r<rows;r++) rowDone[r] = cells[r].some(c => c.decision);
+    for(let c=0;c<cols;c++){
+      let done = false;
+      for(let r=0;r<rows;r++) if(cells[r][c].decision){ done = true; break; }
+      colDone[c] = done;
+    }
+    Array.from(colLabelsEl.children).forEach(d=>{
+      const c = +d.dataset.c;
+      d.classList.toggle('on', locked && c === selC);
+      d.classList.toggle('done', !!colDone[c]);
+    });
+    Array.from(rowLabelsEl.children).forEach(d=>{
+      const r = +d.dataset.r;
+      d.classList.toggle('on', locked && r === selR);
+      d.classList.toggle('done', !!rowDone[r]);
+    });
   }
 
   function renderGridBox(){
@@ -718,6 +1391,10 @@
     const availH = Math.max(120, stageEl.clientHeight - padY);
     if(bgImage.naturalWidth && bgImage.naturalHeight){
       const scale = Math.min(availW / bgImage.naturalWidth, availH / bgImage.naturalHeight);
+      // i max-* del ramo di fallback qui sotto vanno rimossi, altrimenti restano
+      // a vincolare l'immagine ai valori (piccoli) calcolati prima del 'load'
+      bgImage.style.maxWidth = 'none';
+      bgImage.style.maxHeight = 'none';
       bgImage.style.width = Math.round(bgImage.naturalWidth * scale) + 'px';
       bgImage.style.height = Math.round(bgImage.naturalHeight * scale) + 'px';
     } else {
@@ -730,46 +1407,22 @@
     }
   }
 
-  function renderLetterToolbar(){
-    toolRow.innerHTML = '';
-    const xBtn = document.createElement('button');
-    xBtn.textContent = '✕';
-    xBtn.title = t('xToolTitle');
-    xBtn.dataset.tool = 'x';
-    xBtn.addEventListener('click', ()=>selectTool('x'));
-    toolRow.appendChild(xBtn);
-
-    validLetters(objectCount(rows, cols)).forEach(letter=>{
-      const b = document.createElement('button');
-      b.textContent = letter;
-      b.dataset.tool = letter;
-      b.addEventListener('click', ()=>selectTool(letter));
-      b.addEventListener('pointerdown', ()=>highlightLetterOccurrences(letter));
-      toolRow.appendChild(b);
-    });
-    highlightActiveTool();
-    updateLetterButtonsState();
-  }
-
-  // ---------- evidenzia occorrenze di una lettera mentre si tiene premuto il bottone ----------
+  // ---------- evidenziazione "tieni premuto" ----------
   function highlightLetterOccurrences(letter){
     const divs = cellsGridEl.children;
     for(let i=0;i<divs.length;i++){
       const div = divs[i];
-      const r = +div.dataset.r, c = +div.dataset.c;
-      const cell = cells[r][c];
+      const cell = cells[+div.dataset.r][+div.dataset.c];
       div.classList.toggle('letter-highlight', cell.decision === letter || cell.candidates.includes(letter));
     }
   }
 
-  // ---------- evidenzia le caselle ancora "vuote" (senza X e senza decisione,
-  // indizi a parte) mentre si tiene premuto il bottone — stesso meccanismo di sopra ----------
+  // evidenzia le caselle ancora "vuote" (senza X e senza decisione, indizi a parte)
   function highlightEmptyCells(){
     const divs = cellsGridEl.children;
     for(let i=0;i<divs.length;i++){
       const div = divs[i];
-      const r = +div.dataset.r, c = +div.dataset.c;
-      const cell = cells[r][c];
+      const cell = cells[+div.dataset.r][+div.dataset.c];
       div.classList.toggle('empty-highlight', !cell.x && !cell.decision);
     }
   }
@@ -783,11 +1436,42 @@
   document.addEventListener('pointercancel', clearHoldHighlights);
 
   function highlightActiveTool(){
-    Array.from(toolRow.children).forEach(b=>{
+    Array.from(suspectList.children).forEach(card=>{
+      card.classList.toggle('active', card.dataset.tool === activeTool);
+    });
+    Array.from(markRow.children).forEach(b=>{
       b.classList.toggle('toggled', b.dataset.tool === activeTool);
     });
-    modePencilBtn.classList.toggle('toggled', activeMode==='pencil');
-    modePenBtn.classList.toggle('toggled', activeMode==='pen');
+    btnX.classList.toggle('toggled', activeTool === 'x');
+    btnSelect.classList.toggle('toggled', activeTool === 'select');
+    modePencilBtn.classList.toggle('toggled', activeMode === 'pencil');
+    modePenBtn.classList.toggle('toggled', activeMode === 'pen');
+    gridBoxEl.classList.toggle('tool-select', activeTool === 'select');
+    renderToolHint();
+  }
+
+  // riassunto sempre visibile di "cosa scrive il prossimo clic": senza, con il
+  // clic che compila la casella non si capirebbe a colpo d'occhio cosa sta per
+  // succedere (soprattutto tra indizio e decisione, che è irreversibile).
+  function renderToolHint(){
+    let text, accent = 'var(--line)';
+    if(activeTool === 'select'){
+      text = t('toolHintSelect');
+    } else if(activeTool === 'x'){
+      text = t('toolHintX');
+      accent = '#ff6b78';
+    } else if(activeTool.charAt(0) === '#'){
+      const m = MARK_BY_ID[activeTool.slice(1)];
+      text = t('toolHintMark', {glyph: m.glyph});
+      accent = m.color;
+    } else {
+      const name = (suspectNames[activeTool] || '').trim();
+      const label = name ? activeTool.toUpperCase() + ' · ' + name : activeTool.toUpperCase();
+      text = t(activeMode === 'pen' ? 'toolHintDecision' : 'toolHintClue', {letter: label});
+      accent = letterColor(activeTool);
+    }
+    toolHint.textContent = text;
+    toolHint.style.borderLeftColor = accent;
   }
 
   function selectTool(tool){
@@ -796,13 +1480,62 @@
   }
 
   // ---------- cell interaction ----------
-  // il click seleziona solo la cella: lettera e X si impostano da tastiera
+  // il click seleziona la cella E vi applica lo strumento attivo (stessa cosa che
+  // farebbe la tastiera). Per muoversi senza scrivere c'è lo strumento 'select'.
   function onCellClick(e){
     if(!locked) return; // must lock grid before editing cells
     const div = e.currentTarget;
-    const r = +div.dataset.r, c = +div.dataset.c;
-    selR = r; selC = c;
+    selR = +div.dataset.r;
+    selC = +div.dataset.c;
     renderCells();
+    if(activeTool !== 'select') applyActiveToolToCell(selR, selC);
+    updateGhost(div);
+  }
+
+  // anteprima trasparente di cosa scriverebbe il clic sulla casella sotto il mouse.
+  // Volutamente "stupida": guarda solo le due condizioni strutturali leggibili dalla
+  // cella (ha una decisione / ha una X) e non replica le regole, che restano tutte
+  // in applyActiveToolToCell — al massimo si clicca e si legge il messaggio.
+  function updateGhost(div){
+    const g = div.querySelector('.ghost');
+    if(!g) return;
+    g.className = 'ghost';
+    g.textContent = '';
+    g.style.background = '';
+    g.style.color = '';
+    if(!locked || activeTool === 'select') return;
+    const cell = cells[+div.dataset.r][+div.dataset.c];
+    if(cell.decision) return;
+    if(activeTool === 'x'){
+      g.classList.add('ghost-x');
+      g.textContent = cell.x ? '↺' : '✕';
+      return;
+    }
+    if(cell.x) return;
+    if(activeTool.charAt(0) === '#'){
+      const m = MARK_BY_ID[activeTool.slice(1)];
+      g.classList.add('ghost-mark');
+      g.textContent = cell.mark === m.id ? '↺' : m.glyph;
+      g.style.color = cell.mark === m.id ? '#ffd77a' : m.color;
+      return;
+    }
+    if(activeMode === 'pen'){
+      g.classList.add('ghost-decision');
+      g.textContent = activeTool.toUpperCase();
+      g.style.background = letterColor(activeTool);
+    } else {
+      g.classList.add('ghost-clue');
+      const has = cell.candidates.includes(activeTool);
+      g.textContent = has ? '↺' : activeTool;
+      if(has) g.classList.add('ghost-undo');
+      else g.style.background = letterColor(activeTool);
+    }
+  }
+
+  function onCellEnter(e){ updateGhost(e.currentTarget); }
+  function onCellLeave(e){
+    const g = e.currentTarget.querySelector('.ghost');
+    if(g){ g.className = 'ghost'; g.textContent = ''; g.style.background = ''; g.style.color = ''; }
   }
 
   function applyActiveToolToCell(r, c){
@@ -814,7 +1547,25 @@
         return;
       }
       cell.x = !cell.x;
-      if(cell.x) cell.candidates = [];
+      if(cell.x){ cell.candidates = []; cell.mark = null; }
+      ensureTimerRunning();
+      pushHistory();
+      renderCells();
+      return;
+    }
+
+    // simbolo nota: solo annotazione libera, uno per casella, non tocca le regole
+    if(activeTool.charAt(0) === '#'){
+      if(cell.x){
+        showToast(t('toastCellExcluded'));
+        return;
+      }
+      if(cell.decision){
+        showToast(t('toastCellAlreadyDecided'));
+        return;
+      }
+      const id = activeTool.slice(1);
+      cell.mark = (cell.mark === id) ? null : id;
       ensureTimerRunning();
       pushHistory();
       renderCells();
@@ -849,13 +1600,14 @@
       }
       cell.decision = letter;
       cell.candidates = [];
+      cell.mark = null;
       for(const row of cells) for(const c2 of row){
         const idx = c2.candidates.indexOf(letter);
         if(idx >= 0) c2.candidates.splice(idx,1);
       }
       // vincolo "torre": nessun'altra decisione può condividere riga o colonna
-      for(let cc=0; cc<cols; cc++){ if(cc !== c){ cells[r][cc].x = true; cells[r][cc].candidates = []; } }
-      for(let rr=0; rr<rows; rr++){ if(rr !== r){ cells[rr][c].x = true; cells[rr][c].candidates = []; } }
+      for(let cc=0; cc<cols; cc++){ if(cc !== c){ cells[r][cc].x = true; cells[r][cc].candidates = []; cells[r][cc].mark = null; } }
+      for(let rr=0; rr<rows; rr++){ if(rr !== r){ cells[rr][c].x = true; cells[rr][c].candidates = []; cells[rr][c].mark = null; } }
       ensureTimerRunning();
       pushHistory();
       renderCells();
@@ -946,6 +1698,258 @@
 
   window.addEventListener('resize', ()=>{ updateImageSize(); updateCellSizeVar(); });
 
+
+  // ---------- riconoscimento automatico della griglia dalla foto ----------
+  // Idea: le linee della griglia sono le uniche strutture che attraversano tutta
+  // l'immagine, quindi proiettando il gradiente orizzontale su x (e quello verticale
+  // su y) le linee diventano picchi regolari. Da lì si ricavano il riquadro (primo e
+  // ultimo picco forte) e il numero di celle (il conteggio che spiega meglio i picchi).
+  // L'analisi viene ripetuta su qualche piccola rotazione, perché una foto di una
+  // pagina scattata a mano è quasi sempre storta di un grado o due e basta poco
+  // per spalmare i picchi e rendere il conteggio irriconoscibile.
+  // Non è infallibile: quando non è convinta non applica nulla e lo dice.
+
+  const DETECT_MAX_SIDE = 700;
+  const DETECT_ANGLES = [0, -1, 1, -2, 2, -3, 3];
+  const DETECT_MIN_SCORE = 0.34;
+
+  // colore medio dell'immagine, ottenuto lasciando scalare il browser a 1×1 px:
+  // serve a riempire gli angoli scoperti dalla rotazione senza creare bordi finti
+  function averageColor(){
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 1;
+    const ctx = cv.getContext('2d', {willReadFrequently:true});
+    ctx.drawImage(bgImage, 0, 0, 1, 1);
+    try{
+      const d = ctx.getImageData(0,0,1,1).data;
+      return 'rgb(' + d[0] + ',' + d[1] + ',' + d[2] + ')';
+    }catch(e){ return '#808080'; }
+  }
+
+  function imageLuma(deg, fill){
+    const nw = bgImage.naturalWidth, nh = bgImage.naturalHeight;
+    if(!nw || !nh) return null;
+    const scale = Math.min(1, DETECT_MAX_SIDE / Math.max(nw, nh));
+    const W = Math.max(40, Math.round(nw * scale));
+    const H = Math.max(40, Math.round(nh * scale));
+    const cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d', {willReadFrequently:true});
+    ctx.fillStyle = fill;
+    ctx.fillRect(0, 0, W, H);
+    if(deg){
+      ctx.translate(W/2, H/2);
+      ctx.rotate(deg * Math.PI / 180);
+      ctx.translate(-W/2, -H/2);
+    }
+    ctx.drawImage(bgImage, 0, 0, W, H);
+    let px;
+    try{ px = ctx.getImageData(0, 0, W, H).data; }catch(e){ return null; }
+    const g = new Float32Array(W*H);
+    for(let i=0, q=0; i<W*H; i++, q+=4){
+      g[i] = 0.299*px[q] + 0.587*px[q+1] + 0.114*px[q+2];
+    }
+    return {g, W, H};
+  }
+
+  function smooth(arr){
+    const out = new Float32Array(arr.length);
+    const n = arr.length;
+    for(let i=0;i<n;i++){
+      const a = i > 0 ? arr[i-1] : arr[i];
+      const b = i < n-1 ? arr[i+1] : arr[i];
+      out[i] = (a + 2*arr[i] + b) / 4;
+    }
+    return out;
+  }
+
+  // picchi = massimi locali sopra media+σ, con soppressione dei non-massimi
+  // (altrimenti una linea spessa qualche pixel conterebbe più volte)
+  function findPeaks(arr, minDist){
+    const n = arr.length;
+    let mean = 0;
+    for(let i=0;i<n;i++) mean += arr[i];
+    mean /= n;
+    let sd = 0;
+    for(let i=0;i<n;i++) sd += (arr[i]-mean)*(arr[i]-mean);
+    sd = Math.sqrt(sd/n);
+    const thr = mean + 0.55*sd;
+    const cand = [];
+    for(let i=1;i<n-1;i++){
+      if(arr[i] >= thr && arr[i] >= arr[i-1] && arr[i] >= arr[i+1]) cand.push(i);
+    }
+    cand.sort((a,b)=>arr[b]-arr[a]);
+    const kept = [];
+    for(const i of cand){
+      let ok = true;
+      for(const k of kept) if(Math.abs(k-i) < minDist){ ok = false; break; }
+      if(ok) kept.push(i);
+    }
+    kept.sort((a,b)=>a-b);
+    return kept;
+  }
+
+  // per ogni numero di celle plausibile: quanta parte delle linee attese trova
+  // (coverage) e quanta parte dei picchi osservati spiega (explained). Il prodotto
+  // penalizza da solo sia i conteggi troppo bassi sia quelli troppo alti.
+  function countCandidates(peaks, a, b){
+    const span = b - a;
+    const out = [];
+    for(let n=2;n<=22;n++){
+      const step = span / n;
+      if(step < 7) continue;
+      // tolleranza legata all'incertezza sulla posizione di una linea, NON alla
+      // dimensione della cella: se cresce con il passo, i conteggi piccolissimi
+      // (2×2, 3×3) "spiegano" qualsiasi cosa e vincono su foto storte o senza griglia
+      const tol = Math.max(2, Math.min(step*0.2, 9));
+      let matched = 0;
+      for(let k=0;k<=n;k++){
+        const pos = a + k*step;
+        for(const pk of peaks){ if(Math.abs(pk-pos) <= tol){ matched++; break; } }
+      }
+      let explained = 0;
+      for(const pk of peaks){
+        const k = Math.round((pk-a)/step);
+        if(k >= 0 && k <= n && Math.abs(a + k*step - pk) <= tol) explained++;
+      }
+      const coverage = matched/(n+1);
+      // quasi tutte le linee attese devono esserci davvero: è ciò che distingue
+      // una griglia vera da un allineamento fortuito
+      const score = coverage < 0.75 ? 0 : coverage * (peaks.length ? explained/peaks.length : 0);
+      out.push({n, step, score});
+    }
+    out.sort((p,q)=>q.score-p.score);
+    return out.slice(0, 5);
+  }
+
+  function axisAnalysis(profile){
+    const prof = smooth(smooth(profile));
+    let max = 0;
+    for(let i=0;i<prof.length;i++) max = Math.max(max, prof[i]);
+    if(max <= 0) return null;
+    const peaks = findPeaks(prof, Math.max(3, Math.floor(prof.length/44)));
+    if(peaks.length < 4) return null;
+    // il riquadro va dal primo all'ultimo picco "forte": il bordo esterno del
+    // puzzle è spesso e finisce sempre in questa fascia
+    let peakMax = 0;
+    for(const pk of peaks) peakMax = Math.max(peakMax, prof[pk]);
+    const strong = peaks.filter(pk => prof[pk] >= peakMax*0.45);
+    const a = strong[0], b = strong[strong.length-1];
+    if(b - a < prof.length*0.3) return null;
+    const inner = peaks.filter(pk => pk >= a && pk <= b);
+    return {a, b, candidates: countCandidates(inner, a, b)};
+  }
+
+  function analyzeAtAngle(deg, fill){
+    const im = imageLuma(deg, fill);
+    if(!im) return null;
+    const {g, W, H} = im;
+
+    const vProf = new Float32Array(W); // linee verticali → gradiente orizzontale
+    for(let x=1;x<W-1;x++){
+      let sum = 0;
+      for(let y=0;y<H;y++) sum += Math.abs(g[y*W+x+1] - g[y*W+x-1]);
+      vProf[x] = sum/H;
+    }
+    const hProf = new Float32Array(H); // linee orizzontali → gradiente verticale
+    for(let y=1;y<H-1;y++){
+      let sum = 0;
+      for(let x=0;x<W;x++) sum += Math.abs(g[(y+1)*W+x] - g[(y-1)*W+x]);
+      hProf[y] = sum/W;
+    }
+
+    const ax = axisAnalysis(vProf);
+    const ay = axisAnalysis(hProf);
+    if(!ax || !ay) return null;
+    return {ax, ay, W, H};
+  }
+
+  // le caselle di un Murdoku sono quadrate: a parità di punteggio si preferisce
+  // la coppia (righe, colonne) che rende la cella più vicina a un quadrato
+  function bestPair(an){
+    let best = null;
+    for(const cx of an.ax.candidates){
+      for(const cy of an.ay.candidates){
+        const ratio = cx.step / cy.step;
+        const squareness = 1 / (1 + Math.abs(Math.log(ratio))*2.5);
+        const score = cx.score * cy.score * squareness;
+        if(score > 0 && (!best || score > best.score)) best = {score, cols:cx.n, rows:cy.n};
+      }
+    }
+    return best;
+  }
+
+  function boxOf(an){
+    return {
+      x: an.ax.a / an.W * 100,
+      y: an.ay.a / an.H * 100,
+      w: (an.ax.b - an.ax.a) / an.W * 100,
+      h: (an.ay.b - an.ay.a) / an.H * 100
+    };
+  }
+
+  function detectGridFromImage(){
+    if(!bgImage.naturalWidth) return null;
+    const fill = averageColor();
+    let zero = null, best = null;
+    for(const deg of DETECT_ANGLES){
+      const an = analyzeAtAngle(deg, fill);
+      if(deg === 0) zero = an;
+      if(!an) continue;
+      const pick = bestPair(an);
+      if(pick && (!best || pick.score > best.score)) best = {score:pick.score, rows:pick.rows, cols:pick.cols, an};
+      if(best && best.score > 0.95) break; // già ottimo: inutile provare altre rotazioni
+    }
+    if(!best || best.score < DETECT_MIN_SCORE) return null;
+
+    // il riquadro si prende sempre dall'immagine NON ruotata: `gridBox` è allineato
+    // agli assi, quindi su una foto storta può solo approssimare la griglia vera
+    const box = zero ? boxOf(zero) : (best.an ? boxOf(best.an) : {x:0, y:0, w:100, h:100});
+    return {rows: best.rows, cols: best.cols, score: best.score, box};
+  }
+
+  function isGridEmpty(){
+    for(const row of cells) for(const c of row){
+      if(c.x || c.decision || c.candidates.length || c.mark) return false;
+    }
+    return true;
+  }
+
+  function autoDetectGrid(auto){
+    if(!img){
+      if(!auto) showToast(t('toastDetectNoImage'));
+      return;
+    }
+    const res = detectGridFromImage();
+    if(!res){
+      if(!auto) showToast(t('toastDetectFailed'));
+      return;
+    }
+    const changesDims = (res.rows !== rows || res.cols !== cols);
+    let applyDims = changesDims;
+    if(changesDims && !isGridEmpty()){
+      applyDims = confirm(t('confirmDetectResize', {rows:res.rows, cols:res.cols}));
+    }
+    gridBox = res.box;
+    if(applyDims){
+      rows = res.rows;
+      cols = res.cols;
+      rowsInput.value = rows;
+      colsInput.value = cols;
+      cells = makeEmptyCells(rows, cols);
+      selR = 0; selC = 0;
+      updateDimsBadge();
+      buildCellsDom();
+      renderSuspects();
+    }
+    renderGridBox();
+    renderCells();
+    pushHistory();
+    showToast(applyDims || !changesDims
+      ? t('toastDetected', {rows:res.rows, cols:res.cols})
+      : t('toastDetectedBoxOnly'));
+  }
+
   // ---------- toolbar actions ----------
   function onGridSizeChange(){
     let newRows = parseInt(rowsInput.value, 10);
@@ -966,14 +1970,24 @@
     cols = newCols;
     cells = makeEmptyCells(rows, cols);
     selR = 0; selC = 0;
+    updateDimsBadge();
     buildCellsDom();
-    renderLetterToolbar();
+    renderSuspects();
     renderCells();
     renderGridBox();
     pushHistory();
   }
   rowsInput.addEventListener('change', onGridSizeChange);
   colsInput.addEventListener('change', onGridSizeChange);
+
+  puzzleTitleInput.addEventListener('input', ()=>{
+    puzzleTitle = puzzleTitleInput.value;
+    persist();
+  });
+  puzzleTitleInput.addEventListener('keydown', e=>{
+    e.stopPropagation();
+    if(e.key === 'Enter' || e.key === 'Escape') puzzleTitleInput.blur();
+  });
 
   btnLoadImage.addEventListener('click', ()=>fileInput.click());
   fileInput.addEventListener('change', ()=>{
@@ -982,6 +1996,9 @@
     const reader = new FileReader();
     reader.onload = ()=>{
       img = reader.result;
+      // il riconoscimento va fatto sul 'load' di bgImage: prima non ci sono
+      // né dimensioni intrinseche né pixel da leggere
+      pendingAutoDetect = true;
       applyImage();
       gridBox = {x:0, y:0, w:100, h:100};
       renderGridBox();
@@ -1007,7 +2024,15 @@
   // le dimensioni intrinseche (naturalWidth/Height) sono note solo dopo il 'load':
   // va ricalcolata la dimensione scalata dell'immagine, poi il contenitore
   // (fit-content) assume quella dimensione e la griglia sovrapposta può allinearsi.
-  bgImage.addEventListener('load', ()=>{ updateImageSize(); renderGridBox(); });
+  let pendingAutoDetect = false;
+  bgImage.addEventListener('load', ()=>{
+    updateImageSize();
+    renderGridBox();
+    if(pendingAutoDetect){
+      pendingAutoDetect = false;
+      autoDetectGrid(true);
+    }
+  });
 
   btnClearImage.addEventListener('click', ()=>{
     if(!img) return;
@@ -1021,16 +2046,20 @@
     if(!confirm(t('confirmClearGrid'))) return;
     const fullReset = confirm(t('confirmFullReset'));
     if(fullReset){
-      rows = 12; cols = 12;
+      rows = 10; cols = 10;
       gridBox = {x:0, y:0, w:100, h:100};
       img = null;
+      puzzleTitle = '';
+      suspectNames = {};
       rowsInput.value = rows;
       colsInput.value = cols;
+      puzzleTitleInput.value = '';
+      updateDimsBadge();
       applyImage();
       cells = makeEmptyCells(rows, cols);
       selR = 0; selC = 0;
       buildCellsDom();
-      renderLetterToolbar();
+      renderSuspects();
       renderGridBox();
       renderCells();
     } else {
@@ -1049,9 +2078,14 @@
 
   btnLock.addEventListener('click', ()=>{
     locked = !locked;
+    renderLockButton();
     renderGridBox();
+    renderCells();
   });
 
+  btnX.addEventListener('click', ()=>selectTool('x'));
+  btnSelect.addEventListener('click', ()=>selectTool('select'));
+  btnDetect.addEventListener('click', ()=>autoDetectGrid(false));
   btnHighlightEmpty.addEventListener('pointerdown', highlightEmptyCells);
 
   btnUndo.addEventListener('click', undo);
@@ -1060,14 +2094,64 @@
   btnTimerToggle.addEventListener('click', toggleTimer);
   btnTimerReset.addEventListener('click', resetTimer);
 
+  modePencilBtn.addEventListener('click', ()=>{ activeMode='pencil'; highlightActiveTool(); });
+  modePenBtn.addEventListener('click', ()=>{ activeMode='pen'; highlightActiveTool(); });
+
+  // ---------- help ----------
+  function renderHelp(){
+    document.getElementById('helpHeading').textContent = t('helpTitle');
+    document.getElementById('helpIntro').textContent = t('helpIntro');
+    document.getElementById('helpRulesLabel').textContent = t('helpRulesLabel');
+    const ul = document.getElementById('helpRules');
+    ul.innerHTML = '';
+    ['helpRule1','helpRule2','helpRule3','helpRule4','helpRule5'].forEach(k=>{
+      const li = document.createElement('li');
+      li.textContent = t(k);
+      ul.appendChild(li);
+    });
+    document.getElementById('helpMouseLabel').textContent = t('helpMouseLabel');
+    const ml = document.getElementById('helpMouse');
+    ml.innerHTML = '';
+    ['helpMouse1','helpMouse2','helpMouse3'].forEach(k=>{
+      const li = document.createElement('li');
+      li.textContent = t(k);
+      ml.appendChild(li);
+    });
+    document.getElementById('helpKeysLabel').textContent = t('helpKeysLabel');
+    const table = document.getElementById('helpKeys');
+    table.innerHTML = '';
+    [['↑ ↓ ← →','kbMove'], ['a … v','kbClue'], ['Shift + a … v','kbDecision'],
+     ['X','kbExclude'], ['1 – 4','kbMark'], ['Ctrl + Z / Y','kbUndo']].forEach(pair=>{
+      const k = document.createElement('div');
+      k.innerHTML = '<kbd>' + pair[0] + '</kbd>';
+      const d = document.createElement('div');
+      d.className = 'kbd-desc';
+      d.textContent = t(pair[1]);
+      table.appendChild(k);
+      table.appendChild(d);
+    });
+  }
+
+  function toggleHelp(show){
+    helpOverlay.classList.toggle('show', show);
+  }
+  btnHelp.addEventListener('click', ()=>toggleHelp(true));
+  btnHowTo.addEventListener('click', ()=>toggleHelp(true));
+  helpClose.addEventListener('click', ()=>toggleHelp(false));
+  helpOverlay.addEventListener('click', e=>{ if(e.target === helpOverlay) toggleHelp(false); });
+
+  // ---------- keyboard ----------
   document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && helpOverlay.classList.contains('show')){ toggleHelp(false); return; }
+
+    // nessuna scorciatoia mentre si scrive in un campo di testo (righe/colonne,
+    // nome del puzzle, nomi dei sospettati): lì Ctrl+Z deve restare l'undo del browser
+    const tag = (e.target.tagName || '').toLowerCase();
+    if(tag === 'input' || tag === 'textarea') return;
+
     if((e.ctrlKey||e.metaKey) && !e.shiftKey && e.key.toLowerCase()==='z'){ e.preventDefault(); undo(); return; }
     if((e.ctrlKey||e.metaKey) && (e.key.toLowerCase()==='y' || (e.shiftKey && e.key.toLowerCase()==='z'))){ e.preventDefault(); redo(); return; }
 
-    // the rest of the shortcuts only apply to grid editing, and only when
-    // the user isn't typing into a text field (e.g. the N input)
-    const tag = (e.target.tagName || '').toLowerCase();
-    if(tag === 'input' || tag === 'textarea') return;
     if(!locked) return; // grid is being positioned, not edited
     if(e.ctrlKey || e.metaKey || e.altKey) return;
 
@@ -1076,10 +2160,17 @@
     if(e.key === 'ArrowLeft'){ e.preventDefault(); moveSelection(0,-1); return; }
     if(e.key === 'ArrowRight'){ e.preventDefault(); moveSelection(0,1); return; }
 
+    const mark = MARKS.find(m => m.key === e.key);
+    if(mark){
+      e.preventDefault();
+      selectTool('#' + mark.id);
+      applyActiveToolToCell(selR, selC);
+      return;
+    }
+
     if(e.key.toLowerCase() === 'x'){
       e.preventDefault();
-      activeTool = 'x';
-      highlightActiveTool();
+      selectTool('x');
       applyActiveToolToCell(selR, selC);
       return;
     }
@@ -1096,13 +2187,12 @@
     }
   });
 
-  modePencilBtn.addEventListener('click', ()=>{ activeMode='pencil'; highlightActiveTool(); });
-  modePenBtn.addEventListener('click', ()=>{ activeMode='pen'; highlightActiveTool(); });
-
+  // ---------- export / import ----------
   btnExport.addEventListener('click', ()=>{
-    const name = prompt(t('exportPrompt'), 'murdoku');
+    const suggested = puzzleTitle.trim() || 'murdoku';
+    const name = prompt(t('exportPrompt'), suggested);
     if(!name) return;
-    const data = JSON.stringify({name, rows, cols, gridBox, cells, img});
+    const data = JSON.stringify({name, rows, cols, gridBox, cells, img, puzzleTitle, suspectNames});
     const blob = new Blob([data], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1125,7 +2215,12 @@
           showToast(t('toastImportCancelled'));
           return;
         }
-        applyLoadedData({n:parsed.n, rows:parsed.rows, cols:parsed.cols, gridBox:parsed.gridBox, cells:parsed.cells, img:parsed.img||null});
+        applyLoadedData({
+          n:parsed.n, rows:parsed.rows, cols:parsed.cols,
+          gridBox:parsed.gridBox, cells:parsed.cells, img:parsed.img||null,
+          puzzleTitle: parsed.puzzleTitle || parsed.name || '',
+          suspectNames: parsed.suspectNames || {}
+        });
         persist();
         showToast(t('toastImportDone'));
       }catch(e){
@@ -1138,10 +2233,10 @@
 
   // ---------- init ----------
   function init(){
-    applyTranslations();
-    const fresh = {rows:12, cols:12, gridBox:{x:0,y:0,w:100,h:100}, cells:makeEmptyCells(12,12), img:null};
+    const fresh = {rows:10, cols:10, gridBox:{x:0,y:0,w:100,h:100}, cells:makeEmptyCells(10,10), img:null};
     const data = loadStoredData() || fresh;
     applyLoadedData(data);
+    applyTranslations();
   }
 
   init();

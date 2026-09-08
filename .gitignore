@@ -5,3 +5,7 @@
 *.png
 *.pdf
 *.zip
+
+# Pagine di prova usa-e-getta generate durante lo sviluppo (es. _detect_test.html,
+# che estrae il blocco di rilevamento griglia da index.html e lo esegue su puzzle sintetici).
+_*.html
