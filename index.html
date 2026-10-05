@@ -5385,10 +5385,18 @@
     const r = [best[0] - m, best[1] - m, best[2] + m, best[3] + m];
     // le etichette sulla mappa possono sporgere dalla cornice (es. "RESTROOM"): il ritaglio si
     // allarga quanto basta a non tagliarle, ma di poco, per non tirarsi dentro il resto del foglio
+    // Si ragiona per scritte intere: basta che una lettera tocchi le caselle perché entri tutta.
     const lim = 0.08 * side;
+    const words = [];
+    let cur = null;
     for(const g of pr.glyphs){
-      if(g.hidden || !g.ch || !g.ch.trim()) continue;
+      if(g.hidden || !g.ch || !g.ch.trim()) { cur = null; continue; }
       const gb = [g.x - 0.4 * g.size, g.y - 0.45 * g.size, g.x + g.w + 0.4 * g.size, g.y + 1.05 * g.size];
+      const near = cur && Math.abs(g.y - cur.y) < 0.2 * g.size && g.x > cur.box[2] - 1.2 * g.size && g.x < cur.box[2] + 0.6 * g.size;
+      if(near){ cur.box = [Math.min(cur.box[0], gb[0]), Math.min(cur.box[1], gb[1]), Math.max(cur.box[2], gb[2]), Math.max(cur.box[3], gb[3])]; }
+      else { cur = {y: g.y, box: gb}; words.push(cur); }
+    }
+    for(const {box: gb} of words){
       if(gb[2] < inner[0] || gb[0] > inner[2] || gb[3] < inner[1] || gb[1] > inner[3]) continue;
       r[0] = Math.max(Math.min(r[0], gb[0]), best[0] - lim);
       r[1] = Math.max(Math.min(r[1], gb[1]), best[1] - lim);

@@ -6,6 +6,10 @@ Murdoku Assistant è un foglio di lavoro digitale per risolvere i puzzle **Murdo
 
 È un'unica pagina HTML autosufficiente: nessuna installazione, nessun account, nessun server, nessuna libreria o font esterno. Basta aprire `index.html` in un browser da PC.
 
+![Murdoku Assistant dopo aver caricato il PDF di "A Walk in the Park": a sinistra i sospettati con indizi e ritratti, al centro la tavola disegnata dal PDF con qualche indizio, alcune X e due decisioni (E e B), a destra gli strumenti](docs/screenshot.png)
+
+*L'app subito dopo aver caricato il PDF di "A Walk in the Park", con qualche indizio e due decisioni piazzate. Puzzle e disegni di Manuel Garand e Valentyna Bezdushna — [murdoku.com](https://murdoku.com).*
+
 ## Indice
 
 1. [Cos'è un Murdoku](#1-cosè-un-murdoku)

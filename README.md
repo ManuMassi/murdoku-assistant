@@ -6,6 +6,10 @@ Murdoku Assistant is a digital worksheet for solving **Murdoku** puzzles (murdok
 
 It's a single, self-contained HTML page: no install, no account, no server, no external libraries or fonts. Just open `index.html` in a desktop browser.
 
+![Murdoku Assistant after loading the "A Walk in the Park" PDF: the suspects with their clues and portraits on the left, the board drawn from the PDF with a few clues, crosses and two decisions (E and B) in the middle, the tools on the right](docs/screenshot.png)
+
+*The app right after loading the PDF of "A Walk in the Park", with a few clues and two decisions placed. Puzzle and artwork by Manuel Garand and Valentyna Bezdushna — [murdoku.com](https://murdoku.com).*
+
 ## Contents
 
 1. [What is a Murdoku](#1-what-is-a-murdoku)

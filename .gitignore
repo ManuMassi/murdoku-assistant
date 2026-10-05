@@ -5,6 +5,8 @@
 *.png
 *.pdf
 *.zip
+# ...tranne le immagini della documentazione (lo screenshot del README)
+!docs/*.png
 
 # Pagine di prova usa-e-getta generate durante lo sviluppo (es. _detect_test.html,
 # che estrae il blocco di rilevamento griglia da index.html e lo esegue su puzzle sintetici).
