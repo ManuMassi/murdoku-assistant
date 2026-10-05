@@ -2,146 +2,202 @@
 
 *Read this in [English](README.md).*
 
-Murdoku Assistant è un foglio elettronico digitale per risolvere i puzzle **Murdoku** (murdoku.com): sostituisce carta e penna quando si segnano indizi e decisioni su una griglia. Non fa nulla "per te": non risolve il puzzle, non dà suggerimenti — tiene traccia in modo ordinato di quello che scrivi.
+Murdoku Assistant è un foglio di lavoro digitale per risolvere i puzzle **Murdoku** (murdoku.com): sostituisce carta e penna quando si segnano indizi e decisioni sulla scena del crimine. Gli dai il puzzle — il **PDF** o una **foto** — e lui trova la griglia, compila i sospettati con i loro indizi e tiene traccia di tutto quello che scrivi. Non risolve nulla al posto tuo e non dà suggerimenti.
 
-È un'unica pagina HTML autosufficiente: nessuna installazione, nessun account, nessun server. Basta aprire `index.html` in un browser da PC.
+È un'unica pagina HTML autosufficiente: nessuna installazione, nessun account, nessun server, nessuna libreria o font esterno. Basta aprire `index.html` in un browser da PC.
 
 ## Indice
 
 1. [Cos'è un Murdoku](#1-cosè-un-murdoku)
 2. [Avvio](#2-avvio)
-3. [Panoramica dell'interfaccia](#3-panoramica-dellinterfaccia)
-4. [Impostare la griglia](#4-impostare-la-griglia)
-5. [Come si gioca](#5-come-si-gioca)
-6. [Scorciatoie da tastiera](#6-scorciatoie-da-tastiera)
-7. [Undo/Redo](#7-undoredo)
-8. [Evidenziazioni](#8-evidenziazioni)
-9. [Cronometro](#9-cronometro)
-10. [Esporta/Importa](#10-esportaimporta)
-11. [Salvataggio automatico e suoi limiti](#11-salvataggio-automatico-e-suoi-limiti)
-12. [Cambio lingua](#12-cambio-lingua)
-13. [Griglie rettangolari](#13-griglie-rettangolari)
-14. [Domande frequenti](#14-domande-frequenti)
+3. [Caricare un puzzle](#3-caricare-un-puzzle)
+4. [Panoramica dell'interfaccia](#4-panoramica-dellinterfaccia)
+5. [Adattare la griglia alla foto](#5-adattare-la-griglia-alla-foto)
+6. [Come si gioca](#6-come-si-gioca)
+7. [Sospettati, indizi e ritratti](#7-sospettati-indizi-e-ritratti)
+8. [Scorciatoie da tastiera](#8-scorciatoie-da-tastiera)
+9. [Annulla/Ripeti e la gomma](#9-annullaripeti-e-la-gomma)
+10. [Cronometro e chiusura del caso](#10-cronometro-e-chiusura-del-caso)
+11. [Esporta/Importa](#11-esportaimporta)
+12. [Salvataggio automatico e suoi limiti](#12-salvataggio-automatico-e-suoi-limiti)
+13. [Lingua e preferenze](#13-lingua-e-preferenze)
+14. [Dimensioni della griglia e lettere](#14-dimensioni-della-griglia-e-lettere)
+15. [Domande frequenti](#15-domande-frequenti)
 
 ## 1. Cos'è un Murdoku
 
-Un Murdoku è un puzzle logico-deduttivo: su una griglia N×N (o rettangolare), ogni riga e ogni colonna nasconde un'unica lettera "assassino" — esattamente come le torri non attaccanti su una scacchiera, dove una volta piazzata una torre nessun'altra può condividere la sua riga o la sua colonna. Attraverso indizi e deduzioni si restringe il campo finché, per ogni lettera, resta una sola casella possibile: quella diventa la **decisione**.
+Un Murdoku è un puzzle logico-deduttivo: qualcuno è stato ucciso, e ogni sospettato si trova su una sola casella della scena del crimine, con **una persona per riga e una per colonna** — esattamente come le torri non attaccanti su una scacchiera. Leggendo l'indizio di ogni sospettato si restringe il campo finché, per ogni persona, resta una sola casella possibile: quella diventa la **decisione**. L'assassino è chi è rimasto solo con la vittima nella stessa area.
 
 ## 2. Avvio
 
-Apri il file `index.html` con un doppio click, oppure con "Apri con" → il tuo browser preferito. Non serve installare nulla, non serve connessione a internet dopo il primo caricamento (a meno che tu non usi font/risorse esterne — questa app non ne usa).
+Apri `index.html` con un doppio clic, oppure con "Apri con" → il tuo browser preferito. Non serve installare nulla e non serve la connessione: l'app non usa font, script o risorse esterne.
 
-L'app è pensata per l'uso da PC con mouse e tastiera: non c'è un percorso di interazione dedicato al touch.
+L'app è pensata per l'uso da PC con mouse e tastiera. Usa un browser aggiornato (Chrome, Edge, Firefox o Safari): per leggere i PDF ne serve uno abbastanza recente.
 
-## 3. Panoramica dell'interfaccia
+## 3. Caricare un puzzle
 
-Il layout ricalca quello del Murdoku originale: una barra in alto e tre colonne.
+Quando la pagina è vuota, una scheda al centro ti invita a caricare il puzzle. Puoi **trascinare un file in qualunque punto della pagina**, oppure usare **CARICA FOTO O PDF** (lo stesso comando è l'icona con l'immagine in fondo al pannello Strumenti).
 
-- **Barra in alto**: il nome del puzzle (un campo di testo libero che puoi compilare), un badge con le dimensioni della griglia e il numero di sospettati, il cronometro con avvio/pausa e azzeramento, il cambio lingua e il **?** che apre la finestra "Come si gioca".
-- **Pannello sinistro — Sospettati**: una card per ogni lettera valida, con token colorato (la lettera), campo nome facoltativo e spunta verde ✓ quando quella lettera è già stata piazzata come decisione. La vittima (`V`) ha una card rossa dedicata. Sotto: l'interruttore **indizio / decisione**, una barra di avanzamento con le lettere ancora da piazzare e i quattro **simboli nota**.
-- **Centro — il tavolo**: l'immagine di sfondo (facoltativa) con la griglia sovrapposta, più le etichette `R1…Rn` / `C1…Cn` lungo i bordi del riquadro. L'etichetta della riga e della colonna della casella selezionata è evidenziata, e l'intera riga/colonna è tinta leggermente: così il vincolo torre si legge a colpo d'occhio.
-- **Pannello destro — Strumenti**: il grande bottone **✕** (strumento di esclusione), **↖ Solo selezione**, "tieni premuto per evidenziare le caselle vuote", undo/redo, le impostazioni della griglia (righe, colonne, blocca/sblocca), l'immagine di sfondo (carica, **rileva griglia**, rimuovi) e i comandi di sessione (esporta, importa, cancella tutto, come si gioca).
+### Dal PDF (consigliato)
 
-Nella barra in alto una targhetta mostra sempre **cosa scriverà il prossimo clic** ("D · Donna — DECISIONE: clic per piazzare"), e passando sopra una casella ne vedi l'anteprima al suo posto — vale la pena dargli un'occhiata prima di cliccare, perché una decisione non si toglie se non con l'Undo.
+I puzzle stampabili gratuiti di murdoku.com sono PDF. Trascinane uno sulla pagina, oppure premi **LEGGI DAL PDF** sotto il titolo "Sospettati", e in una frazione di secondo l'app:
 
-**I nomi dei sospettati** sono facoltativi e servono solo a te: in un Murdoku vero le iniziali dei sospettati sono in ordine alfabetico (August, Barnaby, Clarence…) e il nome della vittima inizia per V, quindi puoi scrivere nelle card i nomi stampati sul tuo puzzle e leggere la griglia in termini di persone invece che di lettere. I nomi vengono salvati ed esportati insieme al puzzle; non influenzano mai le regole.
+- **disegna la tavola** direttamente dal PDF, la ritaglia e ne trova la griglia;
+- legge **nome e indizio di ogni sospettato**, gli **indizi generali** (numerati come sul foglio) e il **titolo del puzzle**;
+- assegna le **lettere**: la vittima (la riga "*X was murdered!*") è sempre **V**, tutti gli altri prendono A, B, C… in ordine alfabetico — sui fogli originali i nomi cominciano già con A, B, C…, quindi lettera e iniziale coincidono;
+- accende i **ritratti**, scegliendo un uomo o una donna in base al He/She di ogni indizio;
+- porta la griglia a tante righe e colonne quante sono le persone (se ci sono già dei segni, prima te lo chiede).
 
-## 4. Impostare la griglia
+Da sapere:
 
-- **Righe/Colonne**: due campi numerici nel pannello Strumenti a destra, da 2 a 22 ciascuno. Non devono essere uguali: la griglia può essere rettangolare. Cambiare uno dei due valori, dopo conferma, azzera il contenuto della griglia (indizi, decisioni, esclusioni) — non le dimensioni/posizione del riquadro.
-- **Immagine di sfondo** (facoltativa): "Carica immagine" per caricare una foto del puzzle su cui disegnare sopra la griglia; "Rimuovi immagine" per toglierla senza toccare la griglia. Senza immagine, l'app mostra semplicemente una griglia vuota su sfondo neutro.
-- **Riconoscimento automatico**: appena carichi una foto, l'app prova a ricavare da sola **le dimensioni della griglia e la posizione del riquadro**, e le applica. Se la cava anche con una foto da telefono un po' storta, sfocata o con luce sbilanciata, e con margini di pagina larghi. Quando non è sicura non applica nulla e te lo dice — meglio nessuna risposta che una sbagliata, visto che applicarla azzererebbe la griglia. Il bottone **🔍 Rileva griglia** rilancia lo stesso riconoscimento a mano (utile dopo aver raddrizzato o ritagliato di nuovo la foto).
-- **Posizionare/ridimensionare il riquadro griglia**: quando la griglia è **sbloccata** (vedi sotto), puoi trascinare il corpo del riquadro giallo per spostarlo sopra l'immagine, oppure trascinare uno dei quattro angoli per ridimensionarlo, così da farlo coincidere con la griglia reale disegnata nella foto.
-- **Blocca/Sblocca** (bottone 🔒 **Griglia bloccata** / 🔓 **Griglia sbloccata** nel pannello Strumenti): quando è **sbloccata**, puoi spostare/ridimensionare il riquadro ma non modificare le celle, e un banner in cima al tavolo te lo ricorda. Quando è **bloccata**, il riquadro è fisso e puoi cliccare/navigare tra le celle per compilarle. Serve a evitare di spostare accidentalmente la griglia mentre stai giocando.
+- Le scritte sulla tavola (numeri delle buche, nomi delle zone…) sono disegnate con un font di sistema simile, perché i browser non possono caricare i font incorporati nel PDF. Le posizioni sono esatte e il testo resta leggibile.
+- Dopo aver disegnato la tavola, l'app cerca solo una griglia della misura giusta (una riga e una colonna per persona). Se non vede bene le linee, mette la griglia dove il PDF dice che stanno le caselle.
+- Il lettore si aspetta l'impaginazione dei fogli originali: il nome sotto ogni foto segnaletica e l'indizio nella nuvoletta sotto. Un PDF che non è un foglio di Murdoku dà il messaggio "In questo PDF non ho trovato i sospettati" e non cambia nulla.
+- Se trascini **insieme** una foto e il PDF, la tua foto viene usata come tavola e dal PDF arrivano solo i sospettati.
 
-## 5. Come si gioca
+### Da una foto
 
-Puoi lavorare in due modi, del tutto equivalenti: **cliccare** una casella con uno strumento selezionato, oppure muovere la selezione con le **frecce** e digitare. In entrambi i casi la griglia deve essere bloccata.
+Trascina una foto (o uno screenshot) della pagina del puzzle. L'app ricava da sola **quante righe e colonne** ha la griglia, **dove si trova**, **quanto è inclinata** (fino a circa ±5°) e perfino righe e colonne di misure un po' diverse dovute alla prospettiva. Se la cava con una foto scattata a mano dal telefono, con luce sbilanciata e con margini di pagina larghi. Se non è sicura non applica nulla e apre la modalità **Allinea griglia** per sistemarla a mano (vedi sezione 5). Nomi e indizi si possono poi scrivere nelle card dei sospettati.
 
-- **Lettera minuscola → indizio**: annota che quella lettera è *possibile* in quella casella. Più indizi possono coesistere nella stessa casella (es. "potrebbe essere A o C"). Un indizio non è più possibile per una lettera già decisa altrove nella griglia.
-- **Shift+lettera (maiuscola) → decisione**: dichiara che quella lettera è *quella* casella, in modo definitivo. È permesso solo su una casella vuota (senza esclusione X e senza già una decisione) e solo se quella lettera non è già stata decisa altrove. Appena piazzata:
-  - tutti gli indizi di quella lettera vengono rimossi da ogni altra casella della griglia;
-  - ogni altra casella della stessa riga e della stessa colonna viene automaticamente **esclusa (X)** — il "vincolo torre": una lettera per riga, una per colonna.
-  - **Non c'è modo di rimuovere una decisione con un click**: l'unico modo per tornare indietro è l'**Undo**.
-- **`X` → esclusione**: dichiara che nessuna lettera può stare in quella casella. Si attiva/disattiva liberamente (tasto `x`, funziona sia minuscolo che maiuscolo) finché la casella non contiene già una decisione. Impostare `X` su una casella ne svuota anche gli indizi.
-- Se una casella ha già una `X`, non puoi scriverci né un indizio né una decisione: puoi solo togliere la `X` premendo di nuovo `x`.
-- **Simboli nota (tasti `1`–`4`) → annotazione libera**: ▲ ● ■ ★ puoi usarli come preferisci (per esempio "controllata", "impossibile per due motivi", "da rivedere"). Non significano nulla per le regole, uno solo per casella, e ripremendo lo stesso simbolo lo togli. Non si possono mettere su una casella con `X` o con una decisione.
+### Griglia vuota
 
-Decisioni, indizi e simboli nota sono disegnati con il colore del sospettato, lo stesso mostrato sulla sua card: così riconosci una lettera sulla griglia senza doverla leggere.
+"**oppure inizia su una griglia vuota**" nasconde la scheda e ti fa giocare su una griglia semplice (righe e colonne si impostano in **Impostazioni**).
 
-**Inserire con il mouse**: scegli uno strumento — una card sospettato, il bottone ✕, un simbolo nota — e poi clicca una casella: il clic la compila subito. Cliccando di nuovo la stessa casella togli l'indizio, la `X` o il simbolo. Se invece vuoi solo muoverti nella griglia senza scrivere, attiva **↖ Solo selezione**: con quello attivo il clic si limita a spostare la selezione.
+## 4. Panoramica dell'interfaccia
 
-**Quali lettere sono disponibili?** Il numero massimo di decisioni piazzabili in tutta la griglia è `min(righe, colonne)` (il vincolo torre esaurisce prima la dimensione più corta). Le lettere valide sono le prime `min(righe,colonne)-1` lettere dell'alfabeto (a, b, c, ...) più una `v` fissa come ultima lettera; `w/x/y/z` non sono mai lettere di gioco — `x` resta libera per lo strumento di esclusione. Su una griglia rettangolare, alcune caselle resteranno necessariamente senza decisione anche a puzzle risolto: è corretto e atteso.
+Il layout ricalca quello del Murdoku originale: sospettati a sinistra, scena del crimine al centro, strumenti a destra.
 
-## 6. Scorciatoie da tastiera
+- **Pannello sinistro — fascicolo e sospettati**
+  - il logo e il menu della **lingua**;
+  - il **titolo del caso** (modificabile), le dimensioni della griglia e il **cronometro** con il bottone ▶/⏸;
+  - **LEGGI DAL PDF**;
+  - l'interruttore **INDIZIO / DECISIONE**;
+  - una **card per ogni persona**: una grande lettera colorata (o un ritratto, dopo un PDF), il nome e una nuvoletta con l'indizio. La vittima **V** ha un nastro rosso "VITTIMA"; una card riceve il timbro "PIAZZATO" quando quella persona è sulla griglia;
+  - una **barra di avanzamento** con quante persone sono piazzate;
+  - **INDIZI GENERALI**, un riquadro di testo libero per gli indizi che valgono per tutti;
+  - i quattro **simboli nota**.
+- **Il divisore** tra il pannello sinistro e la tavola si può trascinare per ingrandire la tavola (doppio clic per tornare com'era). La larghezza viene ricordata.
+- **Centro — la scena del crimine**: l'immagine della tavola con la griglia sopra, e le etichette `C1…Cn` / `R1…Rn` lungo i bordi (solo i numeri quando le caselle sono piccole). Riga e colonna della casella selezionata sono evidenziate, e un'etichetta diventa verde quando la sua riga/colonna contiene già una decisione. In basso, una barra mostra sempre **cosa scriverà il prossimo clic** (per esempio "A · Anna — INDIZIO — clic = indizio · tieni premuto = decisione").
+- **Pannello destro — Strumenti**: la grande **✕** (esclusione), la **gomma** ("tieni premuto per svuotare tutto"), **ANNULLA / RIPETI**, **SOLO SELEZIONE**, poi **Rileva griglia**, **Allinea griglia**, **Ritaglia e ruota**, **CHIUDI IL CASO**, **COME SI GIOCA**, e quattro icone: carica foto o PDF, esporta, importa, impostazioni.
+- **Impostazioni** (icona a ingranaggio): righe e colonne (2–24), rimuovi la foto, azzera il cronometro, e **Inizia un nuovo caso** (cancella tutto).
+
+## 5. Adattare la griglia alla foto
+
+Il riconoscimento è automatico, ma puoi sempre correggerlo.
+
+- **Rileva griglia** rilancia il riconoscimento sulla foto attuale.
+- **Allinea griglia** passa alla modalità di allineamento (nel frattempo le caselle non si modificano):
+  - trascina il riquadro per spostarlo, un **angolo** per ridimensionarlo, la **manopola rotonda** per ruotarlo;
+  - il pannello in alto ha **RIGHE** e **COLONNE** (− / +), **ROTAZIONE** a passi di 0,1° (tenendo premuto si ripete), **UNIFORMA** (rende di nuovo tutte le righe e colonne della stessa misura) e **FATTO**;
+  - da tastiera: le frecce spostano il riquadro (Shift per passi più grandi), `[` e `]` lo ruotano, Invio o Esc concludono.
+- **Ritaglia e ruota** apre l'editor della foto:
+  - *Ritaglia e ruota*: trascina la cornice e le sue maniglie per ritagliare, ruota di 90°, raddrizza con il cursore (±45°, con i bottoni ± per i ritocchi fini), **✨ Auto** raddrizza e ritaglia da solo attorno alla griglia, **Ripristina** riparte da capo;
+  - *Prospettiva*: trascina i quattro angoli gialli sugli angoli della tavola (oppure lascia che li metta **✨ Trova angoli**), poi **Raddrizza** — utile per le foto scattate di sbieco;
+  - **Foto originale** torna alla foto esattamente com'era stata caricata; **APPLICA** (o Invio) usa il risultato, e la griglia viene ritrovata da capo.
+
+## 6. Come si gioca
+
+**Scegli uno strumento, poi clicca una casella.** Gli strumenti sono: un sospettato (clic sulla sua card, o il tasto della sua lettera), la **✕**, oppure un simbolo nota. L'interruttore **INDIZIO / DECISIONE** decide cosa fa una lettera:
+
+- **Modalità INDIZIO** — clic = **indizio** (una piccola etichetta che vuol dire "questa persona *potrebbe* essere qui"; ce ne possono essere più d'una nella stessa casella). **Tieni premuta una casella per mezzo secondo** per piazzare comunque la persona come **decisione** (mentre tieni premuto si riempie un anello).
+- **Modalità DECISIONE** — clic = **decisione**.
+
+Puoi **trascinare sulle caselle** per mettere lo stesso indizio, la stessa ✕ o lo stesso simbolo su tante caselle in un colpo solo (tutto il tratto è un solo passo di Annulla). Il trascinamento non piazza mai decisioni. Cliccando di nuovo una casella togli quell'indizio, quella ✕ o quel simbolo. Con **SOLO SELEZIONE** attivo, il clic sposta soltanto la selezione. Passando sopra una casella vedi un'anteprima trasparente di cosa scriverà il clic.
+
+Le regole che l'app applica per te:
+
+- Una **decisione** mette la lettera della persona, grande, sulla casella. È permessa solo su una casella senza ✕ e senza altre decisioni, e ogni persona si piazza una volta sola. Appena piazzata:
+  - tutti gli indizi di quella persona spariscono dal resto della griglia;
+  - ogni altra casella della stessa **riga** e della stessa **colonna** riceve una ✕ (la "regola della torre": una persona per riga e per colonna);
+  - **una decisione non si toglie con un clic** — solo **Annulla** la riporta indietro.
+- La **✕** segna una casella dove non può stare nessuno. Si mette e si toglie liberamente, tranne su una casella con una decisione, e svuota indizi e simbolo della casella. Una casella con la ✕ non accetta altro finché non togli la ✕.
+- Non si può scrivere un indizio per una persona già piazzata.
+- I **simboli nota** (▲ ● ■ ★, tasti `1`–`4`) sono annotazioni libere — "controllata", "da rivedere"… Non significano nulla per le regole, uno per casella, e non si mettono su una casella con ✕ o con una decisione.
+
+Indizi, decisioni e simboli usano il colore di ogni persona, lo stesso mostrato sulla sua card. **Tenendo premuta la card di un sospettato** si evidenziano tutte le caselle dove compare la sua lettera.
+
+## 7. Sospettati, indizi e ritratti
+
+Ogni card ha un campo per il nome e una nuvoletta per l'indizio in cui puoi scrivere (da un PDF si compilano da soli). Gli indizi lunghi passano a un corpo più piccolo e la nuvoletta si allunga invece di tagliare il testo. Il riquadro **INDIZI GENERALI** sotto le card cresce con il testo.
+
+I ritratti sono **spenti** di default: ogni card mostra la sua lettera grande. Si accendono quando i sospettati arrivano da un PDF, scegliendo un uomo o una donna in base al He/She dell'indizio — se modifichi l'indizio da "She" a "He", cambia anche il ritratto.
+
+Nomi, indizi e titolo fanno parte del caso (vengono salvati ed esportati) ma non influenzano mai le regole, e scriverli non crea mai un passo di Annulla.
+
+## 8. Scorciatoie da tastiera
 
 | Tasto | Effetto |
 |---|---|
 | Frecce | Sposta la casella selezionata |
-| Lettera minuscola | Indizio nella casella selezionata |
-| Shift + lettera | Decisione nella casella selezionata |
-| `x` | Attiva/disattiva l'esclusione |
-| `1` – `4` | Applica/togli un simbolo nota |
-| Ctrl+Z | Undo |
-| Ctrl+Y (o Ctrl+Shift+Z) | Redo |
+| Lettera (`a`…) | Indizio per quella persona nella casella selezionata |
+| Shift + lettera | Decisione per quella persona nella casella selezionata |
+| `x` | Mette/toglie la ✕ nella casella selezionata |
+| `1` – `4` | Mette/toglie un simbolo nota |
+| Ctrl/Cmd + Z | Annulla |
+| Ctrl/Cmd + Y, oppure Ctrl/Cmd + Shift + Z | Ripeti |
+| Esc | Chiude la finestra aperta |
+| Durante l'allineamento: frecce / `[` `]` | Sposta il riquadro / lo ruota (Shift = passi più grandi); Invio o Esc concludono |
 
-Le scorciatoie funzionano solo quando la griglia è **bloccata** e il focus non è su un campo di testo (righe/colonne, nome del puzzle, nomi dei sospettati) — dentro quei campi Ctrl+Z resta l'undo del testo del browser.
+Le scorciatoie non scattano mentre scrivi in un campo di testo (titolo, nomi, indizi, indizi generali): lì Ctrl+Z è l'annulla del campo stesso.
 
-## 7. Undo/Redo
+## 9. Annulla/Ripeti e la gomma
 
-Ogni modifica (X, indizio, decisione, spostamento/ridimensionamento del riquadro, cambio dimensioni, cancella tutto) viene salvata come istantanea nella cronologia. I bottoni **↶ Undo** / **↷ Redo** nel pannello Strumenti (o Ctrl+Z / Ctrl+Y) scorrono avanti e indietro tra queste istantanee. Il nome del puzzle e i nomi dei sospettati sono volutamente esclusi dalla cronologia: scrivere un nome non crea mai un passo di undo.
+Ogni modifica alla griglia — ✕, indizi, decisioni, simboli, un tratto trascinato, spostamento/ridimensionamento/rotazione del riquadro, cambio di dimensioni, svuotamento — diventa un passo della cronologia. **ANNULLA** e **RIPETI** (o Ctrl+Z / Ctrl+Y) la percorrono. La cronologia vive solo in memoria e **si perde ricaricando la pagina**.
 
-La cronologia vive solo in memoria: **si perde ricaricando la pagina** (a differenza dello stato della griglia, vedi sezione successiva). "Cancella tutto" azzera anche la cronologia: dopo, non è più possibile tornare a prima della cancellazione.
+La **gomma** svuota tutte le caselle (✕, indizi, decisioni, simboli) se la **tieni premuta per circa un secondo e mezzo** — un riempimento mostra quanto manca. Foto, posizione della griglia, nomi, indizi e cronometro restano, e **Annulla** riporta indietro le caselle.
 
-## 8. Evidenziazioni
+## 10. Cronometro e chiusura del caso
 
-Due bottoni funzionano "tieni premuto": mostrano un'evidenziazione temporanea sulla griglia solo mentre il tasto del mouse resta premuto, e la rimuovono al rilascio (anche se il rilascio avviene fuori dal bottone).
+Il cronometro parte da solo alla tua prima mossa sulla griglia. Il bottone ▶/⏸ accanto al titolo lo mette in pausa e lo fa ripartire; **Azzera cronometro** è nelle Impostazioni.
 
-- **Card dei sospettati** nel pannello di sinistra: tenerne premuta una evidenzia tutte le caselle dove quella lettera è presente come indizio o decisione.
-- **Il bottone 👁** nel pannello Strumenti: evidenzia tutte le caselle ancora senza `X` e senza decisione (gli indizi non contano — una casella con soli indizi è ancora considerata "vuota" a questo scopo).
+Quando tutti sono piazzati, **CHIUDI IL CASO** diventa attivo: ferma il cronometro e mostra il timbro "CASO CHIUSO" con tutti i sospettati e il tuo tempo (e un po' di coriandoli). L'app non conosce la soluzione: chiudere il caso non ti dice se hai indovinato — controlla con la soluzione del puzzle. **CONTINUA A GUARDARE** torna alla griglia.
 
-## 9. Cronometro
+## 11. Esporta/Importa
 
-Misura il tempo di risoluzione. Parte automaticamente alla prima interazione con la griglia (non serve premere "Avvia"). I controlli nella barra in alto:
+- **Esporta** chiede un nome (di default il titolo del caso) e scarica un file `.json` con tutto il caso: dimensioni e posizione della griglia, caselle, foto, titolo, nomi, indizi, indizi generali e ritratti. Il cronometro e la cronologia di Annulla non sono inclusi.
+- **Importa** carica un file di questo tipo, **sostituendo** il caso corrente dopo conferma, e azzera il cronometro. Trascinare un file `.json` sulla pagina fa lo stesso.
 
-- **▶ Avvia / ⏸ Pausa**: avvia o metti in pausa manualmente.
-- **⟲ Azzera**: azzera il tempo accumulato (senza fermare il cronometro se era in marcia).
+## 12. Salvataggio automatico e suoi limiti
 
-Il tempo del cronometro viene salvato insieme allo stato della griglia (vedi sezione 11), ma **non viene incluso** quando esporti su file.
+Il caso in corso viene salvato automaticamente mentre lavori, ma il salvataggio è **legato alla scheda del browser** (tecnicamente `sessionStorage`, non `localStorage`):
 
-## 10. Esporta/Importa
+- **Ricaricare la pagina (F5) nella stessa scheda**: tutto resta esattamente come lo hai lasciato.
+- **Aprire una nuova scheda o finestra**, anche sullo stesso file: parte vuota — anche se un'altra scheda ha ancora del lavoro in corso.
+- **Chiudere la scheda o il browser**: il lavoro va perso, a meno che tu non l'abbia esportato.
 
-- **Esporta**: chiede un nome (già precompilato con il nome del puzzle, se lo hai impostato), poi scarica un file `.json` con lo stato completo (dimensioni, immagine, contenuto celle, nome del puzzle, nomi dei sospettati) — non il tempo del cronometro né la cronologia undo. Usalo per salvare un puzzle su cui non stai più lavorando, o per condividerlo.
-- **Importa**: carica un file `.json` precedentemente esportato, **sovrascrivendo** (dopo conferma) la sessione di lavoro corrente. Azzera anche il cronometro.
+Il browser concede a questo salvataggio qualche megabyte. Una tavola disegnata da un PDF ci sta tranquillamente; una foto molto grande potrebbe non starci, e l'app te lo dice ("Spazio esaurito"). Per conservare un caso o passare da un caso all'altro, usa **Esporta**.
 
-## 11. Salvataggio automatico e suoi limiti
+## 13. Lingua e preferenze
 
-L'app salva automaticamente il lavoro in corso (dimensioni, immagine, contenuto celle, nome del puzzle, nomi dei sospettati, cronometro) mentre lavori, senza bisogno di premere nulla. **Attenzione a un comportamento voluto ma non ovvio**: questo salvataggio è legato alla singola scheda del browser (tecnicamente: `sessionStorage`, non `localStorage`).
+L'interfaccia parte in **inglese**; il menu in cima al pannello sinistro passa all'**italiano**. La lingua e la larghezza del pannello sinistro vengono ricordate in questo browser e sono indipendenti dal salvataggio del caso.
 
-- **Premere F5 / ricaricare la pagina nella stessa scheda**: il lavoro resta, esattamente come lo hai lasciato.
-- **Aprire una nuova scheda o finestra** (anche sullo stesso identico file): parte da zero, con una griglia vuota — anche se un'altra scheda ha ancora del lavoro in corso.
-- **Chiudere la scheda/il browser**: il lavoro va perso, a meno che tu non l'abbia esportato su file con "Esporta" prima di chiudere.
+Se il sistema chiede di ridurre le animazioni, quelle decorative vengono spente (resta il riempimento dei gesti "tieni premuto", perché mostra quanto manca).
 
-Se vuoi conservare un puzzle a lungo termine, o passare da un puzzle all'altro, usa sempre **Esporta**.
+## 14. Dimensioni della griglia e lettere
 
-## 12. Cambio lingua
+Le griglie vanno da 2×2 a **24×24**. Il numero di persone è `min(righe, colonne)`: la vittima è sempre **V** e gli altri prendono le lettere **A, B, C…** in ordine. Si saltano **V** (la vittima) e **X** (il tasto dell'esclusione), quindi dopo la **U** vengono **W** e **Y**: un puzzle da 24 persone usa A…U, W, Y e V.
 
-L'interfaccia parte in **inglese**. Il bottone **EN**/**IT** nella barra in alto la alterna tra inglese e italiano; la scelta viene ricordata (in questo browser, su questo computer) e riproposta ad ogni apertura successiva — è indipendente dal salvataggio del puzzle descritto sopra.
+Righe e colonne possono essere diverse. Su una griglia rettangolare alcune caselle del lato più lungo restano per forza senza decisione anche a puzzle risolto: è normale, non un errore.
 
-## 13. Griglie rettangolari
+## 15. Domande frequenti
 
-Righe e colonne possono differire. In questo caso il numero di lettere/decisioni disponibili resta `min(righe, colonne)`: la dimensione più corta si esaurisce prima per il vincolo torre, quindi alcune caselle della dimensione più lunga restano necessariamente senza decisione anche a puzzle completamente risolto. È il comportamento corretto, non un bug.
+**Ho chiuso la scheda e ho perso il lavoro. Si può recuperare?**
+No, a meno che tu non l'avessi esportato. Vedi la sezione 12: esporta se un caso richiede più sessioni.
 
-## 14. Domande frequenti
+**Ho piazzato una decisione per errore. Come la tolgo?**
+Usa Annulla (Ctrl+Z o il bottone) finché non torni a prima di quella decisione. Con un clic non si toglie.
 
-**Ho chiuso la scheda e ho perso tutto il lavoro. Come lo recupero?**
-Non è recuperabile se non l'avevi esportato su file. Vedi la sezione 11: esporta regolarmente se il puzzle richiede più sessioni.
+**Perché non riesco a scrivere in una casella?**
+Ha una ✕ (toglila prima), contiene già una decisione, oppure quella persona è già stata piazzata altrove. Un messaggio in cima alla tavola dice quale dei casi.
 
-**Ho piazzato una decisione per errore, come la tolgo?**
-Non si può togliere con un click. Usa Undo (Ctrl+Z o il bottone nel pannello Strumenti) finché non torni allo stato prima di quella decisione.
+**La griglia non combacia con la foto.**
+Usa **Allinea griglia** per spostarla, ridimensionarla e ruotarla a mano, oppure **Ritaglia e ruota** per raddrizzare la foto (la modalità *Prospettiva* sistema le foto scattate di sbieco). Dopo aver applicato, la griglia viene ritrovata da capo.
 
-**Perché non riesco a scrivere un indizio o una decisione in una casella?**
-Controlla se quella casella ha già una `X` (in tal caso puoi solo togliere la `X`), se ha già una decisione, o se quella lettera è già stata decisa altrove nella griglia — in ognuno di questi casi un messaggio in basso spiega il motivo.
+**Il mio PDF non viene riconosciuto.**
+Il lettore si aspetta l'impaginazione dei fogli originali di Murdoku. Puoi comunque usarlo come foto: fai uno screenshot della tavola e trascinalo, poi scrivi nomi e indizi.
 
-**Perché alcune lettere restano sempre "da piazzare" anche a griglia completa?**
-Solo su griglie rettangolari: è normale, vedi la sezione 13.
+**Un sospettato ha un nome che inizia per X.**
+La X è riservata al tasto dell'esclusione, quindi quella persona prende la lettera libera successiva (Y). La card mostra comunque il suo nome.
+
+**Perché alcune persone restano "da piazzare" anche a griglia piena?**
+Solo sulle griglie rettangolari: vedi la sezione 14.
