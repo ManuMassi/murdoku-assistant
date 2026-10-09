@@ -129,6 +129,136 @@
   .pdf-btn:hover{background:var(--btn-hi);color:#fff;}
   .pdf-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--btn-shadow);}
   .pdf-btn.busy{pointer-events:none;opacity:.6;}
+  .head-tools{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:9px;}
+  .head-tools .pdf-btn{margin:0;}
+  .view-switch{display:flex;gap:2px;padding:2px;background:#29253a;border:2px solid #49435f;border-radius:11px;}
+  .view-switch button{
+    width:30px;height:26px;display:grid;place-items:center;padding:0;border:none;border-radius:8px;
+    background:none;color:var(--muted);transition:background .15s,color .15s;
+  }
+  .view-switch button svg{width:16px;height:16px;}
+  .view-switch button:hover{color:#fff;background:rgba(255,255,255,.07);}
+  .view-switch button.toggled{background:var(--btn-hi);color:#fff;}
+
+  /* ---------- vista a elenco: una riga per sospettato (griglie grandi) ---------- */
+  #app[data-view="list"] #leftPanel{padding:14px 16px 16px;gap:9px;}
+  #app[data-view="list"] .suspects-head{margin-top:2px;}
+  #app[data-view="list"] .suspects-head p,
+  #app[data-view="list"] .byline{display:none;}
+  #app[data-view="list"] .logo{font-size:28px;}
+  #app[data-view="list"] #langSelect{font-size:13px;padding:6px 30px 6px 11px;border-radius:11px;}
+  #app[data-view="list"] #puzzleTitle{font-size:17px;}
+  #app[data-view="list"] #dimsLabel{font-size:15px;}
+  #app[data-view="list"] .suspects-head h2{font-size:19px;}
+  #app[data-view="list"] #suspectList{grid-template-columns:1fr;gap:5px;}
+  #app[data-view="list"] .suspect{
+    display:grid;grid-template-columns:34px minmax(0,1fr);column-gap:9px;align-items:start;
+    padding:5px 9px 5px 5px;border-radius:11px;background:var(--card);
+    border:2px solid rgba(255,255,255,.07);box-shadow:0 3px 0 rgba(0,0,0,.3);
+    transition:border-color .2s,box-shadow .2s;
+  }
+  #app[data-view="list"] .suspect .portrait{grid-row:1 / span 2;width:34px;border-width:2px;border-radius:7px;box-shadow:0 2px 0 rgba(0,0,0,.35);}
+  #app[data-view="list"] .suspect .portrait.letter{font-size:21px;}
+  #app[data-view="list"] .suspect .badge{top:auto;bottom:2px;left:28px;width:18px;height:18px;border-width:2px;font-size:9px;}
+  #app[data-view="list"] .suspect .nameplate{grid-column:2;margin:0;width:auto;background:none;box-shadow:none;padding:0;}
+  #app[data-view="list"] .suspect .nameplate input{text-align:left;font-size:14.5px;line-height:1.2;padding-right:64px;}
+  #app[data-view="list"] .suspect .cluebox{grid-column:2;margin:1px 0 0;width:auto;padding:0;border:none;box-shadow:none;background:none !important;}
+  #app[data-view="list"] .suspect .cluebox textarea{text-align:left;line-height:1.3;}
+  #app[data-view="list"] .suspect .stamp{top:7px;left:auto;right:10px;transform:rotate(-5deg);font-size:9px;padding:2px 5px 1px;border-width:2px;}
+  #app[data-view="list"] .suspect.decided .stamp{animation:none;}
+  #app[data-view="list"] .suspect.victim .ribbon{top:7px;right:10px;transform:none;font-size:8px;padding:2px 5px;border-width:2px;box-shadow:none;}
+  #app[data-view="list"] .suspect.victim .stamp{right:64px;}
+  #app[data-view="list"] .suspect:hover .portrait,
+  #app[data-view="list"] .suspect.active .portrait{transform:none;}
+  #app[data-view="list"] .suspect.active{border-color:var(--accent);box-shadow:0 3px 0 rgba(0,0,0,.3),0 0 18px rgba(255,209,102,.3);}
+  #app[data-view="list"] .suspect.active .cluebox{box-shadow:none;}
+  #app[data-view="list"] .notes .label{display:none;}
+  #app[data-view="list"] #markRow{gap:9px;}
+  #app[data-view="list"] .mark-btn{width:52px;height:52px;padding:10px;}
+
+  /* ---------- tavola in primo piano: il pannello si riduce a una colonna di lettere ---------- */
+  .rail-head{display:none;flex-direction:column;align-items:center;gap:7px;}
+  #btnRailGeneral{font-size:15px;color:#f5c533;}
+  #app[data-view="rail"] .rail-head{display:flex;}
+  #app[data-view="rail"] #splitter{display:none;}
+  #app[data-view="rail"] #leftPanel{padding:12px 9px 14px;gap:9px;}
+  #app[data-view="rail"] #leftPanel > .brand-row,
+  #app[data-view="rail"] #leftPanel > .case-row,
+  #app[data-view="rail"] #leftPanel > .suspects-head,
+  #app[data-view="rail"] #leftPanel > #progressWrap,
+  #app[data-view="rail"] #leftPanel > .general,
+  #app[data-view="rail"] .notes .label{display:none;}
+  #app[data-view="rail"] #modeSwitch{width:100%;grid-template-columns:1fr;margin:0;padding:3px;border-radius:12px;}
+  #app[data-view="rail"] #modeSwitch .thumb{top:3px;left:3px;right:3px;bottom:auto;width:auto;height:calc(50% - 3px);border-radius:9px;}
+  #app[data-view="rail"] #modeSwitch.pen .thumb{transform:translateY(100%);}
+  #app[data-view="rail"] #modeSwitch button{padding:7px 0;font-size:9px;letter-spacing:.03em;}
+  #app[data-view="rail"] #suspectList{grid-template-columns:1fr 1fr;gap:8px 6px;margin:0;}
+  #app[data-view="rail"] .suspect .nameplate,
+  #app[data-view="rail"] .suspect .cluebox,
+  #app[data-view="rail"] .suspect .ribbon{display:none;}
+  #app[data-view="rail"] .suspect .portrait{width:100%;border-width:2px;border-radius:8px;box-shadow:0 2px 0 rgba(0,0,0,.35);}
+  #app[data-view="rail"] .suspect .portrait.letter{font-size:23px;}
+  #app[data-view="rail"] .suspect .badge{top:-5px;left:-5px;width:18px;height:18px;border-width:2px;font-size:9px;}
+  #app[data-view="rail"] .suspect.victim .portrait{box-shadow:0 0 0 3px var(--danger),0 2px 0 rgba(0,0,0,.35);}
+  #app[data-view="rail"] .suspect .stamp{
+    top:auto;bottom:-5px;left:auto;right:-5px;transform:none;width:18px;height:18px;padding:0;
+    border-radius:50%;font-size:0;display:grid;place-items:center;background:var(--ok);border:2px solid var(--outline);
+  }
+  #app[data-view="rail"] .suspect .stamp::before{content:"✓";font-size:11px;color:#0d2715;}
+  #app[data-view="rail"] .suspect.decided .stamp{animation:none;}
+  #app[data-view="rail"] .suspect:hover .portrait{transform:scale(1.06);}
+  #app[data-view="rail"] .suspect.active .portrait{transform:scale(1.06);box-shadow:0 0 0 3px var(--accent),0 2px 0 rgba(0,0,0,.35);}
+  #app[data-view="rail"] #markRow{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  #app[data-view="rail"] .mark-btn{width:100%;height:auto;aspect-ratio:1;padding:8px;border-width:2px;border-radius:10px;}
+  #app[data-view="rail"] .mark-btn .key{display:none;}
+  #railTip{
+    position:fixed;z-index:320;left:0;top:0;max-width:300px;transform:translateY(-50%);pointer-events:none;
+    background:#16131d;color:#fff;border:2px solid #4e4864;border-radius:12px;padding:9px 12px;
+    font-size:13px;line-height:1.4;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transition:opacity .12s;
+  }
+  #railTip.show{opacity:1;}
+
+  /* colore di una lettera: si apre tenendo premuta la lettera nel pannello */
+  #colorPop{
+    position:fixed;z-index:330;left:0;top:0;width:262px;display:none;
+    background:#16131d;border:2px solid #4e4864;border-radius:16px;padding:12px;
+    box-shadow:0 14px 40px rgba(0,0,0,.55);
+  }
+  #colorPop.show{display:block;animation:floatIn .22s var(--ease-pop) both;}
+  .cp-head{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+  .cp-token{flex:none;width:32px;height:32px;border-radius:8px;overflow:hidden;border:2px solid var(--outline);font-size:18px;}
+  .cp-title{font-family:var(--font-hand);font-size:17px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cp-swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;}
+  .cp-swatches button{
+    position:relative;aspect-ratio:1;padding:0;border-radius:8px;border:2px solid var(--outline);
+    cursor:pointer;transition:transform .12s var(--ease-pop),box-shadow .12s;
+  }
+  .cp-swatches button:hover{transform:scale(1.12);}
+  .cp-swatches button.current{box-shadow:0 0 0 3px #fff;}
+  .cp-swatches button span{position:absolute;right:3px;bottom:1px;font-size:9px;line-height:1;color:var(--outline);opacity:.8;}
+  .cp-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:11px;}
+  .cp-custom{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-soft);cursor:pointer;}
+  .cp-custom input{width:32px;height:26px;padding:0;border:2px solid #4e4864;border-radius:7px;background:none;cursor:pointer;}
+  .cp-reset{background:none;border:2px solid #4e4864;border-radius:9px;color:var(--ink-soft);font-size:11.5px;padding:5px 11px;}
+  .cp-reset:hover{color:#fff;border-color:#6c6589;}
+  .suspect .portrait.color-hold{animation:colorHold .55s linear both;}
+  @keyframes colorHold{to{box-shadow:0 0 0 4px #fff,0 0 22px rgba(255,255,255,.55);}}
+  #suspectList.static .suspect{animation:none;}
+  #railTip b{display:block;font-weight:normal;font-family:var(--font-hand);font-size:16px;margin-bottom:2px;}
+  #railTip .muted{color:var(--muted);}
+
+  /* schermo intero: in un browser schede e barra dell'indirizzo tolgono altezza alla tavola */
+  .stage-fs{
+    position:absolute;top:12px;right:12px;z-index:14;width:34px;height:34px;padding:0;display:grid;place-items:center;
+    background:var(--btn);border:2px solid var(--btn-line);border-radius:11px;box-shadow:0 3px 0 var(--btn-shadow);
+    color:var(--ink-soft);transition:transform .1s,background .15s,color .15s;
+  }
+  .stage-fs svg{width:17px;height:17px;}
+  .stage-fs:hover{background:var(--btn-hi);color:#fff;}
+  .stage-fs:active{transform:translateY(2px);box-shadow:0 1px 0 var(--btn-shadow);}
+  .stage-fs .fs-out,.stage-fs.on .fs-in{display:none;}
+  .stage-fs.on .fs-out{display:inline;}
+  .stage-fs[hidden]{display:none;}
 
   #modeSwitch{
     position:relative;display:grid;grid-template-columns:1fr 1fr;
@@ -273,7 +403,7 @@
   #btnX svg{width:50px;height:50px;transition:transform .35s var(--ease-pop);}
   #btnX:hover svg{transform:rotate(90deg) scale(1.06);}
   #btnEraser{
-    height:96px;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+    min-height:96px;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
     user-select:none;-webkit-user-select:none;touch-action:none;
   }
   #btnEraser .fill{
@@ -283,11 +413,14 @@
   }
   #btnEraser.holding .fill{transform:scaleX(1);transition:transform var(--hold,1800ms) linear;}
   #btnEraser > svg,#btnEraser > .cap{position:relative;z-index:1;}
-  #btnEraser svg{width:46px;height:46px;}
+  #btnEraser svg{width:46px;height:46px;flex:none;}
   #btnEraser.holding svg{animation:wiggle .26s ease-in-out infinite;}
-  #btnEraser .cap{font-size:11.5px;letter-spacing:.01em;text-transform:none;color:var(--ink-soft);}
+  #btnEraser .cap{font-size:11.5px;line-height:1.25;letter-spacing:.01em;text-transform:none;color:var(--ink-soft);}
   #btnEraser.nope{animation:shake .4s ease-in-out;}
   #btnEraser.boom{animation:boom .5s var(--ease-pop);}
+  .cell.aer{animation:erasePulse .38s ease-out;}
+  @keyframes erasePulse{from{box-shadow:inset 0 0 0 999px rgba(255,255,255,.42)}to{box-shadow:inset 0 0 0 999px rgba(255,255,255,0)}}
+  .ghost.ghost-erase{opacity:.55;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .row2 .tbtn{height:56px;padding:0 6px;font-size:13px;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;}
   .row2 .tbtn svg{flex:0 0 auto;width:15px;height:15px;}
@@ -725,6 +858,10 @@
 
   <!-- ================= LEFT: case file + suspects ================= -->
   <aside id="leftPanel">
+    <div class="rail-head">
+      <button type="button" id="btnRailOpen" class="mini" data-i18n-title="railOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l6 6-6 6M13 6l6 6-6 6"/></svg></button>
+      <button type="button" id="btnRailGeneral" class="mini" aria-label="★">★</button>
+    </div>
     <div class="brand-row">
       <div class="logo" aria-label="Murdoku">MURD<span class="lens" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M30 72 L13 93" stroke="#14111a" stroke-width="22" stroke-linecap="round"/><path d="M30 72 L13 93" stroke="#e8505b" stroke-width="11" stroke-linecap="round"/><circle cx="56" cy="45" r="35" fill="#4fb6d8" stroke="#14111a" stroke-width="9"/><circle cx="56" cy="45" r="20" fill="#e2f6fc" stroke="#14111a" stroke-width="5"/><path d="M45 36 a14 14 0 0 1 12 -6" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/></svg></span>KU</div>
       <span class="byline" data-i18n="byline">assistant</span>
@@ -748,7 +885,14 @@
     <div class="suspects-head">
       <h2 data-i18n="suspectsTitle">Suspects</h2>
       <p data-i18n="suspectsHint">click to select, hold on grid to place</p>
-      <button type="button" id="btnPdf" class="pdf-btn" data-i18n-title="pdfBtnTitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg><span data-i18n="pdfBtn">READ FROM PDF</span></button>
+      <div class="head-tools">
+        <button type="button" id="btnPdf" class="pdf-btn" data-i18n-title="pdfBtnTitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg><span data-i18n="pdfBtn">READ FROM PDF</span></button>
+        <div class="view-switch" role="group">
+          <button type="button" data-view="cards" data-i18n-title="viewCards"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button>
+          <button type="button" data-view="list" data-i18n-title="viewList"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="4.5" width="4" height="4" rx="1"/><rect x="3.5" y="15.5" width="4" height="4" rx="1"/><path d="M11 6h9M11 9h6M11 17h9M11 20h6" stroke-width="1.9"/></svg></button>
+          <button type="button" data-view="rail" data-i18n-title="viewRail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16"/><path d="M16 9l-3 3 3 3"/></svg></button>
+        </div>
+      </div>
     </div>
     <div id="modeSwitch">
       <span class="thumb"></span>
@@ -775,6 +919,7 @@
 
   <!-- ================= CENTER: the board ================= -->
   <main id="stage">
+    <button type="button" id="btnFullscreen" class="stage-fs" data-i18n-title="fullscreenTitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="fs-in" d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4"/><path class="fs-out" d="M9 4v4a1 1 0 0 1-1 1H4M20 9h-4a1 1 0 0 1-1-1V4M15 20v-4a1 1 0 0 1 1-1h4M4 15h4a1 1 0 0 1 1 1v4"/></svg></button>
     <div id="alignPanel">
       <div class="ap-msg" data-i18n="alignMsg">Drag the box onto the printed grid · corners resize · the round knob rotates</div>
       <div class="ap-row">
@@ -824,7 +969,7 @@
     <button id="btnEraser" class="tbtn" data-i18n-title="eraserTitle">
       <span class="fill"></span>
       <svg viewBox="0 0 100 100" aria-hidden="true"><g transform="rotate(-38 50 50)"><rect x="38" y="33" width="50" height="34" rx="8" fill="#fff" stroke="#14111a" stroke-width="6"/><rect x="12" y="33" width="34" height="34" rx="8" fill="#43a8f5" stroke="#14111a" stroke-width="6"/></g></svg>
-      <span class="cap" id="eraserCap" data-i18n="eraserCap">hold to clear all squares</span>
+      <span class="cap" id="eraserCap" data-i18n="eraserCap">click: eraser · hold: clear all</span>
     </button>
     <div class="row2">
       <button id="btnUndo" class="tbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span data-i18n="btnUndo">UNDO</span></button>
@@ -845,7 +990,7 @@
       <button id="btnImport" class="tbtn icon" data-i18n-title="importTitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V9"/><path d="M7 14l5-5 5 5"/><path d="M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg></button>
       <button id="btnSettings" class="tbtn icon" data-i18n-title="settingsTitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7"/><path d="M12 2.5v2.5M12 19v2.5M21.5 12H19M5 12H2.5M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8M18.7 18.7l-1.8-1.8M7.1 7.1L5.3 5.3"/></svg></button>
     </div>
-    <input type="file" id="fileInput" accept="image/*,application/pdf,.pdf">
+    <input type="file" id="fileInput" accept="image/*,.heic,.heif,.hif,.tif,.tiff,.avif,.dng,.jxl,application/pdf,.pdf">
     <input type="file" id="importInput" accept="application/json,.json">
     <input type="file" id="pdfInput" accept="application/pdf,.pdf">
   </aside>
@@ -954,6 +1099,15 @@
 
   <div id="dropOverlay"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><span data-i18n="dropHint">Drop the photo or the puzzle PDF</span></div></div>
   <div id="toast"></div>
+  <div id="railTip"></div>
+  <div id="colorPop" role="dialog">
+    <div class="cp-head"><span class="cp-token" id="cpToken"></span><span class="cp-title" id="cpTitle"></span></div>
+    <div class="cp-swatches" id="cpSwatches"></div>
+    <div class="cp-row">
+      <label class="cp-custom"><input type="color" id="cpCustom"><span data-i18n="cpCustom">Custom…</span></label>
+      <button type="button" class="cp-reset" id="cpReset" data-i18n="cpReset">Default</button>
+    </div>
+  </div>
   <div id="confetti"></div>
 </div>
 
@@ -972,6 +1126,7 @@
   let puzzleTitle = '';
   let suspectNames = {};                // letter -> name typed by the user
   let suspectClues = {};                // letter -> clue text typed by the user
+  let customColors = {};                // letter -> colore scelto dall'utente (tieni premuto sulla lettera)
   let generalClues = '';                // indizi generali (valgono per tutti)
   // I ritratti dei sospettati sono spenti di default: le card mostrano la lettera
   // grande. Si accendono quando i sospettati arrivano dal PDF del puzzle, con un
@@ -1035,6 +1190,7 @@
   const PAUSE_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4.5" width="4.2" height="15" rx="1.2" fill="currentColor"/><rect x="13.8" y="4.5" width="4.2" height="15" rx="1.2" fill="currentColor"/></svg>';
 
   // simboli nota: annotazione libera dell'utente, senza significato per le regole
+  const ERASER_SVG = '<svg viewBox="0 0 100 100"><g transform="rotate(-38 50 50)"><rect x="38" y="33" width="50" height="34" rx="8" fill="#fff" stroke="#14111a" stroke-width="6"/><rect x="12" y="33" width="34" height="34" rx="8" fill="#43a8f5" stroke="#14111a" stroke-width="6"/></g></svg>';
   const MARKS = [
     {id:'tri',  key:'1', svg:'<svg viewBox="0 0 100 100"><path d="M50 13 L89 83 H11 Z" fill="#e8483f" stroke="#14111a" stroke-width="8" stroke-linejoin="round"/></svg>'},
     {id:'cir',  key:'2', svg:'<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="35" fill="#3d8ee8" stroke="#14111a" stroke-width="8"/></svg>'},
@@ -1047,16 +1203,21 @@
   // ---------- sospettati: colori e ritratti ----------
   // colore stabile per lettera (indicizzato sull'alfabeto, non sulla posizione
   // nella lista): la stessa lettera mantiene il suo colore anche cambiando griglia.
+  // Le lettere vicine devono distinguersi subito: le prime 12 (i puzzle normali arrivano a
+  // 8-11 sospettati) sono tinte "da categoria" ben separate, le altre sono state scelte
+  // una alla volta come le più lontane (ΔE2000) da quelle già prese. Tutte reggono la
+  // lettera scura sopra (contrasto ≥ 6,5) e stanno lontane dal rosa della vittima.
   const PORTRAIT_COLORS = [
-    '#7fd0c5','#f2b39b','#91d47f','#f1e2a3','#8ea3f2','#a7e1dd','#9ed98f','#f3d58b',
-    '#a9d7ec','#d7b3f2','#f5c0d0','#c4e48c','#f7c79a','#9fc3f5','#bfe6c6','#e9b8e8',
-    '#f2d0a7','#9fdde8','#d9e89a','#f0b5b5','#b5c9f0',
+    '#5ea8f2','#f59e4c','#6ccf6a','#b48cf2','#f2d24f','#f58cc6','#45cfc0','#c99a6e',
+    '#b5dc4c','#8c98f7','#f5b39a','#9db4c8','#e3d0ab','#9ae2f4','#9af4c4','#d0e3ab',
+    '#d4abe3','#47bfeb','#abe3d8','#ccb166','#e97ef1',
     // indici 21-25 = v (vittima, colore a parte), w, x (mai usata), y, z
-    '#f28f8f','#b39ddb','#cccccc','#80cbc4','#ffab91'
+    '#f28f8f','#f1f17e','#cccccc','#abb2e3','#ffab91'
   ];
   const VICTIM_COLOR = '#f28f8f';
 
   function letterColor(letter){
+    if(customColors[letter]) return customColors[letter];
     if(letter === 'v') return VICTIM_COLOR;
     return PORTRAIT_COLORS[(letter.charCodeAt(0) - 97) % PORTRAIT_COLORS.length];
   }
@@ -1070,7 +1231,7 @@
   // il riquadro dell'indizio usa una versione scura e smorzata del colore del
   // ritratto, come le card del gioco originale
   function cardColor(letter){
-    if(letter === 'v') return '#7c3a42';
+    if(letter === 'v' && !customColors.v) return '#7c3a42';
     return mixHex(letterColor(letter), '#2c2838', .64);
   }
 
@@ -1095,7 +1256,7 @@
   const avatarCache = {};
 
   function avatarSVG(letter, gender){
-    const key = letter + (gender || '');
+    const key = letter + (gender || '') + letterColor(letter);
     if(avatarCache[key]) return avatarCache[key];
     const i = letter === 'v' ? 21 : letter.charCodeAt(0) - 97;
     const pool = gender === 'f' ? STYLES_F : gender === 'm' ? STYLES_M : STYLES;
@@ -1182,9 +1343,15 @@
       modePen: 'DECISION',
       noteSymbols: 'NOTE SYMBOLS',
       toolsTitle: 'Tools',
-      eraserCap: 'hold to clear all squares',
+      eraserCap: 'click: eraser · hold: clear all',
       eraserHolding: 'keep holding…',
-      eraserTitle: 'Hold for a couple of seconds to empty every square (the photo stays)',
+      eraserTitle: 'Click to pick the eraser (it empties the squares you click or drag over) · hold for a couple of seconds to empty every square (the photo stays)',
+      hintErase: 'Eraser',
+      hintEraseHow: 'click or drag over squares to empty them',
+      kbErase: 'Empty the selected square',
+      cpCustom: 'Custom…',
+      cpReset: 'Default',
+      cpUsedBy: 'already used by {letter}',
       btnUndo: 'UNDO',
       btnRedo: 'REDO',
       selectTool: 'SELECT ONLY',
@@ -1218,8 +1385,19 @@
       pdfBtnTitle: 'Load the board, names and clues from the puzzle PDF',
       toastPdfDone: 'Read {n} people from the PDF, with their clues',
       toastPdfBoardDone: 'From the PDF: the board and {n} people with their clues',
+      toastPdfBoardOnly: 'From the PDF: only the board — couldn’t read the suspects, type names and clues in the cards',
       toastPdfNoVictim: 'Read {n} people from the PDF, but not the victim: fill in V by hand',
       toastPdfFailed: 'Couldn’t find the suspects in this PDF',
+      toastHeicUnsupported: 'This browser can’t decode HEIC photos: try Chrome or Safari, or save the photo as JPEG',
+      viewCards: 'Cards',
+      viewList: 'List: every clue at a glance and a bigger board',
+      viewRail: 'Hide the suspects: the biggest board (hover a letter to read its clue)',
+      railOpen: 'Show the suspects',
+      railNoClue: 'no clue yet',
+      railNoGeneral: 'none',
+      fullscreenTitle: 'Full screen',
+      fullscreenExit: 'Exit full screen (Esc)',
+      toastImageUnsupported: 'Couldn’t open this image ({ext}): save it as JPEG or PNG and try again',
       toastPdfUnsupported: 'This browser can’t read PDFs — try an up-to-date Chrome, Edge, Firefox or Safari',
       confirmPdfResize: 'The PDF has {n} people: set the grid to {n}×{n}? The current squares will be cleared.',
       settingsHeading: 'Settings',
@@ -1308,14 +1486,16 @@
       helpRulesLabel: 'RULES',
       helpRule1: 'Every suspect stands on exactly one square: at most one per row and one per column.',
       helpRule2: 'Suspects go in alphabetical order (A, B, C…) and the victim is always V.',
-      helpRule3: 'A clue is a small tag — several can share a square. A decision places the suspect’s portrait for good.',
+      helpRule3: 'A clue is a small tag — several can share a square. A decision places the suspect’s letter, big, on the square.',
       helpRule4: 'Placing a suspect automatically crosses out every other square in their row and column.',
-      helpRule5: 'Only Undo takes a decision back. To start over, hold the eraser until every square empties.',
+      helpRule5: 'A decision can’t be undone with a click: use Undo, or the eraser, which also lifts the crosses that decision had added. To start over, hold the eraser until every square empties.',
       helpMouseLabel: 'MOUSE',
       helpMouse1: 'Pick a suspect, the ✕ or a note symbol, then click a square to fill it in.',
       helpMouse2: 'Hold a square for half a second to place the selected suspect as a decision, whatever the mode.',
       helpMouse3: 'With “Select only” on, clicking just moves the selection. Hovering a square previews what will land there.',
       helpMouse4: 'Drop a photo anywhere on the page: the grid, its tilt and the size of each row are found automatically. If something is off, “Align grid” lets you move, resize and rotate it by hand.',
+      helpMouse7: 'Click the eraser once to pick it, then click or drag over squares to empty them. Hold a suspect’s letter for half a second to give it another colour: the board follows.',
+      helpMouse6: 'Big grid? The buttons next to “Read from PDF” switch the suspects between cards, a compact list and hidden (just the letters), and the button in the top corner of the board goes full screen: the board grows as much as the screen allows.',
       helpMouse5: 'Got the puzzle as a PDF? Drop it on the page or use “Read from PDF”: the board is drawn straight from the PDF and its grid found, names, clues, general clues and title are filled in, and the portraits follow the He/She of each clue.',
       helpKeysLabel: 'KEYBOARD',
       kbMove: 'Move the selected square',
@@ -1335,9 +1515,15 @@
       modePen: 'DECISIONE',
       noteSymbols: 'SIMBOLI NOTA',
       toolsTitle: 'Strumenti',
-      eraserCap: 'tieni premuto per svuotare tutto',
+      eraserCap: 'clic: gomma · tieni: svuota tutto',
       eraserHolding: 'continua a tenere…',
-      eraserTitle: 'Tieni premuto un paio di secondi per svuotare tutte le caselle (la foto resta)',
+      eraserTitle: 'Clic per scegliere la gomma (svuota le caselle che clicchi o su cui trascini) · tieni premuto un paio di secondi per svuotare tutte le caselle (la foto resta)',
+      hintErase: 'Gomma',
+      hintEraseHow: 'clicca o trascina sulle caselle per svuotarle',
+      kbErase: 'Svuota la casella selezionata',
+      cpCustom: 'Personalizzato…',
+      cpReset: 'Predefinito',
+      cpUsedBy: 'già usato da {letter}',
       btnUndo: 'ANNULLA',
       btnRedo: 'RIPETI',
       selectTool: 'SOLO SELEZIONE',
@@ -1371,8 +1557,19 @@
       pdfBtnTitle: 'Carica tavola, nomi e indizi dal PDF del puzzle',
       toastPdfDone: 'Lette dal PDF {n} persone, con i loro indizi',
       toastPdfBoardDone: 'Dal PDF: la tavola e {n} persone con i loro indizi',
+      toastPdfBoardOnly: 'Dal PDF solo la tavola: non sono riuscito a leggere i sospettati, scrivi nomi e indizi nelle card',
       toastPdfNoVictim: 'Lette {n} persone dal PDF, ma non la vittima: compila V a mano',
       toastPdfFailed: 'In questo PDF non ho trovato i sospettati',
+      toastHeicUnsupported: 'Questo browser non riesce a decodificare le foto HEIC: prova con Chrome o Safari, oppure salva la foto in JPEG',
+      viewCards: 'Schede',
+      viewList: 'Elenco: tutti gli indizi a colpo d’occhio e una tavola più grande',
+      viewRail: 'Nascondi i sospettati: la tavola più grande possibile (passa sopra una lettera per leggerne l’indizio)',
+      railOpen: 'Mostra i sospettati',
+      railNoClue: 'nessun indizio',
+      railNoGeneral: 'nessuno',
+      fullscreenTitle: 'Schermo intero',
+      fullscreenExit: 'Esci dallo schermo intero (Esc)',
+      toastImageUnsupported: 'Non riesco ad aprire questa immagine ({ext}): salvala in JPEG o PNG e riprova',
       toastPdfUnsupported: 'Questo browser non sa leggere i PDF: prova con una versione aggiornata di Chrome, Edge, Firefox o Safari',
       confirmPdfResize: 'Nel PDF ci sono {n} persone: porto la griglia a {n}×{n}? Le caselle attuali verranno svuotate.',
       settingsHeading: 'Impostazioni',
@@ -1461,14 +1658,16 @@
       helpRulesLabel: 'REGOLE',
       helpRule1: 'Ogni sospettato sta su una sola casella: al massimo uno per riga e uno per colonna.',
       helpRule2: 'I sospettati sono in ordine alfabetico (A, B, C…) e la vittima è sempre V.',
-      helpRule3: 'Un indizio è un piccolo gettone, e più indizi possono stare nella stessa casella. Una decisione piazza il ritratto del sospettato in modo definitivo.',
+      helpRule3: 'Un indizio è un piccolo gettone, e più indizi possono stare nella stessa casella. Una decisione mette la lettera del sospettato, grande, sulla casella.',
       helpRule4: 'Piazzare un sospettato esclude automaticamente tutte le altre caselle della sua riga e della sua colonna.',
-      helpRule5: 'Solo Annulla ritira una decisione. Per ricominciare, tieni premuta la gomma finché tutte le caselle si svuotano.',
+      helpRule5: 'Una decisione non si toglie con un clic: usa Annulla, oppure la gomma, che si porta via anche le X che quella decisione aveva messo. Per ricominciare, tieni premuta la gomma finché tutte le caselle si svuotano.',
       helpMouseLabel: 'MOUSE',
       helpMouse1: 'Scegli un sospettato, la ✕ o un simbolo nota, poi clicca una casella per compilarla.',
       helpMouse2: 'Tieni premuta una casella per mezzo secondo per piazzare il sospettato selezionato come decisione, in qualunque modalità.',
       helpMouse3: 'Con “Solo selezione” attivo il clic sposta solo la selezione. Passando sopra una casella vedi in anteprima cosa ci finirà.',
       helpMouse4: 'Trascina una foto in qualunque punto della pagina: griglia, inclinazione e altezza di ogni riga vengono trovate da sole. Se qualcosa non torna, “Allinea griglia” ti fa spostare, ridimensionare e ruotare a mano.',
+      helpMouse7: 'Clicca una volta la gomma per sceglierla, poi clicca o trascina sulle caselle per svuotarle. Tieni premuta per mezzo secondo la lettera di un sospettato per dargli un altro colore: la tavola si aggiorna.',
+      helpMouse6: 'Griglia grande? I bottoni accanto a “Leggi dal PDF” passano i sospettati tra schede, elenco compatto e nascosti (solo le lettere), e il bottone nell’angolo in alto della tavola va a schermo intero: la tavola cresce quanto lo schermo permette.',
       helpMouse5: 'Hai il puzzle in PDF? Trascinalo sulla pagina o usa “Leggi dal PDF”: la tavola viene disegnata direttamente dal PDF e la sua griglia trovata, nomi, indizi, indizi generali e titolo si compilano da soli, e i ritratti seguono il He/She di ogni indizio.',
       helpKeysLabel: 'TASTIERA',
       kbMove: 'Sposta la casella selezionata',
@@ -1509,6 +1708,7 @@
     renderLockButton();
     renderHelp();
     updateLetterButtonsState();
+    renderFullscreenButton();
     eraserCap.textContent = t(eraseHold ? 'eraserHolding' : 'eraserCap');
   }
 
@@ -1536,7 +1736,7 @@
     const out = [];
     for(let r=0;r<rr;r++){
       const row = [];
-      for(let c=0;c<cc;c++) row.push({x:false, decision:null, candidates:[], mark:null});
+      for(let c=0;c<cc;c++) row.push({x:false, xBy:null, decision:null, candidates:[], mark:null});
       out.push(row);
     }
     return out;
@@ -1551,6 +1751,7 @@
         const src = (raw && raw[r] && raw[r][c]) || {};
         row.push({
           x: !!src.x,
+          xBy: src.x && typeof src.xBy === 'string' ? src.xBy : null,
           decision: src.decision || null,
           candidates: Array.isArray(src.candidates) ? src.candidates.slice() : [],
           mark: src.mark || null
@@ -1595,7 +1796,7 @@
   }
 
   function isLetterTool(tool){
-    return tool !== 'select' && tool !== 'x' && tool.charAt(0) !== '#';
+    return tool !== 'select' && tool !== 'x' && tool !== 'erase' && tool.charAt(0) !== '#';
   }
 
   function displayName(letter){
@@ -1671,6 +1872,7 @@
 
   // ---------- pannello sospettati ----------
   function renderSuspects(){
+    applyView();
     suspectList.innerHTML = '';
     validLetters(objectCount(rows, cols)).forEach((letter, idx)=>{
       const isVictim = letter === 'v';
@@ -1678,6 +1880,7 @@
       card.className = 'suspect' + (isVictim ? ' victim' : '');
       card.dataset.tool = letter;
       card.style.setProperty('--i', idx);
+      card.style.setProperty('--card', cardColor(letter));
 
       const portrait = document.createElement('div');
       if(showPortraits){
@@ -1755,12 +1958,17 @@
       card.appendChild(plate);
       card.appendChild(clue);
 
+      portrait.addEventListener('pointerdown', e=>armColorHold(e, letter, portrait));
       card.addEventListener('click', e=>{
+        if(suppressCardClick){ suppressCardClick = false; return; }   // ha appena aperto i colori
         selectTool(letter);
         // la piccola "esultanza" del ritratto solo se si clicca la card, non i campi di testo
         if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') restartAnim(card, 'picked', 520);
       });
       card.addEventListener('pointerdown', ()=>highlightLetterOccurrences(letter));
+      // nella vista ridotta nome e indizio si leggono passando sopra la lettera
+      card.addEventListener('pointerenter', ()=>showRailTip(card, suspectTipHtml(letter)));
+      card.addEventListener('pointerleave', hideRailTip);
       suspectList.appendChild(card);
     });
     // si misura solo a lista completa: le ultime card fanno comparire la barra di scorrimento
@@ -1773,6 +1981,13 @@
   // come nel gioco originale, un indizio lungo usa un corpo più piccolo invece di
   // essere tagliato: si scende di mezzo punto finché il testo sta nel riquadro
   function fitClue(area){
+    if(curView === 'list'){
+      area.style.fontSize = '12.5px';
+      area.style.height = '0px';
+      area.style.height = area.scrollHeight + 'px';
+      return;
+    }
+    if(curView === 'rail') return;
     let size = 12.5;
     area.style.height = '';
     area.style.fontSize = size + 'px';
@@ -1858,7 +2073,7 @@
     return {
       rows, cols,
       gridBox: cloneBox(gridBox),
-      cells: cells.map(row => row.map(c => ({x:c.x, decision:c.decision, candidates:[...c.candidates], mark:c.mark})))
+      cells: cells.map(row => row.map(c => ({x:c.x, xBy:c.xBy, decision:c.decision, candidates:[...c.candidates], mark:c.mark})))
     };
   }
 
@@ -1866,7 +2081,7 @@
     rows = snap.rows;
     cols = snap.cols;
     gridBox = cloneBox(snap.gridBox);
-    cells = snap.cells.map(row => row.map(c => ({x:c.x, decision:c.decision, candidates:[...c.candidates], mark:c.mark})));
+    cells = snap.cells.map(row => row.map(c => ({x:c.x, xBy:c.xBy || null, decision:c.decision, candidates:[...c.candidates], mark:c.mark})));
     syncSizeInputs();
     updateDimsLabel();
     clampSelection();
@@ -1924,7 +2139,7 @@
     try{
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
         rows, cols, gridBox, cells, img,
-        puzzleTitle, suspectNames, suspectClues, generalClues, showPortraits,
+        puzzleTitle, suspectNames, suspectClues, generalClues, showPortraits, customColors,
         timerElapsedMs: currentTimerElapsedMs(),
         timerRunning
       }));
@@ -1950,6 +2165,10 @@
     suspectNames = (data.suspectNames && typeof data.suspectNames === 'object') ? {...data.suspectNames} : {};
     suspectClues = (data.suspectClues && typeof data.suspectClues === 'object') ? {...data.suspectClues} : {};
     generalClues = typeof data.generalClues === 'string' ? data.generalClues : '';
+    customColors = {};
+    if(data.customColors && typeof data.customColors === 'object'){
+      for(const [k, v] of Object.entries(data.customColors)) if(/^[a-z]$/.test(k) && /^#[0-9a-f]{6}$/i.test(v)) customColors[k] = v.toLowerCase();
+    }
     showPortraits = !!data.showPortraits;
     generalCluesInput.value = generalClues;
     fitGeneral();
@@ -2079,17 +2298,20 @@
       div.classList.toggle('has-content', !!(cell.x || cell.decision || cell.candidates.length || cell.mark));
 
       // il contenuto viene riscritto solo quando cambia: i ritratti SVG costano
-      if(div._dec !== cell.decision){
+      const tc = cell.decision ? letterColor(cell.decision) : '';
+      if(div._dec !== cell.decision || div._tc !== tc){
         div._dec = cell.decision;
+        div._tc = tc;
         const tok = div.querySelector('.token');
         tok.textContent = cell.decision ? cell.decision.toUpperCase() : '';
-        if(cell.decision) tok.style.setProperty('--tc', letterColor(cell.decision));
+        if(cell.decision) tok.style.setProperty('--tc', tc);
       }
       if(div._mark !== cell.mark){
         div._mark = cell.mark;
         div.querySelector('.mark').innerHTML = cell.mark ? MARK_BY_ID[cell.mark].svg : '';
       }
-      const candKey = cell.candidates.join('');
+      // nella chiave anche i colori: cambiandone uno i gettoni si ridipingono
+      const candKey = cell.candidates.map(l => l + letterColor(l)).join('');
       const isPopTarget = pendingChip && pendingChip.r === r && pendingChip.c === c;
       if(div._cand !== candKey || isPopTarget){
         div._cand = candKey;
@@ -2225,6 +2447,7 @@
     Array.from(suspectList.children).forEach(card=>card.classList.toggle('active', card.dataset.tool === activeTool));
     Array.from(markRow.children).forEach(b=>b.classList.toggle('toggled', b.dataset.tool === activeTool));
     btnX.classList.toggle('toggled', activeTool === 'x');
+    btnEraser.classList.toggle('toggled', activeTool === 'erase');
     btnSelect.classList.toggle('toggled', activeTool === 'select');
     modePencilBtn.classList.toggle('toggled', activeMode === 'pencil');
     modePenBtn.classList.toggle('toggled', activeMode === 'pen');
@@ -2242,6 +2465,8 @@
       ic = SELECT_SVG; who = t('hintSelect'); how = t('hintSelectHow');
     } else if(activeTool === 'x'){
       ic = X_SVG; who = t('hintX'); how = t('hintXHow');
+    } else if(activeTool === 'erase'){
+      ic = ERASER_SVG; who = t('hintErase'); how = t('hintEraseHow');
     } else if(activeTool.charAt(0) === '#'){
       ic = MARK_BY_ID[activeTool.slice(1)].svg; who = t('hintMark'); how = t('hintMarkHow');
     } else {
@@ -2389,6 +2614,10 @@
     g.style.color = '';
     if(!locked || activeTool === 'select') return;
     const cell = cells[+div.dataset.r][+div.dataset.c];
+    if(activeTool === 'erase'){
+      if(cell.x || cell.decision || cell.candidates.length || cell.mark){ g.classList.add('ghost-mark', 'ghost-erase'); g.innerHTML = ERASER_SVG; }
+      return;
+    }
     if(cell.decision) return;
     if(activeTool === 'x'){
       if(cell.x){ g.classList.add('ghost-undo-big'); g.textContent = '↺'; }
@@ -2432,27 +2661,42 @@
   //  noHistory — il pennello registra un solo passo di Annulla alla fine.
   function applyActiveToolToCell(r, c, opts){
     opts = opts || {};
+    const tool = opts.tool || activeTool;
     const cell = cells[r][c];
     const mode = opts.mode || activeMode;
     const deny = msg => { if(!opts.silent){ denyCell(r, c); showToast(msg); } };
     const want = current => opts.intent ? opts.intent === 'on' : !current;
     const commit = () => { ensureTimerRunning(); if(!opts.noHistory) pushHistory(); renderCells(); };
 
-    if(activeTool === 'x'){
+    // gomma: svuota la casella. Una decisione cancellata si porta via anche le X che aveva
+    // messo lei sulla sua riga e colonna (xBy); quelle messe a mano restano
+    if(tool === 'erase'){
+      if(!cell.x && !cell.decision && !cell.candidates.length && !cell.mark) return;
+      const dec = cell.decision;
+      cell.x = false; cell.xBy = null; cell.decision = null; cell.candidates = []; cell.mark = null;
+      if(dec) liftDecisionCrosses(dec);
+      queueAnim(r, c, 'aer', 0);
+      commit();
+      if(dec) updateLetterButtonsState();
+      return;
+    }
+
+    if(tool === 'x'){
       if(cell.decision){ deny(t('toastCellHasDecision')); return; }
       const on = want(cell.x);
       if(on === cell.x) return;
       cell.x = on;
+      cell.xBy = null;
       if(cell.x){ cell.candidates = []; cell.mark = null; queueAnim(r, c, 'ax', 0); }
       commit();
       return;
     }
 
     // simbolo nota: solo annotazione libera, uno per casella, non tocca le regole
-    if(activeTool.charAt(0) === '#'){
+    if(tool.charAt(0) === '#'){
       if(cell.x){ deny(t('toastCellExcluded')); return; }
       if(cell.decision){ deny(t('toastCellAlreadyDecided')); return; }
-      const id = activeTool.slice(1);
+      const id = tool.slice(1);
       const on = want(cell.mark === id);
       if(on === (cell.mark === id)) return;
       cell.mark = on ? id : null;
@@ -2463,7 +2707,7 @@
 
     if(cell.x){ deny(t('toastCellExcluded')); return; }
 
-    const letter = activeTool;
+    const letter = tool;
     if(mode === 'pencil'){
       if(isGloballyDecided(letter)){
         deny(t('toastLetterDecidedElsewhereClue', {letter: letter.toUpperCase()}));
@@ -2494,19 +2738,31 @@
       for(let cc=0; cc<cols; cc++){
         if(cc === c) continue;
         const t2 = cells[r][cc];
-        if(!t2.x) queueAnim(r, cc, 'ax', 120 + Math.abs(cc - c) * STEP);
+        if(!t2.x){ queueAnim(r, cc, 'ax', 120 + Math.abs(cc - c) * STEP); t2.xBy = letter; }
         t2.x = true; t2.candidates = []; t2.mark = null;
       }
       for(let rr=0; rr<rows; rr++){
         if(rr === r) continue;
         const t2 = cells[rr][c];
-        if(!t2.x) queueAnim(rr, c, 'ax', 120 + Math.abs(rr - r) * STEP);
+        if(!t2.x){ queueAnim(rr, c, 'ax', 120 + Math.abs(rr - r) * STEP); t2.xBy = letter; }
         t2.x = true; t2.candidates = []; t2.mark = null;
       }
       queueAnim(r, c, 'at', 0);
       queueAnim(r, c, 'ar', 0, letterColor(letter));
       commit();
       updateLetterButtonsState();
+    }
+  }
+
+  // una decisione tolta con la gomma: via le X che aveva messo lei, poi le decisioni rimaste
+  // richiudono le loro righe e colonne (una X può servire a due decisioni)
+  function liftDecisionCrosses(letter){
+    for(const row of cells) for(const c of row) if(c.xBy === letter){ c.x = false; c.xBy = null; }
+    for(let r = 0; r < rows; r++) for(let c = 0; c < cols; c++){
+      const d = cells[r][c].decision;
+      if(!d) continue;
+      for(let k = 0; k < cols; k++) if(k !== c && !cells[r][k].x){ cells[r][k].x = true; cells[r][k].xBy = d; }
+      for(let k = 0; k < rows; k++) if(k !== r && !cells[k][c].x){ cells[k][c].x = true; cells[k][c].xBy = d; }
     }
   }
 
@@ -2525,24 +2781,27 @@
   // Come la gomma del gioco originale: il gesto prolungato è la conferma, e
   // l'operazione finisce comunque nello storico, quindi Annulla la ripristina.
   // Restano foto, riquadro, dimensioni, nomi, indizi scritti nelle card e cronometro.
-  let eraseHold = null;
+  // Un clic breve sceglie invece lo strumento gomma (svuota le caselle cliccate): la barra che
+  // si riempie parte solo dopo ERASE_ARM_MS, così un clic non la fa lampeggiare.
+  const ERASE_ARM_MS = 180;
+  let eraseHold = null, eraseArm = null, eraseFired = false;
 
   function startErase(e){
     if(e.button !== 0) return;
-    if(isGridEmpty()){
-      showToast(t('toastNothingToClear'));
-      if(!REDUCED_MOTION) restartAnim(btnEraser, 'nope', 450);
-      return;
-    }
     cancelErase();
-    btnEraser.style.setProperty('--hold', ERASE_HOLD_MS + 'ms');
-    btnEraser.classList.add('holding');
-    gridBoxEl.classList.add('erase-armed');
-    eraserCap.textContent = t('eraserHolding');
+    eraseFired = false;
+    eraseArm = setTimeout(()=>{
+      eraseArm = null;
+      btnEraser.style.setProperty('--hold', (ERASE_HOLD_MS - ERASE_ARM_MS) + 'ms');
+      btnEraser.classList.add('holding');
+      gridBoxEl.classList.add('erase-armed');
+      eraserCap.textContent = t('eraserHolding');
+    }, ERASE_ARM_MS);
     eraseHold = setTimeout(finishErase, ERASE_HOLD_MS);
   }
 
   function cancelErase(){
+    if(eraseArm){ clearTimeout(eraseArm); eraseArm = null; }
     if(!eraseHold) return;
     clearTimeout(eraseHold);
     eraseHold = null;
@@ -2553,9 +2812,15 @@
 
   function finishErase(){
     eraseHold = null;
+    eraseFired = true;
     btnEraser.classList.remove('holding');
     gridBoxEl.classList.remove('erase-armed');
     eraserCap.textContent = t('eraserCap');
+    if(isGridEmpty()){
+      showToast(t('toastNothingToClear'));
+      if(!REDUCED_MOTION) restartAnim(btnEraser, 'nope', 450);
+      return;
+    }
     if(!REDUCED_MOTION) restartAnim(btnEraser, 'boom', 520);
 
     // onda di cancellazione in diagonale, poi lo stato vero viene azzerato
@@ -2582,6 +2847,10 @@
   }
 
   btnEraser.addEventListener('pointerdown', startErase);
+  btnEraser.addEventListener('click', ()=>{
+    if(eraseFired){ eraseFired = false; return; }   // era una pressione lunga: ha già svuotato tutto
+    selectTool('erase');
+  });
   btnEraser.addEventListener('pointerleave', cancelErase);
   btnEraser.addEventListener('contextmenu', e=>e.preventDefault());
 
@@ -3388,6 +3657,7 @@
     clearHoldHighlights();
     cancelPlaceHold();
     cancelErase();
+    cancelColorHold();
     stopRepeat();
     if(dragState){ dragState = null; pushHistory(); }
   });
@@ -3396,10 +3666,12 @@
     clearHoldHighlights();
     cancelPlaceHold();
     cancelErase();
+    cancelColorHold();
     stopRepeat();
   });
 
   function relayout(){
+    syncStagePadding();
     updateImageSize();
     renderGridBox();
     if(editModal.classList.contains('show')) renderEditor();
@@ -3412,9 +3684,12 @@
 
   // ---------- pannello sinistro ridimensionabile ----------
   // Preferenza del dispositivo come la lingua (localStorage), non stato del puzzle.
-  // Si stringe fino a ~2 colonne di card e si allarga lasciando sempre spazio
-  // alla tavola; doppio clic sulla maniglia torna alla larghezza predefinita.
-  const LEFT_KEY = 'murdoku_left_w_v1';
+  // Ogni vista ha la sua larghezza: le schede si stringono fino a ~2 colonne, l'elenco
+  // parte stretto, la colonna di lettere è fissa. Il pannello si allarga lasciando sempre
+  // spazio alla tavola; doppio clic sulla maniglia torna alla larghezza predefinita.
+  const LEFT_KEYS = {cards: 'murdoku_left_w_v1', list: 'murdoku_left_w_list_v1'};
+  const LIST_DEFAULT_W = 'clamp(300px, 25vw, 400px)';
+  const RAIL_W = 104;
   const splitter = $('splitter');
   const toolsPanel = $('toolsPanel');
   let leftWidth = null;
@@ -3422,19 +3697,25 @@
 
   function clampLeft(px){
     const max = Math.max(300, window.innerWidth - toolsPanel.offsetWidth - 380);
-    return Math.round(Math.max(300, Math.min(max, px)));
+    return Math.round(Math.max(curView === 'list' ? 260 : 300, Math.min(max, px)));
   }
   function applyLeftWidth(px){
+    if(curView === 'rail'){ appEl.style.setProperty('--left', RAIL_W + 'px'); return; }
     leftWidth = px ? clampLeft(px) : null;
     if(leftWidth) appEl.style.setProperty('--left', leftWidth + 'px');
+    else if(curView === 'list') appEl.style.setProperty('--left', LIST_DEFAULT_W);
     else appEl.style.removeProperty('--left');
+  }
+  function loadLeftWidth(){
+    let v = null;
+    try{ v = parseFloat(localStorage.getItem(LEFT_KEYS[curView])); }catch(e){}
+    applyLeftWidth(v > 0 ? v : null);
   }
   function queueRelayout(){
     if(relayoutQueued) return;
     relayoutQueued = true;
     requestAnimationFrame(()=>{ relayoutQueued = false; relayout(); });
   }
-  try{ const v = parseFloat(localStorage.getItem(LEFT_KEY)); if(v > 0) applyLeftWidth(v); }catch(e){}
 
   splitter.addEventListener('pointerdown', e=>{
     if(e.button !== 0) return;
@@ -3452,16 +3733,174 @@
     if(!splitDrag) return;
     splitDrag = null;
     appEl.classList.remove('resizing');
-    try{ localStorage.setItem(LEFT_KEY, String(leftWidth)); }catch(e){}
+    try{ if(leftWidth) localStorage.setItem(LEFT_KEYS[curView], String(leftWidth)); }catch(e){}
     relayout();
   };
   document.addEventListener('pointerup', endSplit);
   document.addEventListener('pointercancel', endSplit);
   splitter.addEventListener('dblclick', ()=>{
     applyLeftWidth(null);
-    try{ localStorage.removeItem(LEFT_KEY); }catch(e){}
+    try{ localStorage.removeItem(LEFT_KEYS[curView]); }catch(e){}
     relayout();
   });
+
+  // ---------- vista del pannello dei sospettati ----------
+  // Schede (come sul foglio originale), elenco (una riga a testa: con le griglie grandi lascia
+  // la larghezza alla tavola e fa stare gli indizi quasi senza scorrere) oppure nascosto (una
+  // colonna di lettere: nome e indizio compaiono passandoci sopra). È una preferenza del
+  // dispositivo; finché non la si sceglie vale "auto": elenco oltre 12 persone, schede sotto.
+  const VIEW_KEY = 'murdoku_view_v1';
+  let viewPref = 'auto', curView = null, viewBeforeRail = 'auto';
+  try{ const v = localStorage.getItem(VIEW_KEY); if(v === 'cards' || v === 'list' || v === 'rail') viewPref = v; }catch(e){}
+  const effectiveView = () => viewPref !== 'auto' ? viewPref : (objectCount(rows, cols) > 12 ? 'list' : 'cards');
+
+  function applyView(){
+    const v = effectiveView();
+    document.querySelectorAll('.view-switch button').forEach(b => b.classList.toggle('toggled', b.dataset.view === v));
+    if(v === curView) return;
+    curView = v;
+    appEl.dataset.view = v;
+    hideRailTip();
+    loadLeftWidth();
+    suspectList.querySelectorAll('.cluebox textarea').forEach(fitClue);
+    queueRelayout();
+  }
+  function setView(v){
+    if(v === 'rail' && curView !== 'rail') viewBeforeRail = viewPref === 'rail' ? 'auto' : viewPref;
+    viewPref = v;
+    try{ localStorage.setItem(VIEW_KEY, v); }catch(e){}
+    applyView();
+  }
+  document.querySelectorAll('.view-switch button').forEach(b => b.addEventListener('click', ()=>setView(b.dataset.view)));
+  $('btnRailOpen').addEventListener('click', ()=>setView(viewBeforeRail));
+
+  const railTip = $('railTip');
+  const escHtml = str => String(str).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+  function suspectTipHtml(letter){
+    const clue = (suspectClues[letter] || '').trim();
+    return '<b>' + escHtml(letter.toUpperCase() + ' · ' + displayName(letter)) + '</b>' +
+           (clue ? escHtml(clue) : '<span class="muted">' + escHtml(t('railNoClue')) + '</span>');
+  }
+  function showRailTip(el, html){
+    if(curView !== 'rail') return;
+    railTip.innerHTML = html;
+    const r = el.getBoundingClientRect(), y = r.top + r.height / 2;
+    railTip.style.left = (r.right + 12) + 'px';
+    railTip.style.top = y + 'px';
+    railTip.classList.add('show');
+    // dentro la finestra anche per le lettere in fondo alla colonna
+    const tr = railTip.getBoundingClientRect();
+    if(tr.bottom > window.innerHeight - 8) railTip.style.top = (y - (tr.bottom - window.innerHeight + 8)) + 'px';
+    else if(tr.top < 8) railTip.style.top = (y + 8 - tr.top) + 'px';
+  }
+  function hideRailTip(){ railTip.classList.remove('show'); }
+  const btnRailGeneral = $('btnRailGeneral');
+  btnRailGeneral.addEventListener('pointerenter', ()=>showRailTip(btnRailGeneral,
+    '<b>' + escHtml(t('generalTitle')) + '</b>' +
+    (generalClues.trim() ? escHtml(generalClues.trim()).replace(/\n/g, '<br>') : '<span class="muted">' + escHtml(t('railNoGeneral')) + '</span>')));
+  btnRailGeneral.addEventListener('pointerleave', hideRailTip);
+
+  // ---------- colore di una lettera: tieni premuto sulla sua lettera nel pannello ----------
+  // Il colore scelto vale per il caso (si salva e si esporta con lui) e si vede ovunque:
+  // card, decisioni e gettoni degli indizi sulla tavola, riga dello strumento.
+  const COLOR_HOLD_MS = 550;
+  const colorPop = $('colorPop'), cpSwatches = $('cpSwatches'), cpCustom = $('cpCustom');
+  // la tavolozza delle lettere (senza i posti di v, x e z) più il rosa della vittima
+  const SWATCHES = PORTRAIT_COLORS.filter((c, i) => i !== 21 && i !== 23 && i !== 25).concat([VICTIM_COLOR]);
+  let colorHold = null, colorFor = null, suppressCardClick = false;
+
+  const defaultColorOf = letter => letter === 'v' ? VICTIM_COLOR : PORTRAIT_COLORS[(letter.charCodeAt(0) - 97) % PORTRAIT_COLORS.length];
+
+  function armColorHold(e, letter, el){
+    suppressCardClick = false;
+    if(e.button !== 0) return;
+    cancelColorHold();
+    el.classList.add('color-hold');
+    colorHold = {el, x: e.clientX, y: e.clientY, timer: setTimeout(()=>{
+      el.classList.remove('color-hold');
+      colorHold = null;
+      suppressCardClick = true;
+      clearHoldHighlights();
+      openColorPop(letter, el);
+    }, COLOR_HOLD_MS)};
+  }
+  function cancelColorHold(){
+    if(!colorHold) return;
+    clearTimeout(colorHold.timer);
+    colorHold.el.classList.remove('color-hold');
+    colorHold = null;
+  }
+  document.addEventListener('pointermove', e=>{
+    if(colorHold && Math.hypot(e.clientX - colorHold.x, e.clientY - colorHold.y) > 8) cancelColorHold();
+  });
+
+  function openColorPop(letter, anchor){
+    colorFor = letter;
+    hideRailTip();
+    $('cpToken').innerHTML = letterToken(letter);
+    $('cpTitle').textContent = letter.toUpperCase() + ' · ' + displayName(letter);
+    const cur = letterColor(letter).toLowerCase(), users = {};
+    validLetters(objectCount(rows, cols)).forEach(l=>{
+      const c = letterColor(l).toLowerCase();
+      if(l !== letter && !users[c]) users[c] = l.toUpperCase();
+    });
+    cpSwatches.innerHTML = '';
+    SWATCHES.forEach(hex=>{
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.style.background = hex;
+      b.classList.toggle('current', hex === cur);
+      // la lettera che usa già quel colore, per non creare doppioni senza accorgersene
+      if(users[hex]){ const sp = document.createElement('span'); sp.textContent = users[hex]; b.appendChild(sp); }
+      b.title = users[hex] ? t('cpUsedBy', {letter: users[hex]}) : hex;
+      b.addEventListener('click', ()=>{ setLetterColor(letter, hex); closeColorPop(); });
+      cpSwatches.appendChild(b);
+    });
+    cpCustom.value = cur;
+    colorPop.classList.add('show');
+    const r = anchor.getBoundingClientRect(), pw = colorPop.offsetWidth, ph = colorPop.offsetHeight;
+    let x = r.right + 12;
+    if(x + pw > window.innerWidth - 8) x = r.left - pw - 12;
+    x = Math.max(8, Math.min(window.innerWidth - pw - 8, x));
+    const y = Math.max(8, Math.min(window.innerHeight - ph - 8, r.top + r.height / 2 - ph / 2));
+    colorPop.style.left = x + 'px';
+    colorPop.style.top = y + 'px';
+  }
+  function closeColorPop(){ colorPop.classList.remove('show'); colorFor = null; }
+  const colorPopOpen = () => colorPop.classList.contains('show');
+  cpCustom.addEventListener('input', ()=>{ if(colorFor) setLetterColor(colorFor, cpCustom.value); });
+  $('cpReset').addEventListener('click', ()=>{ if(colorFor) setLetterColor(colorFor, null); closeColorPop(); });
+  document.addEventListener('pointerdown', e=>{ if(colorPopOpen() && !colorPop.contains(e.target)) closeColorPop(); }, true);
+
+  function setLetterColor(letter, hex){
+    if(hex && hex.toLowerCase() !== defaultColorOf(letter)) customColors[letter] = hex.toLowerCase();
+    else delete customColors[letter];
+    suspectList.classList.add('static');   // le card si ridisegnano senza rifare l'ingresso
+    renderSuspects();
+    requestAnimationFrame(()=>suspectList.classList.remove('static'));
+    renderCells();
+    renderToolHint();
+    persist();
+  }
+
+  // ---------- schermo intero ----------
+  const btnFullscreen = $('btnFullscreen');
+  const fsElement = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+  btnFullscreen.hidden = !(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+  function renderFullscreenButton(){
+    const on = !!fsElement();
+    btnFullscreen.classList.toggle('on', on);
+    btnFullscreen.title = t(on ? 'fullscreenExit' : 'fullscreenTitle');
+  }
+  btnFullscreen.addEventListener('click', ()=>{
+    const d = document.documentElement;
+    try{
+      const p = fsElement() ? (document.exitFullscreen || document.webkitExitFullscreen).call(document)
+                            : (d.requestFullscreen || d.webkitRequestFullscreen).call(d);
+      if(p && p.catch) p.catch(()=>{});
+    }catch(e){}
+  });
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, ()=>{ renderFullscreenButton(); queueRelayout(); }));
 
   // ---------- dimensioni della griglia (impostazioni e pannello di allineamento) ----------
   function syncSizeInputs(){
@@ -3564,6 +4003,385 @@
     if(e.key === 'Enter' || e.key === 'Escape') puzzleTitleInput.blur();
   });
 
+  // ---------- foto in qualsiasi formato ----------
+  // JPEG, PNG, WebP, AVIF, GIF, BMP… li apre il browser. Restano fuori soprattutto l'HEIC
+  // dell'iPhone (solo Safari lo apre da solo) e il TIFF degli scanner: li si decodifica qui,
+  // senza librerie. Come ultima spiaggia (es. i RAW delle fotocamere) si cerca l'anteprima
+  // JPEG che quei formati portano dentro. Il risultato diventa sempre un JPEG o PNG, che ogni
+  // browser sa mostrare anche dopo un export/import, ridotto se la foto è enorme: il caso si
+  // salva nella sessione della scheda, che ha pochi megabyte.
+
+  // HEIC/HEIF: è solo un contenitore (box ISO BMFF) con dentro immagini HEVC, sull'iPhone una
+  // griglia di tessere 512×512. Si leggono i box e si fanno decodificare le tessere al decoder
+  // video del browser (WebCodecs, con l'accelerazione hardware), poi le si incolla su un canvas.
+  const Heif = (() => {
+    const u16 = (b, o) => (b[o] << 8) | b[o+1];
+    const u32 = (b, o) => b[o] * 0x1000000 + ((b[o+1] << 16) | (b[o+2] << 8) | b[o+3]);
+    const readN = (b, o, n) => { let v = 0; for(let i = 0; i < n; i++) v = v * 256 + b[o + i]; return v; };
+    const fourcc = (b, o) => String.fromCharCode(b[o], b[o+1], b[o+2], b[o+3]);
+    const BRANDS = ['heic', 'heix', 'heim', 'heis', 'hevc', 'hevx', 'hevm', 'hevs', 'mif1', 'msf1'];
+
+    function boxes(b, start, end){
+      const out = [];
+      let p = start;
+      while(p + 8 <= end){
+        let size = u32(b, p), hdr = 8;
+        if(size === 1){ size = u32(b, p + 8) * 0x100000000 + u32(b, p + 12); hdr = 16; }
+        else if(size === 0) size = end - p;
+        if(size < hdr || p + size > end) break;
+        out.push({type: fourcc(b, p + 4), data: p + hdr, end: p + size});
+        p += size;
+      }
+      return out;
+    }
+
+    function isHeif(b){
+      if(b.length < 16 || fourcc(b, 4) !== 'ftyp') return false;
+      const end = Math.min(u32(b, 0), b.length), brands = [fourcc(b, 8)];
+      for(let o = 16; o + 4 <= end; o += 4) brands.push(fourcc(b, o));
+      return brands.some(x => BRANDS.includes(x));
+    }
+
+    function parse(b){
+      const meta = boxes(b, 0, b.length).find(x => x.type === 'meta');
+      if(!meta) throw new Error('heif: no meta');
+      const mb = boxes(b, meta.data + 4, meta.end), get = t => mb.find(x => x.type === t);
+      const pitm = get('pitm'), iinf = get('iinf'), iloc = get('iloc'), iprp = get('iprp');
+      if(!pitm || !iinf || !iloc || !iprp) throw new Error('heif: incomplete meta');
+      const primary = b[pitm.data] === 0 ? u16(b, pitm.data + 4) : u32(b, pitm.data + 4);
+
+      const items = new Map();
+      const iv = b[iinf.data];
+      for(const e of boxes(b, iinf.data + 4 + (iv === 0 ? 2 : 4), iinf.end)){
+        if(e.type !== 'infe' || b[e.data] < 2) continue;
+        const v = b[e.data];
+        let o = e.data + 4;
+        const id = v === 2 ? u16(b, o) : u32(b, o);
+        o += (v === 2 ? 2 : 4) + 2;
+        items.set(id, {id, type: fourcc(b, o), props: [], refs: {}, extents: [], method: 0});
+      }
+
+      let o = iloc.data;
+      const lv = b[o];
+      o += 4;
+      const offSize = b[o] >> 4, lenSize = b[o] & 15, baseSize = b[o+1] >> 4, idxSize = lv >= 1 ? b[o+1] & 15 : 0;
+      o += 2;
+      const n = lv < 2 ? u16(b, o) : u32(b, o);
+      o += lv < 2 ? 2 : 4;
+      for(let i = 0; i < n; i++){
+        const id = lv < 2 ? u16(b, o) : u32(b, o);
+        o += lv < 2 ? 2 : 4;
+        let method = 0;
+        if(lv >= 1){ method = u16(b, o) & 15; o += 2; }
+        o += 2;
+        const base = readN(b, o, baseSize);
+        o += baseSize;
+        const ec = u16(b, o);
+        o += 2;
+        const ext = [];
+        for(let k = 0; k < ec; k++){
+          o += idxSize;
+          const off = readN(b, o, offSize); o += offSize;
+          const len = readN(b, o, lenSize); o += lenSize;
+          ext.push([base + off, len]);
+        }
+        const it = items.get(id);
+        if(it){ it.extents = ext; it.method = method; }
+      }
+
+      const iref = get('iref');
+      if(iref){
+        const rv = b[iref.data], w = rv === 0 ? 2 : 4, rd = (p) => rv === 0 ? u16(b, p) : u32(b, p);
+        for(const r of boxes(b, iref.data + 4, iref.end)){
+          let p = r.data;
+          const from = rd(p); p += w;
+          const cnt = u16(b, p); p += 2;
+          const to = [];
+          for(let k = 0; k < cnt; k++){ to.push(rd(p)); p += w; }
+          const it = items.get(from);
+          if(it) it.refs[r.type] = to;
+        }
+      }
+
+      const ip = boxes(b, iprp.data, iprp.end), ipco = ip.find(x => x.type === 'ipco');
+      const props = ipco ? boxes(b, ipco.data, ipco.end) : [];
+      for(const ipma of ip.filter(x => x.type === 'ipma')){
+        let p = ipma.data;
+        const v = b[p], wide = b[p+3] & 1;
+        p += 4;
+        const cnt = u32(b, p);
+        p += 4;
+        for(let i = 0; i < cnt; i++){
+          const id = v < 1 ? u16(b, p) : u32(b, p);
+          p += v < 1 ? 2 : 4;
+          const k = b[p++];
+          for(let j = 0; j < k; j++){
+            const idx = wide ? u16(b, p) & 0x7fff : b[p] & 0x7f;
+            p += wide ? 2 : 1;
+            const it = items.get(id);
+            if(it && idx > 0 && props[idx - 1]) it.props.push(props[idx - 1]);
+          }
+        }
+      }
+      return {items, primary, idat: get('idat')};
+    }
+
+    function dataOf(b, it, idat){
+      const parts = it.extents.map(([off, len]) => {
+        const s = it.method === 1 ? (idat ? idat.data + off : -1) : off;
+        if(s < 0 || s + len > b.length) throw new Error('heif: bad extent');
+        return b.subarray(s, s + (len || b.length - s));
+      });
+      if(parts.length === 1) return parts[0];
+      const out = new Uint8Array(parts.reduce((t, x) => t + x.length, 0));
+      let o = 0; for(const x of parts){ out.set(x, o); o += x.length; }
+      return out;
+    }
+
+    // stringa del codec per WebCodecs, dai primi byte di hvcC (ISO/IEC 14496-15, allegato E)
+    function codecString(h){
+      const space = h[1] >> 6, tier = (h[1] >> 5) & 1, idc = h[1] & 31;
+      let compat = u32(h, 2), rev = 0;
+      for(let i = 0; i < 32; i++){ rev = rev * 2 + (compat % 2); compat = Math.floor(compat / 2); }
+      const cons = Array.from(h.subarray(6, 12));
+      while(cons.length && !cons[cons.length - 1]) cons.pop();
+      return 'hvc1.' + ['', 'A', 'B', 'C'][space] + idc + '.' + rev.toString(16).toUpperCase() + '.' +
+             (tier ? 'H' : 'L') + h[12] + cons.map(c => '.' + c.toString(16).toUpperCase()).join('');
+    }
+
+    const ispeOf = (b, it) => { const p = it.props.find(x => x.type === 'ispe'); return p ? [u32(b, p.data + 4), u32(b, p.data + 8)] : null; };
+
+    async function decode(buffer){
+      const b = new Uint8Array(buffer);
+      const {items, primary, idat} = parse(b);
+      let top = items.get(primary);
+      if(!top) throw new Error('heif: no primary item');
+      // rotazione e specchiatura si leggono dal primario (e da un eventuale 'iden' che lo avvolge)
+      const transforms = top.props.filter(p => p.type === 'irot' || p.type === 'imir');
+      if(top.type === 'iden' && top.refs.dimg){
+        top = items.get(top.refs.dimg[0]);
+        transforms.unshift(...top.props.filter(p => p.type === 'irot' || p.type === 'imir'));
+      }
+      let tiles, cols = 1, outW, outH;
+      if(top.type === 'grid'){
+        const g = dataOf(b, top, idat), big = g[1] & 1;
+        cols = g[3] + 1;
+        outW = big ? u32(g, 4) : u16(g, 4);
+        outH = big ? u32(g, 8) : u16(g, 6);
+        tiles = (top.refs.dimg || []).map(id => items.get(id)).filter(Boolean);
+      } else if(top.type === 'hvc1'){
+        tiles = [top];
+        [outW, outH] = ispeOf(b, top) || [0, 0];
+      } else throw new Error('heif: unsupported item ' + top.type);
+      if(!tiles.length || !outW || !outH) throw new Error('heif: empty image');
+
+      const hv = tiles[0].props.find(p => p.type === 'hvcC');
+      if(!hv) throw new Error('heif: no hvcC');
+      if(typeof VideoDecoder === 'undefined') throw new Error('heif: no WebCodecs');
+      const desc = b.slice(hv.data, hv.end);
+      const config = {codec: codecString(desc), description: desc, optimizeForLatency: true};
+      const sup = await VideoDecoder.isConfigSupported(config).catch(() => ({supported: false}));
+      if(!sup.supported) throw new Error('heif: HEVC not supported (' + config.codec + ')');
+
+      const [tw, th] = ispeOf(b, tiles[0]) || [outW, outH];
+      const canvas = document.createElement('canvas');
+      canvas.width = outW; canvas.height = outH;
+      const ctx = canvas.getContext('2d');
+      let failure = null, done = 0;
+      const dec = new VideoDecoder({
+        output: f => {
+          const i = Math.round(f.timestamp);
+          ctx.drawImage(f, (i % cols) * tw, Math.floor(i / cols) * th, tw, th);
+          f.close();
+          done++;
+        },
+        error: e => { failure = e; }
+      });
+      dec.configure(config);
+      tiles.forEach((t, i) => dec.decode(new EncodedVideoChunk({type: 'key', timestamp: i, data: dataOf(b, t, idat)})));
+      try{ await dec.flush(); }catch(e){ failure = failure || e; }
+      if(dec.state !== 'closed') dec.close();
+      if(failure || done < tiles.length) throw new Error('heif: decode failed ' + (failure ? failure.message : done + '/' + tiles.length));
+
+      // irot = rotazione antioraria a passi di 90°, imir = specchiatura (0: sinistra↔destra)
+      let out = canvas;
+      for(const p of transforms){
+        const v = b[p.data] & (p.type === 'irot' ? 3 : 1);
+        if(p.type === 'irot' && !v) continue;
+        const swap = p.type === 'irot' && v % 2 === 1;
+        const c = document.createElement('canvas');
+        c.width = swap ? out.height : out.width;
+        c.height = swap ? out.width : out.height;
+        const x = c.getContext('2d');
+        if(p.type === 'irot'){
+          if(v === 1){ x.translate(0, c.height); x.rotate(-Math.PI / 2); }
+          else if(v === 2){ x.translate(c.width, c.height); x.rotate(Math.PI); }
+          else { x.translate(c.width, 0); x.rotate(Math.PI / 2); }
+        } else if(v === 0){ x.translate(c.width, 0); x.scale(-1, 1); }
+        else { x.translate(0, c.height); x.scale(1, -1); }
+        x.drawImage(out, 0, 0);
+        out = c;
+      }
+      return out;
+    }
+    return {isHeif, decode};
+  })();
+
+  // TIFF (scanner, vecchie esportazioni): strisce non compresse, LZW, Deflate o PackBits,
+  // 8 bit in grigi, RGB/RGBA o a palette. Gli altri casi passano all'anteprima incorporata.
+  const Tiff = (() => {
+    const isTiff = b => b.length > 8 && ((b[0] === 0x49 && b[1] === 0x49 && b[2] === 42 && b[3] === 0) || (b[0] === 0x4d && b[1] === 0x4d && b[2] === 0 && b[3] === 42));
+    function lzw(src){
+      const out = [];
+      let dict = [], bits = 9, pos = 0, prev = null;
+      const reset = () => { dict = []; for(let i = 0; i < 256; i++) dict.push([i]); dict.push(null, null); bits = 9; };
+      const read = () => {
+        let v = 0;
+        for(let i = 0; i < bits; i++){ const byte = src[(pos + i) >> 3]; if(byte === undefined) return 257; v = (v << 1) | ((byte >> (7 - ((pos + i) & 7))) & 1); }
+        pos += bits;
+        return v;
+      };
+      reset();
+      for(;;){
+        const code = read();
+        if(code === 257) break;
+        if(code === 256){ reset(); prev = null; continue; }
+        let entry;
+        if(code < dict.length && dict[code]) entry = dict[code];
+        else if(prev) entry = prev.concat(prev[0]);
+        else break;
+        for(const x of entry) out.push(x);
+        if(prev) dict.push(prev.concat(entry[0]));
+        prev = entry;
+        if(dict.length + 1 >= (1 << bits) && bits < 12) bits++;
+      }
+      return Uint8Array.from(out);
+    }
+    function packbits(src){
+      const out = [];
+      for(let i = 0; i < src.length;){
+        const n = (src[i++] << 24) >> 24;
+        if(n >= 0){ for(let k = 0; k <= n && i < src.length; k++) out.push(src[i++]); }
+        else if(n !== -128){ const v = src[i++]; for(let k = 0; k < 1 - n; k++) out.push(v); }
+      }
+      return Uint8Array.from(out);
+    }
+    async function inflateZ(u8){
+      const ds = new DecompressionStream('deflate');
+      const w = ds.writable.getWriter();
+      w.write(u8).catch(()=>{}); w.close().catch(()=>{});
+      return new Uint8Array(await new Response(ds.readable).arrayBuffer());
+    }
+    async function decode(buffer){
+      const b = new Uint8Array(buffer), le = b[0] === 0x49;
+      const u16 = o => le ? b[o] | (b[o+1] << 8) : (b[o] << 8) | b[o+1];
+      const u32 = o => le ? (b[o] | (b[o+1] << 8) | (b[o+2] << 16)) + b[o+3] * 0x1000000 : b[o] * 0x1000000 + ((b[o+1] << 16) | (b[o+2] << 8) | b[o+3]);
+      const ifd = u32(4), tags = {};
+      const cnt = u16(ifd);
+      for(let i = 0; i < cnt; i++){
+        const e = ifd + 2 + i * 12, tag = u16(e), type = u16(e + 2), n = u32(e + 4);
+        const size = {1: 1, 3: 2, 4: 4}[type];
+        if(!size) continue;
+        const at = n * size <= 4 ? e + 8 : u32(e + 8), vals = [];
+        for(let k = 0; k < n && k < 65536; k++) vals.push(size === 1 ? b[at + k] : size === 2 ? u16(at + k * 2) : u32(at + k * 4));
+        tags[tag] = vals;
+      }
+      const W = tags[256] && tags[256][0], H = tags[257] && tags[257][0];
+      const bps = tags[258] || [1], comp = (tags[259] || [1])[0], photo = (tags[262] || [1])[0], spp = (tags[277] || [1])[0];
+      const pred = (tags[317] || [1])[0], planar = (tags[284] || [1])[0];
+      if(!W || !H || !tags[273] || bps[0] !== 8 || planar !== 1 || ![1, 5, 8, 32946, 32773].includes(comp)) throw new Error('tiff: unsupported');
+      const rowsPer = (tags[278] || [H])[0], offs = tags[273], lens = tags[279] || [];
+      const rowB = W * spp, raw = new Uint8Array(rowB * H);
+      for(let s = 0; s < offs.length; s++){
+        let chunk = b.subarray(offs[s], offs[s] + (lens[s] || 0));
+        if(comp === 5) chunk = lzw(chunk);
+        else if(comp === 8 || comp === 32946) chunk = await inflateZ(chunk);
+        else if(comp === 32773) chunk = packbits(chunk);
+        const at = s * rowsPer * rowB;
+        raw.set(chunk.subarray(0, Math.max(0, Math.min(chunk.length, raw.length - at))), at);
+      }
+      if(pred === 2) for(let y = 0; y < H; y++) for(let x = spp; x < rowB; x++) raw[y * rowB + x] = (raw[y * rowB + x] + raw[y * rowB + x - spp]) & 255;
+      const c = document.createElement('canvas');
+      c.width = W; c.height = H;
+      const ctx = c.getContext('2d'), img = ctx.createImageData(W, H), px = img.data, map = tags[320];
+      for(let i = 0, p = 0; i < W * H; i++, p += spp){
+        let r, g, bl, a = 255;
+        if(photo === 2){ r = raw[p]; g = raw[p+1]; bl = raw[p+2]; if(spp > 3) a = raw[p+3]; }
+        else if(photo === 3 && map){ const k = raw[p]; r = map[k] >> 8; g = map[k + 256] >> 8; bl = map[k + 512] >> 8; }
+        else { r = g = bl = photo === 0 ? 255 - raw[p] : raw[p]; if(spp > 1) a = raw[p+1]; }
+        px[i*4] = r; px[i*4+1] = g; px[i*4+2] = bl; px[i*4+3] = a;
+      }
+      ctx.putImageData(img, 0, 0);
+      return c;
+    }
+    return {isTiff, decode};
+  })();
+
+  // ultima spiaggia: la più grande anteprima JPEG contenuta nel file (RAW, DNG, TIFF compressi…)
+  async function embeddedJpeg(buffer){
+    const b = new Uint8Array(buffer);
+    let best = null, tries = 0;
+    for(let i = 0; i + 4 < b.length && tries < 12; i++){
+      if(b[i] !== 0xff || b[i+1] !== 0xd8 || b[i+2] !== 0xff || ![0xe0, 0xe1, 0xdb, 0xc0, 0xc4, 0xee].includes(b[i+3])) continue;
+      tries++;
+      try{
+        const bmp = await createImageBitmap(new Blob([b.subarray(i)], {type: 'image/jpeg'}));
+        if(!best || bmp.width * bmp.height > best.width * best.height) best = bmp;
+      }catch(e){}
+    }
+    return best && best.width >= 400 ? best : null;
+  }
+
+  // l'immagine come la sa aprire il browser (EXIF di orientamento compreso)
+  function loadImageEl(url){
+    return new Promise((resolve, reject) => {
+      const im = new Image();
+      im.onload = () => (im.naturalWidth ? resolve(im) : reject(new Error('empty')));
+      im.onerror = () => reject(new Error('decode'));
+      im.src = url;
+    });
+  }
+
+  const PHOTO_MAX_SIDE = 2400;      // lato massimo della foto salvata nel caso
+  const PHOTO_KEEP_BYTES = 2.5e6;   // sotto questa misura un JPEG/PNG/WebP/GIF resta com'è
+
+  // da un file immagine qualunque a un data URL pronto per la tavola
+  async function imageFileToUrl(file){
+    const buf = await file.arrayBuffer(), head = new Uint8Array(buf, 0, Math.min(64, buf.byteLength));
+    let src = null, native = false;
+    const url = URL.createObjectURL(file);
+    try{ src = await loadImageEl(url); native = true; }catch(e){}
+    finally{ URL.revokeObjectURL(url); }
+    if(!src && Heif.isHeif(head)){
+      try{ src = await Heif.decode(buf); }
+      catch(e){ console.warn(e); const err = new Error('heic'); err.heic = true; throw err; }
+    }
+    if(!src && Tiff.isTiff(head)){ try{ src = await Tiff.decode(buf); }catch(e){} }
+    if(!src) src = await embeddedJpeg(buf);
+    if(!src) throw new Error('unsupported');
+
+    const w = src.naturalWidth || src.width, h = src.naturalHeight || src.height;
+    if(native && /^image\/(jpeg|png|webp|gif)$/.test(file.type) && Math.max(w, h) <= PHOTO_MAX_SIDE && file.size <= PHOTO_KEEP_BYTES){
+      return await new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
+    const k = Math.min(1, PHOTO_MAX_SIDE / Math.max(w, h));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w * k));
+    c.height = Math.max(1, Math.round(h * k));
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff';            // le parti trasparenti diventerebbero nere nel JPEG
+    ctx.fillRect(0, 0, c.width, c.height);
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(src, 0, 0, c.width, c.height);
+    if(src.close) src.close();
+    return c.toDataURL('image/jpeg', 0.92);
+  }
+
   // ---------- immagine ----------
   let pendingAutoDetect = false;
 
@@ -3571,10 +4389,15 @@
   // correzione automatica non piace
   let imgRaw = null;
 
-  function loadImageFile(file){
-    const reader = new FileReader();
-    reader.onload = ()=>setPhoto(reader.result);
-    reader.readAsDataURL(file);
+  async function loadImageFile(file){
+    let url;
+    try{ url = await imageFileToUrl(file); }
+    catch(e){
+      const ext = ((/\.([a-z0-9]{2,5})$/i.exec(file.name || '') || [])[1] || file.type || '?').toUpperCase();
+      showToast(e.heic ? t('toastHeicUnsupported') : t('toastImageUnsupported', {ext}));
+      return;
+    }
+    setPhoto(url);
   }
 
   // nuova foto della tavola (da file o disegnata dal PDF)
@@ -3624,6 +4447,9 @@
     fileInput.value = '';
   });
   const isPdfFile = f => f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
+  // alcuni sistemi non danno un tipo MIME alle foto HEIC/RAW: vale anche l'estensione
+  const IMAGE_EXT = /\.(jpe?g|jfif|png|gif|webp|avif|bmp|ico|svg|heic|heif|hif|tiff?|dng|cr2|cr3|nef|arw|orf|rw2|raf|jxl)$/i;
+  const isImageFile = f => (f.type || '').startsWith('image/') || IMAGE_EXT.test(f.name || '');
   const openPdfPicker = ()=>pdfInput.click();
   $('btnPdf').addEventListener('click', openPdfPicker);
   pdfInput.addEventListener('change', ()=>{
@@ -3977,6 +4803,7 @@
     puzzleTitle = '';
     suspectNames = {};
     suspectClues = {};
+    customColors = {};
     generalClues = '';
     showPortraits = false;
     generalCluesInput.value = '';
@@ -4984,7 +5811,9 @@
         glyphs, images, boxes,
         save(){}, restore(){}, clip(){}, shade(){}, beginGroup(){ return false; }, endGroup(){},
         glyph(ch, trm, w0, f, gs, adv){
-          glyphs.push({ch, x: trm[4], y: trm[5], w: adv, size: Math.hypot(trm[2], trm[3]), font: f.name, hidden: gs.tr === 3 || gs.tr === 7});
+          // rot: testo non orizzontale (scritte decorative messe in verticale lungo i bordi)
+          const rot = !(trm[0] > 0 && Math.abs(trm[1]) < 0.1 * trm[0] && Math.abs(trm[2]) < 0.1 * Math.abs(trm[3]));
+          glyphs.push({ch, x: trm[4], y: trm[5], w: adv, size: Math.hypot(trm[2], trm[3]), font: f.name, hidden: gs.tr === 3 || gs.tr === 7, rot});
         },
         path(path, gs, fill, stroke, rule, b){
           if(!b || !(fill || stroke)) return;
@@ -5181,7 +6010,8 @@
   // Si lavora quindi sulle posizioni: righe di testo → nomi → righe sotto ciascun nome.
   function readCaseFromGlyphs(page){
     const [bx0, by0, bx1, by1] = page.box;
-    const gl = page.glyphs.filter(g => !g.hidden && g.size > 0.5 && g.x >= bx0 - 2 && g.x <= bx1 + 2 && g.y >= by0 - 2 && g.y <= by1 + 2);
+    // il testo ruotato è decorazione (es. "VISITORS" in verticale accanto alle foto): fuori
+    const gl = page.glyphs.filter(g => !g.hidden && !g.rot && g.size > 0.5 && g.x >= bx0 - 2 && g.x <= bx1 + 2 && g.y >= by0 - 2 && g.y <= by1 + 2);
 
     // 1) pezzi di testo nell'ordine in cui sono disegnati (stesso font, stessa riga, contigui)
     const runs = [];
@@ -5245,6 +6075,17 @@
     });
     const textLines = lines.filter(L => L.text);
 
+    // titolo: la riga subito sopra "difficulty: …". Si legge prima dei sospettati perché
+    // in un PDF di più pagine può stare su una pagina che non ne ha
+    let title = '', difficulty = '';
+    const dl = textLines.find(L => /^difficulty\s*:/i.test(L.text));
+    if(dl){
+      difficulty = dl.text.replace(/^difficulty\s*:\s*/i, '').trim();
+      const above = textLines.filter(L => L !== dl && L.y > dl.y && L.y - dl.y < 4 * dl.size && Math.abs(L.x1 - dl.x1) < 3 * dl.size)
+                             .sort((a, b) => a.y - b.y)[0];
+      if(above) title = above.text;
+    }
+
     // 4) vittima e nomi
     let victimName = null;
     for(const L of textLines){
@@ -5264,7 +6105,9 @@
       nameFont = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0] || null;
       if(nameFont && cnt[nameFont] < 3) nameFont = null;
     }
-    if(!nameFont) return null;
+    // pagina senza sospettati: restano titolo e vittima, utili se il caso continua su altre pagine
+    const none = () => ({suspects: [], victim: null, victimName, general: [], title, difficulty, nameBoxes: []});
+    if(!nameFont) return none();
     let names = textLines.filter(L => L.font === nameFont && NAME_RE.test(L.text) && L.text.length <= 16);
     if(names.length){
       const sizes = names.map(n => n.size).sort((a, b) => a - b), med = sizes[sizes.length >> 1];
@@ -5273,7 +6116,7 @@
     // uno stesso nome ripetuto (es. la vittima citata altrove con lo stesso font) conta una volta sola
     const seenNames = new Set();
     names = names.filter(n => !seenNames.has(n.text) && seenNames.add(n.text));
-    if(names.length < 2) return null;
+    if(names.length < 2) return none();
 
     // 5) distanza tipica fra le colonne di sospettati, per sapere fin dove arriva una nuvoletta
     const xs = names.map(n => n.cx).sort((a, b) => a - b);
@@ -5317,7 +6160,7 @@
     // in un foglio di Murdoku ogni nome ha sotto la sua frase, e la frase parla di una persona (He/She…):
     // se non è così è un altro PDF (i nomi degli autori di un articolo, titoli di sezione con il testo sotto…)
     const withClue = suspects.filter(s => s.clue.split(' ').length >= 3 && /\b(he|she|his|her|him|victim)\b/i.test(s.clue)).length;
-    if(suspects.length < 3 || suspects.length > 40 || withClue < 0.6 * suspects.length) return null;
+    if(suspects.length < 3 || suspects.length > 40 || withClue < 0.6 * suspects.length) return none();
 
     // 7) la vittima: dalla frase "X was murdered!", altrimenti da "The Victim." nel suo indizio
     let victim = victimName && suspects.find(s => s.name === victimName);
@@ -5346,17 +6189,8 @@
     const general = blocks.map(B => joinLines(B.slice()).replace(/^\(?\d{1,2}[.)]?\s+/, ''))
                           .filter(s => s.split(' ').length >= 3 && /\p{Ll}/u.test(s));
 
-    // 9) titolo: la riga subito sopra "difficulty: …"
-    let title = '', difficulty = '';
-    const dl = textLines.find(L => /^difficulty\s*:/i.test(L.text));
-    if(dl){
-      difficulty = dl.text.replace(/^difficulty\s*:\s*/i, '').trim();
-      const above = textLines.filter(L => L !== dl && L.y > dl.y && L.y - dl.y < 4 * dl.size && Math.abs(L.x1 - dl.x1) < 3 * dl.size)
-                             .sort((a, b) => a.y - b.y)[0];
-      if(above) title = above.text;
-    }
     const nameBoxes = names.map(N => [N.x1, N.y - 0.2 * N.size, N.x2, N.y + 0.8 * N.size]);
-    return {suspects, victim: victim ? victim.name : null, general, title, difficulty, nameBoxes};
+    return {suspects, victim: victim ? victim.name : null, victimName, general, title, difficulty, nameBoxes};
   }
 
   // dove sta la tavola nella pagina: la più grande immagine quadrata (sui fogli originali è il
@@ -5413,27 +6247,61 @@
   }
 
   // lato lungo, in pixel, della tavola disegnata dal PDF: abbastanza per uno schermo retina,
-  // abbastanza poco da stare comodo nel salvataggio della sessione
-  const PDF_BOARD_SIDE = 1400;
+  // abbastanza poco da stare comodo nel salvataggio della sessione. Le griglie grandi
+  // ne hanno di più, perché ogni casella resti nitida anche ingrandita (24×24 → 1920 px).
+  const PDF_BOARD_SIDE = 1400, PDF_BOARD_CELL = 80, PDF_BOARD_MAX = 2400;
+  const PDF_MAX_PAGES = 12;
+
+  // un caso può stare su più pagine (sospettati divisi in due, tavola su una pagina sua):
+  // si uniscono i sospettati trovati, senza doppioni, e gli indizi generali
+  function mergeCases(list){
+    if(list.length === 1) return list[0];
+    const seen = new Set(), suspects = [], general = [];
+    for(const c of list) for(const sp of c.suspects) if(!seen.has(sp.name)){ seen.add(sp.name); suspects.push(sp); }
+    for(const c of list) for(const g of c.general) if(!general.includes(g)) general.push(g);
+    const named = list.map(c => c.victimName).find(n => n && seen.has(n));
+    const first = key => (list.find(c => c[key]) || {})[key] || '';
+    return {suspects, victim: named || first('victim') || null, general, title: first('title'), difficulty: first('difficulty')};
+  }
 
   // withBoard: disegna anche la tavola dal PDF (no se insieme al PDF è arrivata una foto)
   async function importCasePdf(file, withBoard = true){
     if(typeof DecompressionStream === 'undefined'){ showToast(t('toastPdfUnsupported')); return; }
-    let info = null, board = null, boardBox = null;
+    let info = null, board = null, boardBox = null, boardOnly = false;
     const btn = $('btnPdf');
     btn.classList.add('busy');
     try{
       const {doc, pages} = await Pdf.open(await file.arrayBuffer());
-      for(const pg of pages){
+      const probes = [];
+      for(const pg of pages.slice(0, PDF_MAX_PAGES)){
         const pr = await Pdf.probe(doc, pg);
-        info = readCaseFromGlyphs(pr);
-        if(!info) continue;
-        const found = withBoard && findBoardRect(pr, info.nameBoxes);
-        if(found){
-          const r = found.rect, q = found.inner, W = r[2] - r[0], H = r[3] - r[1];
+        probes.push({pg, pr, info: readCaseFromGlyphs(pr)});
+      }
+      const cases = probes.filter(p => p.info && p.info.suspects.length);
+      if(cases.length) info = mergeCases(cases.concat(probes.filter(p => p.info && !p.info.suspects.length)).map(p => p.info));
+      // Paracadute: un foglio di Murdoku impaginato in un modo che il lettore non conosce.
+      // Se il PDF parla di un omicidio, almeno la tavola si carica lo stesso.
+      const murdoku = probes.some(p => /murder|murdoku/i.test(p.pr.glyphs.map(g => g.ch).join('')));
+      if(!info && withBoard && murdoku) boardOnly = true;
+      if((info || boardOnly) && withBoard){
+        // la tavola: prima sulle pagine con i sospettati, altrimenti su una pagina a parte;
+        // se ce n'è più d'una vince la più grande
+        const area = f => (f.inner[2] - f.inner[0]) * (f.inner[3] - f.inner[1]);
+        let best = null;
+        for(const group of [cases, probes.filter(p => !cases.includes(p))]){
+          for(const p of group){
+            const f = findBoardRect(p.pr, p.info.nameBoxes);
+            if(f && (!best || area(f) > area(best.f))) best = {f, pg: p.pg};
+          }
+          if(best) break;
+        }
+        if(best){
+          const r = best.f.rect, q = best.f.inner, W = r[2] - r[0], H = r[3] - r[1];
+          const people = info ? info.suspects.length : MAX_GRID;   // senza sospettati: come la griglia più grande
+          const side = Math.min(PDF_BOARD_MAX, Math.max(PDF_BOARD_SIDE, PDF_BOARD_CELL * people));
           try{
-            const scale = Math.min(6, PDF_BOARD_SIDE / Math.max(W, H));
-            board = (await Pdf.render(doc, pg, r, scale)).toDataURL('image/jpeg', 0.9);
+            const scale = Math.min(6, side / Math.max(W, H));
+            board = (await Pdf.render(doc, best.pg, r, scale)).toDataURL('image/jpeg', 0.9);
             // dove stanno le caselle nell'immagine (in %, y verso il basso): serve se il
             // riconoscimento della griglia non ce la fa
             boardBox = {x: (q[0] - r[0]) / W * 100, y: (r[3] - q[3]) / H * 100, w: (q[2] - q[0]) / W * 100, h: (q[3] - q[1]) / H * 100, rot: 0, colFr: null, rowFr: null};
@@ -5441,12 +6309,16 @@
             console.error(e);
           }
         }
-        break;
       }
     }catch(e){
       console.error(e);
     }
     btn.classList.remove('busy');
+    if(!info && boardOnly && board){
+      detectNote = t('toastPdfBoardOnly');
+      setPhoto(board);
+      return;
+    }
     if(!info || !info.suspects.length){ showToast(t('toastPdfFailed')); return; }
     const count = applyCaseInfo(info, file.name);
     if(board){
@@ -5527,13 +6399,16 @@
     dragDepth = 0;
     appEl.classList.remove('dragging');
     const files = Array.from(e.dataTransfer.files || []);
-    const image = files.find(f => f.type.startsWith('image/'));
+    const image = files.find(isImageFile);
     const pdf = files.find(isPdfFile);
     if(pdf) importCasePdf(pdf, !image);
     if(image) loadImageFile(image);
     if(image || pdf) return;
     const json = files.find(f => f.type === 'application/json' || /\.json$/i.test(f.name));
-    if(json) importFile(json);
+    if(json){ importFile(json); return; }
+    // tipo sconosciuto (estensione strana o assente): si prova comunque come immagine,
+    // e se non lo è compare il messaggio
+    if(files.length) loadImageFile(files[0]);
   });
 
   // ---------- strumenti ----------
@@ -5547,9 +6422,20 @@
   modePenBtn.addEventListener('click', ()=>setMode('pen'));
   langSelect.addEventListener('change', ()=>setLang(langSelect.value));
 
+  // In allineamento la barra dei comandi sta in fondo alla scena, sopra la tavola: le si fa
+  // posto alzando il margine inferiore, così la tavola si rimpicciolisce un poco e gli angoli
+  // in basso (che sporgono di 13 px) restano afferrabili invece di finirle sotto.
+  const alignPanelEl = $('alignPanel');
+  function syncStagePadding(){
+    const pad = locked ? '' : (alignPanelEl.offsetHeight + 14 + 13 + 12) + 'px';
+    if(stageEl.style.paddingBottom !== pad) stageEl.style.paddingBottom = pad;
+  }
+
   function setLocked(v){
     locked = v;
     renderLockButton();
+    syncStagePadding();
+    updateImageSize();
     renderGridBox();
     renderCells();
   }
@@ -5588,11 +6474,11 @@
       keys.forEach(k=>{ const li = document.createElement('li'); li.textContent = t(k); ul.appendChild(li); });
     };
     fill('helpRules', ['helpRule1','helpRule2','helpRule3','helpRule4','helpRule5']);
-    fill('helpMouse', ['helpMouse1','helpMouse2','helpMouse3','helpMouse4','helpMouse5']);
+    fill('helpMouse', ['helpMouse1','helpMouse2','helpMouse3','helpMouse4','helpMouse5','helpMouse6','helpMouse7']);
     const table = $('helpKeys');
     table.innerHTML = '';
     [['↑ ↓ ← →','kbMove'], ['A … V','kbClue'], ['Shift + A … V','kbDecision'],
-     ['X','kbExclude'], ['1 – 4','kbMark'], ['Ctrl + Z / Y','kbUndo'], ['↑ ↓ ← → · [ ]','kbAlign']].forEach(pair=>{
+     ['X','kbExclude'], ['Del / ⌫','kbErase'], ['1 – 4','kbMark'], ['Ctrl + Z / Y','kbUndo'], ['↑ ↓ ← → · [ ]','kbAlign']].forEach(pair=>{
       const k = document.createElement('div');
       k.innerHTML = '<kbd>' + pair[0] + '</kbd>';
       const d = document.createElement('div');
@@ -5605,6 +6491,7 @@
 
   // ---------- keyboard ----------
   document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && colorPopOpen()){ closeColorPop(); return; }
     if(e.key === 'Escape' && openModalEl){ closeModal(openModalEl); return; }
     if(e.key === 'Enter' && openModalEl === editModal){ e.preventDefault(); applyEditor(); return; }
     if(openModalEl) return;
@@ -5645,6 +6532,12 @@
       return;
     }
 
+    if(e.key === 'Delete' || e.key === 'Backspace'){
+      e.preventDefault();
+      applyActiveToolToCell(selR, selC, {tool: 'erase'});
+      return;
+    }
+
     if(e.key.toLowerCase() === 'x'){
       e.preventDefault();
       selectTool('x');
@@ -5669,7 +6562,7 @@
     const suggested = puzzleTitle.trim() || 'murdoku';
     const name = prompt(t('exportPrompt'), suggested);
     if(!name) return;
-    const data = JSON.stringify({name, rows, cols, gridBox, cells, img, puzzleTitle, suspectNames, suspectClues, generalClues, showPortraits});
+    const data = JSON.stringify({name, rows, cols, gridBox, cells, img, puzzleTitle, suspectNames, suspectClues, generalClues, showPortraits, customColors});
     const blob = new Blob([data], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -5696,7 +6589,8 @@
           suspectNames: parsed.suspectNames || {},
           suspectClues: parsed.suspectClues || {},
           generalClues: parsed.generalClues || '',
-          showPortraits: !!parsed.showPortraits
+          showPortraits: !!parsed.showPortraits,
+          customColors: parsed.customColors || {}
         });
         persist();
         showToast(t('toastImportDone'));

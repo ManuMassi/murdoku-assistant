@@ -3,6 +3,13 @@
 *.jpg
 *.jpeg
 *.png
+*.heic
+*.heif
+*.tif
+*.tiff
+*.webp
+*.avif
+*.dng
 *.pdf
 *.zip
 # ...tranne le immagini della documentazione (lo screenshot del README)

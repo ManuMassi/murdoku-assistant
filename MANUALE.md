@@ -56,12 +56,16 @@ Da sapere:
 
 - Le scritte sulla tavola (numeri delle buche, nomi delle zone…) sono disegnate con un font di sistema simile, perché i browser non possono caricare i font incorporati nel PDF. Le posizioni sono esatte e il testo resta leggibile.
 - Dopo aver disegnato la tavola, l'app cerca solo una griglia della misura giusta (una riga e una colonna per persona). Se non vede bene le linee, mette la griglia dove il PDF dice che stanno le caselle.
-- Il lettore si aspetta l'impaginazione dei fogli originali: il nome sotto ogni foto segnaletica e l'indizio nella nuvoletta sotto. Un PDF che non è un foglio di Murdoku dà il messaggio "In questo PDF non ho trovato i sospettati" e non cambia nulla.
+- Un caso può stare su più pagine: sospettati divisi su due pagine, oppure la tavola su una pagina a parte — vengono rimessi insieme. Le scritte decorative in verticale (come "VISITORS" lungo il bordo) vengono ignorate.
+- Con le griglie grandi l'immagine della tavola ha più pixel (fino a circa 2000 px per una 24×24), così ogni casella resta nitida anche a schermo intero.
+- Il lettore si aspetta l'impaginazione dei fogli originali: il nome sotto ogni foto segnaletica e l'indizio nella nuvoletta sotto. Se un foglio di Murdoku è impaginato in un altro modo e i sospettati non si riescono a leggere, **la tavola si carica comunque** e nomi e indizi li scrivi nelle card. Un PDF che non è un foglio di Murdoku dà il messaggio "In questo PDF non ho trovato i sospettati" e non cambia nulla.
 - Se trascini **insieme** una foto e il PDF, la tua foto viene usata come tavola e dal PDF arrivano solo i sospettati.
 
 ### Da una foto
 
 Trascina una foto (o uno screenshot) della pagina del puzzle. L'app ricava da sola **quante righe e colonne** ha la griglia, **dove si trova**, **quanto è inclinata** (fino a circa ±5°) e perfino righe e colonne di misure un po' diverse dovute alla prospettiva. Se la cava con una foto scattata a mano dal telefono, con luce sbilanciata e con margini di pagina larghi. Se non è sicura non applica nulla e apre la modalità **Allinea griglia** per sistemarla a mano (vedi sezione 5). Nomi e indizi si possono poi scrivere nelle card dei sospettati.
+
+Va bene qualunque formato di immagine comune: JPEG, PNG, **HEIC** (quello predefinito dell'iPhone), WebP, AVIF, GIF, BMP, TIFF, e per i file RAW delle fotocamere (DNG, CR2, NEF…) l'anteprima che portano dentro. Le foto HEIC si aprono in Safari, e anche in Chrome ed Edge (decodificate con il decoder video del computer); nei browser che non sanno decodificarle compare un messaggio — salva la foto in JPEG, oppure imposta l'iPhone su *Impostazioni › Fotocamera › Formati › Più compatibile*. Le foto più grandi di 2400 px vengono ridotte a quella misura, che basta e avanza per la griglia e tiene leggero il caso.
 
 ### Griglia vuota
 
@@ -74,15 +78,22 @@ Il layout ricalca quello del Murdoku originale: sospettati a sinistra, scena del
 - **Pannello sinistro — fascicolo e sospettati**
   - il logo e il menu della **lingua**;
   - il **titolo del caso** (modificabile), le dimensioni della griglia e il **cronometro** con il bottone ▶/⏸;
-  - **LEGGI DAL PDF**;
+  - **LEGGI DAL PDF** e i tre bottoni della **vista** (schede, elenco, nascosto — vedi sotto);
   - l'interruttore **INDIZIO / DECISIONE**;
   - una **card per ogni persona**: una grande lettera colorata (o un ritratto, dopo un PDF), il nome e una nuvoletta con l'indizio. La vittima **V** ha un nastro rosso "VITTIMA"; una card riceve il timbro "PIAZZATO" quando quella persona è sulla griglia;
   - una **barra di avanzamento** con quante persone sono piazzate;
   - **INDIZI GENERALI**, un riquadro di testo libero per gli indizi che valgono per tutti;
   - i quattro **simboli nota**.
 - **Il divisore** tra il pannello sinistro e la tavola si può trascinare per ingrandire la tavola (doppio clic per tornare com'era). La larghezza viene ricordata.
+- **Viste dei sospettati** — la tavola è grande quanto lo spazio che le lasciano i pannelli, quindi con le griglie grandi conviene stringere il pannello:
+  - **Schede**: l'impaginazione del foglio originale. È quella predefinita fino a 12 persone.
+  - **Elenco**: una riga compatta per sospettato (lettera, nome e indizio), in un pannello stretto. È quella predefinita oltre le 12 persone: una tavola 24×24 su uno schermo 1440×900 passa da 23 a 31 px per casella.
+  - **Nascosto**: il pannello si riduce a una colonna di lettere (sempre cliccabili, con l'interruttore indizio/decisione e i simboli nota); passa sopra una lettera per leggere nome e indizio, e sopra la ★ per gli indizi generali. **»** riapre il pannello.
+  
+  La vista scelta viene ricordata in questo browser.
+- **Schermo intero**: il bottone nell'angolo in alto a destra della tavola nasconde schede e barra dell'indirizzo del browser (Esc per uscire), e su un portatile regala alla tavola circa 100 px.
 - **Centro — la scena del crimine**: l'immagine della tavola con la griglia sopra, e le etichette `C1…Cn` / `R1…Rn` lungo i bordi (solo i numeri quando le caselle sono piccole). Riga e colonna della casella selezionata sono evidenziate, e un'etichetta diventa verde quando la sua riga/colonna contiene già una decisione. In basso, una barra mostra sempre **cosa scriverà il prossimo clic** (per esempio "A · Anna — INDIZIO — clic = indizio · tieni premuto = decisione").
-- **Pannello destro — Strumenti**: la grande **✕** (esclusione), la **gomma** ("tieni premuto per svuotare tutto"), **ANNULLA / RIPETI**, **SOLO SELEZIONE**, poi **Rileva griglia**, **Allinea griglia**, **Ritaglia e ruota**, **CHIUDI IL CASO**, **COME SI GIOCA**, e quattro icone: carica foto o PDF, esporta, importa, impostazioni.
+- **Pannello destro — Strumenti**: la grande **✕** (esclusione), la **gomma** (clic: strumento gomma · tieni premuto: svuota tutto), **ANNULLA / RIPETI**, **SOLO SELEZIONE**, poi **Rileva griglia**, **Allinea griglia**, **Ritaglia e ruota**, **CHIUDI IL CASO**, **COME SI GIOCA**, e quattro icone: carica foto o PDF, esporta, importa, impostazioni.
 - **Impostazioni** (icona a ingranaggio): righe e colonne (2–24), rimuovi la foto, azzera il cronometro, e **Inizia un nuovo caso** (cancella tutto).
 
 ## 5. Adattare la griglia alla foto
@@ -101,24 +112,26 @@ Il riconoscimento è automatico, ma puoi sempre correggerlo.
 
 ## 6. Come si gioca
 
-**Scegli uno strumento, poi clicca una casella.** Gli strumenti sono: un sospettato (clic sulla sua card, o il tasto della sua lettera), la **✕**, oppure un simbolo nota. L'interruttore **INDIZIO / DECISIONE** decide cosa fa una lettera:
+**Scegli uno strumento, poi clicca una casella.** Gli strumenti sono: un sospettato (clic sulla sua card, o il tasto della sua lettera), la **✕**, la **gomma**, oppure un simbolo nota. L'interruttore **INDIZIO / DECISIONE** decide cosa fa una lettera:
 
 - **Modalità INDIZIO** — clic = **indizio** (una piccola etichetta che vuol dire "questa persona *potrebbe* essere qui"; ce ne possono essere più d'una nella stessa casella). **Tieni premuta una casella per mezzo secondo** per piazzare comunque la persona come **decisione** (mentre tieni premuto si riempie un anello).
 - **Modalità DECISIONE** — clic = **decisione**.
 
-Puoi **trascinare sulle caselle** per mettere lo stesso indizio, la stessa ✕ o lo stesso simbolo su tante caselle in un colpo solo (tutto il tratto è un solo passo di Annulla). Il trascinamento non piazza mai decisioni. Cliccando di nuovo una casella togli quell'indizio, quella ✕ o quel simbolo. Con **SOLO SELEZIONE** attivo, il clic sposta soltanto la selezione. Passando sopra una casella vedi un'anteprima trasparente di cosa scriverà il clic.
+Puoi **trascinare sulle caselle** per mettere lo stesso indizio, la stessa ✕ o lo stesso simbolo su tante caselle in un colpo solo (tutto il tratto è un solo passo di Annulla). Il trascinamento non piazza mai decisioni. La **gomma** (un clic sul suo bottone) svuota ogni casella che clicchi o su cui trascini; Canc/Backspace svuota la casella selezionata senza cambiare strumento. Cliccando di nuovo una casella togli quell'indizio, quella ✕ o quel simbolo. Con **SOLO SELEZIONE** attivo, il clic sposta soltanto la selezione. Passando sopra una casella vedi un'anteprima trasparente di cosa scriverà il clic.
 
 Le regole che l'app applica per te:
 
 - Una **decisione** mette la lettera della persona, grande, sulla casella. È permessa solo su una casella senza ✕ e senza altre decisioni, e ogni persona si piazza una volta sola. Appena piazzata:
   - tutti gli indizi di quella persona spariscono dal resto della griglia;
   - ogni altra casella della stessa **riga** e della stessa **colonna** riceve una ✕ (la "regola della torre": una persona per riga e per colonna);
-  - **una decisione non si toglie con un clic** — solo **Annulla** la riporta indietro.
+  - **una decisione non si toglie cliccandoci di nuovo**: usa **Annulla**, oppure la **gomma**, che toglie la decisione insieme alle ✕ che aveva messo sulla sua riga e colonna (le ✕ messe da te restano).
 - La **✕** segna una casella dove non può stare nessuno. Si mette e si toglie liberamente, tranne su una casella con una decisione, e svuota indizi e simbolo della casella. Una casella con la ✕ non accetta altro finché non togli la ✕.
 - Non si può scrivere un indizio per una persona già piazzata.
 - I **simboli nota** (▲ ● ■ ★, tasti `1`–`4`) sono annotazioni libere — "controllata", "da rivedere"… Non significano nulla per le regole, uno per casella, e non si mettono su una casella con ✕ o con una decisione.
 
 Indizi, decisioni e simboli usano il colore di ogni persona, lo stesso mostrato sulla sua card. **Tenendo premuta la card di un sospettato** si evidenziano tutte le caselle dove compare la sua lettera.
+
+I colori sono scelti perché lettere vicine siano ben diverse. Se due ti sembrano comunque simili, **tieni premuta per mezzo secondo la lettera (o il ritratto) di un sospettato**: si apre una tavolozza, con segnata la lettera che usa già ogni colore, più *Personalizzato…* per un colore qualsiasi e *Predefinito* per tornare indietro. Il nuovo colore compare subito ovunque — card, indizi e decisioni sulla tavola — e si salva con il caso.
 
 ## 7. Sospettati, indizi e ritratti
 
@@ -136,6 +149,7 @@ Nomi, indizi e titolo fanno parte del caso (vengono salvati ed esportati) ma non
 | Lettera (`a`…) | Indizio per quella persona nella casella selezionata |
 | Shift + lettera | Decisione per quella persona nella casella selezionata |
 | `x` | Mette/toglie la ✕ nella casella selezionata |
+| Canc / Backspace | Svuota la casella selezionata |
 | `1` – `4` | Mette/toglie un simbolo nota |
 | Ctrl/Cmd + Z | Annulla |
 | Ctrl/Cmd + Y, oppure Ctrl/Cmd + Shift + Z | Ripeti |
@@ -148,7 +162,10 @@ Le scorciatoie non scattano mentre scrivi in un campo di testo (titolo, nomi, in
 
 Ogni modifica alla griglia — ✕, indizi, decisioni, simboli, un tratto trascinato, spostamento/ridimensionamento/rotazione del riquadro, cambio di dimensioni, svuotamento — diventa un passo della cronologia. **ANNULLA** e **RIPETI** (o Ctrl+Z / Ctrl+Y) la percorrono. La cronologia vive solo in memoria e **si perde ricaricando la pagina**.
 
-La **gomma** svuota tutte le caselle (✕, indizi, decisioni, simboli) se la **tieni premuta per circa un secondo e mezzo** — un riempimento mostra quanto manca. Foto, posizione della griglia, nomi, indizi e cronometro restano, e **Annulla** riporta indietro le caselle.
+La **gomma** ha due gesti:
+
+- **un clic** sceglie lo strumento gomma: ogni casella che poi clicchi o su cui trascini viene svuotata (✕, indizi, simboli, e le decisioni con le ✕ che avevano messo);
+- **tenendola premuta per circa un secondo e mezzo** svuota tutte le caselle in un colpo — un riempimento mostra quanto manca. Foto, posizione della griglia, nomi, indizi e cronometro restano, e **Annulla** riporta indietro le caselle.
 
 ## 10. Cronometro e chiusura del caso
 
@@ -169,7 +186,7 @@ Il caso in corso viene salvato automaticamente mentre lavori, ma il salvataggio 
 - **Aprire una nuova scheda o finestra**, anche sullo stesso file: parte vuota — anche se un'altra scheda ha ancora del lavoro in corso.
 - **Chiudere la scheda o il browser**: il lavoro va perso, a meno che tu non l'abbia esportato.
 
-Il browser concede a questo salvataggio qualche megabyte. Una tavola disegnata da un PDF ci sta tranquillamente; una foto molto grande potrebbe non starci, e l'app te lo dice ("Spazio esaurito"). Per conservare un caso o passare da un caso all'altro, usa **Esporta**.
+Il browser concede a questo salvataggio qualche megabyte. Una tavola disegnata da un PDF ci sta tranquillamente, e le foto vengono ridotte a 2400 px sul lato lungo, quindi di solito ci stanno anche loro; se qualcosa non ci sta, l'app te lo dice ("Spazio esaurito"). Per conservare un caso o passare da un caso all'altro, usa **Esporta**.
 
 ## 13. Lingua e preferenze
 
@@ -179,7 +196,7 @@ Se il sistema chiede di ridurre le animazioni, quelle decorative vengono spente 
 
 ## 14. Dimensioni della griglia e lettere
 
-Le griglie vanno da 2×2 a **24×24**. Il numero di persone è `min(righe, colonne)`: la vittima è sempre **V** e gli altri prendono le lettere **A, B, C…** in ordine. Si saltano **V** (la vittima) e **X** (il tasto dell'esclusione), quindi dopo la **U** vengono **W** e **Y**: un puzzle da 24 persone usa A…U, W, Y e V.
+Le griglie vanno da 2×2 a **24×24**. Per quelle grandi vedi le viste dei sospettati e il bottone dello schermo intero nella sezione 4: su un portatile, *Nascosto* (o *Elenco*) più lo schermo intero danno alla tavola quasi tutta l'altezza dello schermo. Il numero di persone è `min(righe, colonne)`: la vittima è sempre **V** e gli altri prendono le lettere **A, B, C…** in ordine. Si saltano **V** (la vittima) e **X** (il tasto dell'esclusione), quindi dopo la **U** vengono **W** e **Y**: un puzzle da 24 persone usa A…U, W, Y e V.
 
 Righe e colonne possono essere diverse. Su una griglia rettangolare alcune caselle del lato più lungo restano per forza senza decisione anche a puzzle risolto: è normale, non un errore.
 
@@ -189,7 +206,13 @@ Righe e colonne possono essere diverse. Su una griglia rettangolare alcune casel
 No, a meno che tu non l'avessi esportato. Vedi la sezione 12: esporta se un caso richiede più sessioni.
 
 **Ho piazzato una decisione per errore. Come la tolgo?**
-Usa Annulla (Ctrl+Z o il bottone) finché non torni a prima di quella decisione. Con un clic non si toglie.
+Usa Annulla (Ctrl+Z o il bottone), oppure scegli la gomma e cliccala: se ne va insieme alle ✕ che aveva messo.
+
+**La tavola è troppo piccola (24×24).**
+Passa i sospettati a *Elenco* o *Nascosto* e premi il bottone dello schermo intero nell'angolo in alto a destra della tavola.
+
+**Due sospettati hanno colori che si somigliano.**
+Tieni premuta una delle due lettere nel pannello dei sospettati e scegli un altro colore.
 
 **Perché non riesco a scrivere in una casella?**
 Ha una ✕ (toglila prima), contiene già una decisione, oppure quella persona è già stata piazzata altrove. Un messaggio in cima alla tavola dice quale dei casi.
@@ -197,8 +220,11 @@ Ha una ✕ (toglila prima), contiene già una decisione, oppure quella persona �
 **La griglia non combacia con la foto.**
 Usa **Allinea griglia** per spostarla, ridimensionarla e ruotarla a mano, oppure **Ritaglia e ruota** per raddrizzare la foto (la modalità *Prospettiva* sistema le foto scattate di sbieco). Dopo aver applicato, la griglia viene ritrovata da capo.
 
+**La mia foto non si apre.**
+Le foto HEIC richiedono Safari, Chrome o Edge; negli altri browser salva la foto in JPEG (o imposta la fotocamera dell'iPhone su *Più compatibile*). Per altri formati insoliti, una copia in JPEG o PNG funziona sempre.
+
 **Il mio PDF non viene riconosciuto.**
-Il lettore si aspetta l'impaginazione dei fogli originali di Murdoku. Puoi comunque usarlo come foto: fai uno screenshot della tavola e trascinalo, poi scrivi nomi e indizi.
+Il lettore si aspetta l'impaginazione dei fogli originali di Murdoku. Se è un foglio di Murdoku impaginato in un altro modo, la tavola si carica comunque e nomi e indizi li scrivi tu; altrimenti fai uno screenshot della tavola e trascinalo.
 
 **Un sospettato ha un nome che inizia per X.**
 La X è riservata al tasto dell'esclusione, quindi quella persona prende la lettera libera successiva (Y). La card mostra comunque il suo nome.
